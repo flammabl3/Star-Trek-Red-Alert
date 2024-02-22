@@ -5,7 +5,8 @@ include(CTest)
 enable_testing()
 
 
-add_executable(Star-Trek-Red-Alert src/main.cpp)
+
+add_executable(Star-Trek-Red-Alert src/main.cpp src/Game.h src/Game.cpp)
 
 cmake_policy(SET CMP0074 NEW)
 

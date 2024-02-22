@@ -59,18 +59,23 @@ class System {
     private:
     public:
         std::string systemType;
+        //Array of rooms in the system.
         Room *rooms;
         // how well a room is running. Determined by condition of rooms, personnel in rooms.
         double operationalCapacity; 
         // an array of personnel, the current crew of the system. Determined by adding all the personnel lists of each room.
         Personnel *personnel; 
-        System(std::string systemType, Room rooms[]) {
+        System(std::string systemType, Room rooms[], Personnel personnel[]) {
             this->systemType = systemType;
             this->rooms = rooms;
+            this->personnel = personnel;
             this->operationalCapacity = 100.0;
         }
+        // We define a constructor yet never end up using it. Figure this problem out.
+        System() {
 
-        System() = default;
+        }
+        
 };
 
 class Room {
@@ -90,6 +95,10 @@ class Room {
             this->subsystems = subsystems;
             this->oxygen = 100.0;
             this->operationalCapacity = 100.0;
+        }
+
+        Room() {
+
         }
 
 };

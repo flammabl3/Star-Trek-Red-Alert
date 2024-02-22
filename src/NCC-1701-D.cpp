@@ -6,11 +6,13 @@
 
 class Bridge: public System {
     private:
-        Personnel personnelList[11];
-        std::map<std::string, Subsystem> subsystemList;
+        
 
         
     public:
+        Personnel personnelList[11];
+        Room roomsList[1];
+        std::map<std::string, Subsystem> subsystemList;
 
         void initBridge() {
 
@@ -100,7 +102,7 @@ class Bridge: public System {
 
             subsystemList["Engineering Panel"] = environmentPanel;
             
-            Room rooms[1] = Room(std::string("Main Bridge"), personnelList, subsystemList);
+            roomsList[0] = Room(std::string("Main Bridge"), personnelList, subsystemList);
         }
 
         //figure out how to make Bridge a System constructor that uses "Bridge" 
@@ -108,7 +110,9 @@ class Bridge: public System {
         Bridge() {
             initBridge();
             this->systemType = "Bridge";
-            this->rooms = rooms;
+            this->personnel = personnelList;
+            this->rooms = roomsList;
+            this->operationalCapacity = 100.0;
         }
 
 };

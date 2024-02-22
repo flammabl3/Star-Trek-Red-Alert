@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj"
+  "CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj.d"
   "CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj"
   "CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj.d"
   "Star-Trek-Red-Alert.exe"

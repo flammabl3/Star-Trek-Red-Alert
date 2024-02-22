@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "C:/Users/harry/Desktop/Star Trek Red Alert/src/Game.cpp" "CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj" "gcc" "CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj.d"
   "C:/Users/harry/Desktop/Star Trek Red Alert/src/main.cpp" "CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj" "gcc" "CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj.d"
   )
 

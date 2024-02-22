@@ -522,6 +522,30 @@ Star-Trek-Red-Alert/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/build
 .PHONY : Star-Trek-Red-Alert/fast
 
+src/Game.obj: src/Game.cpp.obj
+.PHONY : src/Game.obj
+
+# target to build an object file
+src/Game.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj
+.PHONY : src/Game.cpp.obj
+
+src/Game.i: src/Game.cpp.i
+.PHONY : src/Game.i
+
+# target to preprocess a source file
+src/Game.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.i
+.PHONY : src/Game.cpp.i
+
+src/Game.s: src/Game.cpp.s
+.PHONY : src/Game.s
+
+# target to generate assembly for a file
+src/Game.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.s
+.PHONY : src/Game.cpp.s
+
 src/main.obj: src/main.cpp.obj
 .PHONY : src/main.obj
 
@@ -586,6 +610,9 @@ help:
 	@echo ... NightlyTest
 	@echo ... NightlyUpdate
 	@echo ... Star-Trek-Red-Alert
+	@echo ... src/Game.obj
+	@echo ... src/Game.i
+	@echo ... src/Game.s
 	@echo ... src/main.obj
 	@echo ... src/main.i
 	@echo ... src/main.s

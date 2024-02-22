@@ -1,23 +1,16 @@
-#include <SFML/Graphics.hpp>
+#include "Game.h"
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(200, 200), "Star Trek: Red Alert");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
+    Game game;
 
-    while (window.isOpen())
+    while (game.getWindowIsOpen())
     {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
+        
+        game.update();
 
-        window.clear();
-        window.draw(shape);
-        window.display();
+        game.render();
+        
     }
 
     return 0;

@@ -1,5 +1,5 @@
-CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj: \
- C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\main.cpp \
+CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj: \
+ C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\Game.cpp \
  C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\Game.h \
  c:/SFML/include/SFML/Graphics.hpp c:/SFML/include/SFML/Window.hpp \
  c:/SFML/include/SFML/System.hpp c:/SFML/include/SFML/Config.hpp \

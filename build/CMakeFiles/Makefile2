@@ -836,12 +836,12 @@ CMakeFiles/ContinuousSubmit.dir/clean:
 CMakeFiles/Star-Trek-Red-Alert.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir="C:\Users\harry\Desktop\Star Trek Red Alert\build\CMakeFiles" --progress-num=1,2,3 "Built target Star-Trek-Red-Alert"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir="C:\Users\harry\Desktop\Star Trek Red Alert\build\CMakeFiles" --progress-num=1,2,3,4,5,6 "Built target Star-Trek-Red-Alert"
 .PHONY : CMakeFiles/Star-Trek-Red-Alert.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/Star-Trek-Red-Alert.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\harry\Desktop\Star Trek Red Alert\build\CMakeFiles" 3
+	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\harry\Desktop\Star Trek Red Alert\build\CMakeFiles" 6
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 CMakeFiles/Star-Trek-Red-Alert.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start "C:\Users\harry\Desktop\Star Trek Red Alert\build\CMakeFiles" 0
 .PHONY : CMakeFiles/Star-Trek-Red-Alert.dir/rule

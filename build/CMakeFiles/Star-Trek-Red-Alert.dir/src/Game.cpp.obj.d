@@ -243,4 +243,39 @@ CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj: \
  c:/SFML/include/SFML/Graphics/Glsl.inl \
  c:/SFML/include/SFML/Graphics/Sprite.hpp \
  c:/SFML/include/SFML/Graphics/Text.hpp \
- c:/SFML/include/SFML/Graphics/VertexBuffer.hpp
+ c:/SFML/include/SFML/Graphics/VertexBuffer.hpp \
+ c:/SFML/include/SFML/Network.hpp c:/SFML/include/SFML/Network/Ftp.hpp \
+ c:/SFML/include/SFML/Network/Export.hpp \
+ c:/SFML/include/SFML/Network/TcpSocket.hpp \
+ c:/SFML/include/SFML/Network/Socket.hpp \
+ c:/SFML/include/SFML/Network/SocketHandle.hpp \
+ C:/mingw64/x86_64-w64-mingw32/include/basetsd.h \
+ c:/SFML/include/SFML/Network/Http.hpp \
+ c:/SFML/include/SFML/Network/IpAddress.hpp \
+ C:/mingw64/include/c++/13.1.0/istream \
+ C:/mingw64/include/c++/13.1.0/bits/istream.tcc \
+ c:/SFML/include/SFML/Network/Packet.hpp \
+ c:/SFML/include/SFML/Network/SocketSelector.hpp \
+ c:/SFML/include/SFML/Network/TcpListener.hpp \
+ c:/SFML/include/SFML/Network/UdpSocket.hpp \
+ C:/mingw64/include/c++/13.1.0/iostream \
+ C:/mingw64/include/c++/13.1.0/cmath \
+ C:/mingw64/x86_64-w64-mingw32/include/math.h \
+ C:/mingw64/include/c++/13.1.0/bits/specfun.h \
+ C:/mingw64/include/c++/13.1.0/limits \
+ C:/mingw64/include/c++/13.1.0/tr1/gamma.tcc \
+ C:/mingw64/include/c++/13.1.0/tr1/special_function_util.h \
+ C:/mingw64/include/c++/13.1.0/tr1/bessel_function.tcc \
+ C:/mingw64/include/c++/13.1.0/tr1/beta_function.tcc \
+ C:/mingw64/include/c++/13.1.0/tr1/ell_integral.tcc \
+ C:/mingw64/include/c++/13.1.0/tr1/exp_integral.tcc \
+ C:/mingw64/include/c++/13.1.0/tr1/hypergeometric.tcc \
+ C:/mingw64/include/c++/13.1.0/tr1/legendre_function.tcc \
+ C:/mingw64/include/c++/13.1.0/tr1/modified_bessel_func.tcc \
+ C:/mingw64/include/c++/13.1.0/tr1/poly_hermite.tcc \
+ C:/mingw64/include/c++/13.1.0/tr1/poly_laguerre.tcc \
+ C:/mingw64/include/c++/13.1.0/tr1/riemann_zeta.tcc \
+ C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\ship.hpp \
+ C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\personnel.hpp \
+ C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\NCC-1701-D.hpp \
+ C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\systems.hpp

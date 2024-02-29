@@ -243,4 +243,18 @@ CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj: \
  c:/SFML/include/SFML/Graphics/Glsl.inl \
  c:/SFML/include/SFML/Graphics/Sprite.hpp \
  c:/SFML/include/SFML/Graphics/Text.hpp \
- c:/SFML/include/SFML/Graphics/VertexBuffer.hpp
+ c:/SFML/include/SFML/Graphics/VertexBuffer.hpp \
+ c:/SFML/include/SFML/Network.hpp c:/SFML/include/SFML/Network/Ftp.hpp \
+ c:/SFML/include/SFML/Network/Export.hpp \
+ c:/SFML/include/SFML/Network/TcpSocket.hpp \
+ c:/SFML/include/SFML/Network/Socket.hpp \
+ c:/SFML/include/SFML/Network/SocketHandle.hpp \
+ C:/mingw64/x86_64-w64-mingw32/include/basetsd.h \
+ c:/SFML/include/SFML/Network/Http.hpp \
+ c:/SFML/include/SFML/Network/IpAddress.hpp \
+ C:/mingw64/include/c++/13.1.0/istream \
+ C:/mingw64/include/c++/13.1.0/bits/istream.tcc \
+ c:/SFML/include/SFML/Network/Packet.hpp \
+ c:/SFML/include/SFML/Network/SocketSelector.hpp \
+ c:/SFML/include/SFML/Network/TcpListener.hpp \
+ c:/SFML/include/SFML/Network/UdpSocket.hpp

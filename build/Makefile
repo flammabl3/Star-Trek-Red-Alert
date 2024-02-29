@@ -546,6 +546,30 @@ src/Game.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.s
 .PHONY : src/Game.cpp.s
 
+src/NCC-1701-D.obj: src/NCC-1701-D.cpp.obj
+.PHONY : src/NCC-1701-D.obj
+
+# target to build an object file
+src/NCC-1701-D.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj
+.PHONY : src/NCC-1701-D.cpp.obj
+
+src/NCC-1701-D.i: src/NCC-1701-D.cpp.i
+.PHONY : src/NCC-1701-D.i
+
+# target to preprocess a source file
+src/NCC-1701-D.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.i
+.PHONY : src/NCC-1701-D.cpp.i
+
+src/NCC-1701-D.s: src/NCC-1701-D.cpp.s
+.PHONY : src/NCC-1701-D.s
+
+# target to generate assembly for a file
+src/NCC-1701-D.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.s
+.PHONY : src/NCC-1701-D.cpp.s
+
 src/main.obj: src/main.cpp.obj
 .PHONY : src/main.obj
 
@@ -569,6 +593,54 @@ src/main.s: src/main.cpp.s
 src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
+
+src/personnel.obj: src/personnel.cpp.obj
+.PHONY : src/personnel.obj
+
+# target to build an object file
+src/personnel.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj
+.PHONY : src/personnel.cpp.obj
+
+src/personnel.i: src/personnel.cpp.i
+.PHONY : src/personnel.i
+
+# target to preprocess a source file
+src/personnel.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.i
+.PHONY : src/personnel.cpp.i
+
+src/personnel.s: src/personnel.cpp.s
+.PHONY : src/personnel.s
+
+# target to generate assembly for a file
+src/personnel.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.s
+.PHONY : src/personnel.cpp.s
+
+src/ship.obj: src/ship.cpp.obj
+.PHONY : src/ship.obj
+
+# target to build an object file
+src/ship.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.obj
+.PHONY : src/ship.cpp.obj
+
+src/ship.i: src/ship.cpp.i
+.PHONY : src/ship.i
+
+# target to preprocess a source file
+src/ship.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.i
+.PHONY : src/ship.cpp.i
+
+src/ship.s: src/ship.cpp.s
+.PHONY : src/ship.s
+
+# target to generate assembly for a file
+src/ship.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.s
+.PHONY : src/ship.cpp.s
 
 # Help Target
 help:
@@ -613,9 +685,18 @@ help:
 	@echo ... src/Game.obj
 	@echo ... src/Game.i
 	@echo ... src/Game.s
+	@echo ... src/NCC-1701-D.obj
+	@echo ... src/NCC-1701-D.i
+	@echo ... src/NCC-1701-D.s
 	@echo ... src/main.obj
 	@echo ... src/main.i
 	@echo ... src/main.s
+	@echo ... src/personnel.obj
+	@echo ... src/personnel.i
+	@echo ... src/personnel.s
+	@echo ... src/ship.obj
+	@echo ... src/ship.i
+	@echo ... src/ship.s
 .PHONY : help
 
 

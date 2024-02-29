@@ -1,5 +1,5 @@
 #include <string>
-#include "personnel.h"
+#include "personnel.hpp"
 #include <map>
 #pragma once
 
@@ -31,32 +31,20 @@ class Ship
         int width;
         int height;
 
-        Ship(std::map<std::string, System> shipSystems, int mass, int impulseSpeed, int warpSpeed, std::string name, std::string designation) {
-            this->shipSystems = shipSystems;
-            this->impulseSpeed = impulseSpeed;
-            this->warpSpeed = warpSpeed;
-            this->mass = mass;
-            this->name = name;
-            this->designation = designation;
-        }
+        Ship(std::map<std::string, System> shipSystems, int mass, int impulseSpeed, int warpSpeed, std::string name, std::string designation);
 
-        void setPos(int x, int y, int z) {
-            xcoord = x;
-            ycoord = y;
-            zcoord = z;
-        }
+        Ship();
 
-        void setSize(int l, int w, int h) {
-            length = l;
-            width = w;
-            height = h;
-        }
+        void setPos(int x, int y, int z);
+
+        void setSize(int l, int w, int h);
         //~Ship();
 
 };
 
 class System {
     private:
+    
     public:
         std::string systemType;
         //Array of rooms in the system.
@@ -65,16 +53,9 @@ class System {
         double operationalCapacity; 
         // an array of personnel, the current crew of the system. Determined by adding all the personnel lists of each room.
         Personnel *personnel; 
-        System(std::string systemType, Room rooms[], Personnel personnel[]) {
-            this->systemType = systemType;
-            this->rooms = rooms;
-            this->personnel = personnel;
-            this->operationalCapacity = 100.0;
-        }
+        System(std::string systemType, Room rooms[], Personnel personnel[]); 
         // We define a constructor yet never end up using it. Figure this problem out.
-        System() {
-
-        }
+        System() = default;
         
 };
 
@@ -89,13 +70,7 @@ class Room {
         double operationalCapacity; 
         std::map<std::string, Subsystem> subsystems;
     
-        Room(std::string roomType, Personnel personnel[], std::map<std::string, Subsystem> subsystems) {
-            this-> roomType = roomType;
-            this->personnel = personnel;
-            this->subsystems = subsystems;
-            this->oxygen = 100.0;
-            this->operationalCapacity = 100.0;
-        }
+        Room(std::string roomType, Personnel personnel[], std::map<std::string, Subsystem> subsystems);
 
         Room() {
 
@@ -110,11 +85,7 @@ class Subsystem { // the individual consoles and parts inside a room.
         std::string name;
         double operationalCapacity; 
         Personnel operating; // the person at the station
-        Subsystem(std::string name, Personnel operating) {
-            this->name = name;
-            this->operationalCapacity = 100.0;
-            this->operating = operating;
-        }
+        Subsystem(std::string name, Personnel operating);
 
         Subsystem() = default;
 };

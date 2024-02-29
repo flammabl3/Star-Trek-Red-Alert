@@ -1,7 +1,6 @@
-CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj: \
- C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\NCC-1701-D.cpp \
- C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\NCC-1701-D.hpp \
- C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\ship.hpp \
+CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj: \
+ C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\personnel.cpp \
+ C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\personnel.hpp \
  C:/mingw64/include/c++/13.1.0/string \
  C:/mingw64/include/c++/13.1.0/bits/requires_hosted.h \
  C:/mingw64/include/c++/13.1.0/x86_64-w64-mingw32/bits/c++config.h \
@@ -98,57 +97,4 @@ CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj: \
  C:/mingw64/x86_64-w64-mingw32/include/stddef.h \
  C:/mingw64/include/c++/13.1.0/bits/uses_allocator.h \
  C:/mingw64/include/c++/13.1.0/bits/uses_allocator_args.h \
- C:/mingw64/include/c++/13.1.0/tuple \
- C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\personnel.hpp \
- C:/mingw64/include/c++/13.1.0/map \
- C:/mingw64/include/c++/13.1.0/bits/stl_tree.h \
- C:/mingw64/include/c++/13.1.0/ext/aligned_buffer.h \
- C:/mingw64/include/c++/13.1.0/bits/node_handle.h \
- C:/mingw64/include/c++/13.1.0/bits/stl_map.h \
- C:/mingw64/include/c++/13.1.0/bits/stl_multimap.h \
- C:/mingw64/include/c++/13.1.0/bits/erase_if.h \
- C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\systems.hpp \
- C:/mingw64/include/c++/13.1.0/iostream \
- C:/mingw64/include/c++/13.1.0/ostream C:/mingw64/include/c++/13.1.0/ios \
- C:/mingw64/include/c++/13.1.0/exception \
- C:/mingw64/include/c++/13.1.0/bits/exception_ptr.h \
- C:/mingw64/include/c++/13.1.0/bits/cxxabi_init_exception.h \
- C:/mingw64/include/c++/13.1.0/typeinfo \
- C:/mingw64/include/c++/13.1.0/bits/nested_exception.h \
- C:/mingw64/include/c++/13.1.0/bits/ios_base.h \
- C:/mingw64/include/c++/13.1.0/ext/atomicity.h \
- C:/mingw64/include/c++/13.1.0/x86_64-w64-mingw32/bits/gthr.h \
- C:/mingw64/include/c++/13.1.0/x86_64-w64-mingw32/bits/gthr-default.h \
- C:/mingw64/x86_64-w64-mingw32/include/pthread.h \
- C:/mingw64/x86_64-w64-mingw32/include/sys/types.h \
- C:/mingw64/x86_64-w64-mingw32/include/process.h \
- C:/mingw64/x86_64-w64-mingw32/include/corecrt_startup.h \
- C:/mingw64/x86_64-w64-mingw32/include/signal.h \
- C:/mingw64/x86_64-w64-mingw32/include/pthread_signal.h \
- C:/mingw64/x86_64-w64-mingw32/include/time.h \
- C:/mingw64/x86_64-w64-mingw32/include/sys/timeb.h \
- C:/mingw64/x86_64-w64-mingw32/include/sec_api/sys/timeb_s.h \
- C:/mingw64/x86_64-w64-mingw32/include/_timeval.h \
- C:/mingw64/x86_64-w64-mingw32/include/pthread_time.h \
- C:/mingw64/x86_64-w64-mingw32/include/pthread_compat.h \
- C:/mingw64/x86_64-w64-mingw32/include/pthread_unistd.h \
- C:/mingw64/include/c++/13.1.0/x86_64-w64-mingw32/bits/atomic_word.h \
- C:/mingw64/include/c++/13.1.0/bits/locale_classes.h \
- C:/mingw64/include/c++/13.1.0/bits/locale_classes.tcc \
- C:/mingw64/include/c++/13.1.0/system_error \
- C:/mingw64/include/c++/13.1.0/x86_64-w64-mingw32/bits/error_constants.h \
- C:/mingw64/include/c++/13.1.0/stdexcept \
- C:/mingw64/include/c++/13.1.0/streambuf \
- C:/mingw64/include/c++/13.1.0/bits/streambuf.tcc \
- C:/mingw64/include/c++/13.1.0/bits/basic_ios.h \
- C:/mingw64/include/c++/13.1.0/bits/locale_facets.h \
- C:/mingw64/include/c++/13.1.0/cwctype \
- C:/mingw64/x86_64-w64-mingw32/include/wctype.h \
- C:/mingw64/include/c++/13.1.0/x86_64-w64-mingw32/bits/ctype_base.h \
- C:/mingw64/include/c++/13.1.0/bits/streambuf_iterator.h \
- C:/mingw64/include/c++/13.1.0/x86_64-w64-mingw32/bits/ctype_inline.h \
- C:/mingw64/include/c++/13.1.0/bits/locale_facets.tcc \
- C:/mingw64/include/c++/13.1.0/bits/basic_ios.tcc \
- C:/mingw64/include/c++/13.1.0/bits/ostream.tcc \
- C:/mingw64/include/c++/13.1.0/istream \
- C:/mingw64/include/c++/13.1.0/bits/istream.tcc
+ C:/mingw64/include/c++/13.1.0/tuple

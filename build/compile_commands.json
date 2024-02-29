@@ -1,14 +1,32 @@
 [
 {
   "directory": "C:/Users/harry/Desktop/Star Trek Red Alert/build",
+  "command": "c:\\mingw64\\bin\\g++.exe  @CMakeFiles/Star-Trek-Red-Alert.dir/includes_CXX.rsp -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Game.cpp.obj -c \"C:\\Users\\harry\\Desktop\\Star Trek Red Alert\\src\\Game.cpp\"",
+  "file": "C:/Users/harry/Desktop/Star Trek Red Alert/src/Game.cpp",
+  "output": "CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj"
+},
+{
+  "directory": "C:/Users/harry/Desktop/Star Trek Red Alert/build",
+  "command": "c:\\mingw64\\bin\\g++.exe  @CMakeFiles/Star-Trek-Red-Alert.dir/includes_CXX.rsp -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\NCC-1701-D.cpp.obj -c \"C:\\Users\\harry\\Desktop\\Star Trek Red Alert\\src\\NCC-1701-D.cpp\"",
+  "file": "C:/Users/harry/Desktop/Star Trek Red Alert/src/NCC-1701-D.cpp",
+  "output": "CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj"
+},
+{
+  "directory": "C:/Users/harry/Desktop/Star Trek Red Alert/build",
   "command": "c:\\mingw64\\bin\\g++.exe  @CMakeFiles/Star-Trek-Red-Alert.dir/includes_CXX.rsp -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\main.cpp.obj -c \"C:\\Users\\harry\\Desktop\\Star Trek Red Alert\\src\\main.cpp\"",
   "file": "C:/Users/harry/Desktop/Star Trek Red Alert/src/main.cpp",
   "output": "CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj"
 },
 {
   "directory": "C:/Users/harry/Desktop/Star Trek Red Alert/build",
-  "command": "c:\\mingw64\\bin\\g++.exe  @CMakeFiles/Star-Trek-Red-Alert.dir/includes_CXX.rsp -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Game.cpp.obj -c \"C:\\Users\\harry\\Desktop\\Star Trek Red Alert\\src\\Game.cpp\"",
-  "file": "C:/Users/harry/Desktop/Star Trek Red Alert/src/Game.cpp",
-  "output": "CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj"
+  "command": "c:\\mingw64\\bin\\g++.exe  @CMakeFiles/Star-Trek-Red-Alert.dir/includes_CXX.rsp -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\personnel.cpp.obj -c \"C:\\Users\\harry\\Desktop\\Star Trek Red Alert\\src\\personnel.cpp\"",
+  "file": "C:/Users/harry/Desktop/Star Trek Red Alert/src/personnel.cpp",
+  "output": "CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj"
+},
+{
+  "directory": "C:/Users/harry/Desktop/Star Trek Red Alert/build",
+  "command": "c:\\mingw64\\bin\\g++.exe  @CMakeFiles/Star-Trek-Red-Alert.dir/includes_CXX.rsp -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\ship.cpp.obj -c \"C:\\Users\\harry\\Desktop\\Star Trek Red Alert\\src\\ship.cpp\"",
+  "file": "C:/Users/harry/Desktop/Star Trek Red Alert/src/ship.cpp",
+  "output": "CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.obj"
 }
 ]

@@ -68,26 +68,11 @@ include CMakeFiles/Star-Trek-Red-Alert.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/Star-Trek-Red-Alert.dir/flags.make
 
-CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj: CMakeFiles/Star-Trek-Red-Alert.dir/flags.make
-CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj: CMakeFiles/Star-Trek-Red-Alert.dir/includes_CXX.rsp
-CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj: C:/Users/harry/Desktop/Star\ Trek\ Red\ Alert/src/main.cpp
-CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj: CMakeFiles/Star-Trek-Red-Alert.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="C:\Users\harry\Desktop\Star Trek Red Alert\build\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj"
-	c:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj -MF CMakeFiles\Star-Trek-Red-Alert.dir\src\main.cpp.obj.d -o CMakeFiles\Star-Trek-Red-Alert.dir\src\main.cpp.obj -c "C:\Users\harry\Desktop\Star Trek Red Alert\src\main.cpp"
-
-CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.i"
-	c:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "C:\Users\harry\Desktop\Star Trek Red Alert\src\main.cpp" > CMakeFiles\Star-Trek-Red-Alert.dir\src\main.cpp.i
-
-CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.s"
-	c:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "C:\Users\harry\Desktop\Star Trek Red Alert\src\main.cpp" -o CMakeFiles\Star-Trek-Red-Alert.dir\src\main.cpp.s
-
 CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj: CMakeFiles/Star-Trek-Red-Alert.dir/flags.make
 CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj: CMakeFiles/Star-Trek-Red-Alert.dir/includes_CXX.rsp
 CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj: C:/Users/harry/Desktop/Star\ Trek\ Red\ Alert/src/Game.cpp
 CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj: CMakeFiles/Star-Trek-Red-Alert.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="C:\Users\harry\Desktop\Star Trek Red Alert\build\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="C:\Users\harry\Desktop\Star Trek Red Alert\build\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj"
 	c:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj -MF CMakeFiles\Star-Trek-Red-Alert.dir\src\Game.cpp.obj.d -o CMakeFiles\Star-Trek-Red-Alert.dir\src\Game.cpp.obj -c "C:\Users\harry\Desktop\Star Trek Red Alert\src\Game.cpp"
 
 CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.i: cmake_force
@@ -98,16 +83,82 @@ CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.s"
 	c:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "C:\Users\harry\Desktop\Star Trek Red Alert\src\Game.cpp" -o CMakeFiles\Star-Trek-Red-Alert.dir\src\Game.cpp.s
 
+CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj: CMakeFiles/Star-Trek-Red-Alert.dir/flags.make
+CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj: CMakeFiles/Star-Trek-Red-Alert.dir/includes_CXX.rsp
+CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj: C:/Users/harry/Desktop/Star\ Trek\ Red\ Alert/src/NCC-1701-D.cpp
+CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj: CMakeFiles/Star-Trek-Red-Alert.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="C:\Users\harry\Desktop\Star Trek Red Alert\build\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj"
+	c:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj -MF CMakeFiles\Star-Trek-Red-Alert.dir\src\NCC-1701-D.cpp.obj.d -o CMakeFiles\Star-Trek-Red-Alert.dir\src\NCC-1701-D.cpp.obj -c "C:\Users\harry\Desktop\Star Trek Red Alert\src\NCC-1701-D.cpp"
+
+CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.i"
+	c:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "C:\Users\harry\Desktop\Star Trek Red Alert\src\NCC-1701-D.cpp" > CMakeFiles\Star-Trek-Red-Alert.dir\src\NCC-1701-D.cpp.i
+
+CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.s"
+	c:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "C:\Users\harry\Desktop\Star Trek Red Alert\src\NCC-1701-D.cpp" -o CMakeFiles\Star-Trek-Red-Alert.dir\src\NCC-1701-D.cpp.s
+
+CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj: CMakeFiles/Star-Trek-Red-Alert.dir/flags.make
+CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj: CMakeFiles/Star-Trek-Red-Alert.dir/includes_CXX.rsp
+CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj: C:/Users/harry/Desktop/Star\ Trek\ Red\ Alert/src/main.cpp
+CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj: CMakeFiles/Star-Trek-Red-Alert.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="C:\Users\harry\Desktop\Star Trek Red Alert\build\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj"
+	c:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj -MF CMakeFiles\Star-Trek-Red-Alert.dir\src\main.cpp.obj.d -o CMakeFiles\Star-Trek-Red-Alert.dir\src\main.cpp.obj -c "C:\Users\harry\Desktop\Star Trek Red Alert\src\main.cpp"
+
+CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.i"
+	c:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "C:\Users\harry\Desktop\Star Trek Red Alert\src\main.cpp" > CMakeFiles\Star-Trek-Red-Alert.dir\src\main.cpp.i
+
+CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.s"
+	c:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "C:\Users\harry\Desktop\Star Trek Red Alert\src\main.cpp" -o CMakeFiles\Star-Trek-Red-Alert.dir\src\main.cpp.s
+
+CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj: CMakeFiles/Star-Trek-Red-Alert.dir/flags.make
+CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj: CMakeFiles/Star-Trek-Red-Alert.dir/includes_CXX.rsp
+CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj: C:/Users/harry/Desktop/Star\ Trek\ Red\ Alert/src/personnel.cpp
+CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj: CMakeFiles/Star-Trek-Red-Alert.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="C:\Users\harry\Desktop\Star Trek Red Alert\build\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj"
+	c:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj -MF CMakeFiles\Star-Trek-Red-Alert.dir\src\personnel.cpp.obj.d -o CMakeFiles\Star-Trek-Red-Alert.dir\src\personnel.cpp.obj -c "C:\Users\harry\Desktop\Star Trek Red Alert\src\personnel.cpp"
+
+CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.i"
+	c:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "C:\Users\harry\Desktop\Star Trek Red Alert\src\personnel.cpp" > CMakeFiles\Star-Trek-Red-Alert.dir\src\personnel.cpp.i
+
+CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.s"
+	c:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "C:\Users\harry\Desktop\Star Trek Red Alert\src\personnel.cpp" -o CMakeFiles\Star-Trek-Red-Alert.dir\src\personnel.cpp.s
+
+CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.obj: CMakeFiles/Star-Trek-Red-Alert.dir/flags.make
+CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.obj: CMakeFiles/Star-Trek-Red-Alert.dir/includes_CXX.rsp
+CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.obj: C:/Users/harry/Desktop/Star\ Trek\ Red\ Alert/src/ship.cpp
+CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.obj: CMakeFiles/Star-Trek-Red-Alert.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="C:\Users\harry\Desktop\Star Trek Red Alert\build\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.obj"
+	c:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.obj -MF CMakeFiles\Star-Trek-Red-Alert.dir\src\ship.cpp.obj.d -o CMakeFiles\Star-Trek-Red-Alert.dir\src\ship.cpp.obj -c "C:\Users\harry\Desktop\Star Trek Red Alert\src\ship.cpp"
+
+CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.i"
+	c:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "C:\Users\harry\Desktop\Star Trek Red Alert\src\ship.cpp" > CMakeFiles\Star-Trek-Red-Alert.dir\src\ship.cpp.i
+
+CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.s"
+	c:\mingw64\bin\g++.exe $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "C:\Users\harry\Desktop\Star Trek Red Alert\src\ship.cpp" -o CMakeFiles\Star-Trek-Red-Alert.dir\src\ship.cpp.s
+
 # Object files for target Star-Trek-Red-Alert
 Star__Trek__Red__Alert_OBJECTS = \
+"CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj" \
+"CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj" \
 "CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj" \
-"CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj"
+"CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj" \
+"CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.obj"
 
 # External object files for target Star-Trek-Red-Alert
 Star__Trek__Red__Alert_EXTERNAL_OBJECTS =
 
-Star-Trek-Red-Alert.exe: CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj
 Star-Trek-Red-Alert.exe: CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj
+Star-Trek-Red-Alert.exe: CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj
+Star-Trek-Red-Alert.exe: CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj
+Star-Trek-Red-Alert.exe: CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj
+Star-Trek-Red-Alert.exe: CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.obj
 Star-Trek-Red-Alert.exe: CMakeFiles/Star-Trek-Red-Alert.dir/build.make
 Star-Trek-Red-Alert.exe: C:/SFML/lib/libsfml-audio-d.a
 Star-Trek-Red-Alert.exe: C:/SFML/lib/libsfml-network-d.a
@@ -117,7 +168,7 @@ Star-Trek-Red-Alert.exe: C:/SFML/lib/libsfml-system-d.a
 Star-Trek-Red-Alert.exe: CMakeFiles/Star-Trek-Red-Alert.dir/linkLibs.rsp
 Star-Trek-Red-Alert.exe: CMakeFiles/Star-Trek-Red-Alert.dir/objects1.rsp
 Star-Trek-Red-Alert.exe: CMakeFiles/Star-Trek-Red-Alert.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir="C:\Users\harry\Desktop\Star Trek Red Alert\build\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable Star-Trek-Red-Alert.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir="C:\Users\harry\Desktop\Star Trek Red Alert\build\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable Star-Trek-Red-Alert.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\Star-Trek-Red-Alert.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

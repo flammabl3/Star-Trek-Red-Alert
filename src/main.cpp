@@ -4,13 +4,14 @@ int main()
 {
     Game game;
 
+    game.initPlayer();
+
     while (game.getWindowIsOpen())
     {
         
         game.update();
-
-        game.render();
         
+        game.render();
     }
 
     return 0;

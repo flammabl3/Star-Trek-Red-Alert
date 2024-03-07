@@ -4,17 +4,17 @@
 
 
 # Configuration directories and files
-SourceDirectory: C:/Users/harry/Desktop/Star Trek Red Alert
-BuildDirectory: C:/Users/harry/Desktop/Star Trek Red Alert/build
+SourceDirectory: C:/Users/Harry/Desktop/Star-Trek-Red-Alert
+BuildDirectory: C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build
 
 # Where to place the cost data store
 CostDataFile: 
 
 # Site is something like machine.domain, i.e. pragmatic.crd
-Site: Harrys-Hub
+Site: NCC-1701-D
 
 # Build name is osname-revision-compiler, i.e. Linux-2.4.2-2smp-c++
-BuildName: Win32-mingw32-make
+BuildName: Win32-ninja
 
 # Subprojects
 LabelsForSubprojects: 
@@ -27,8 +27,8 @@ SubmitInactivityTimeout:
 NightlyStartTime: 00:00:00 EDT
 
 # Commands for the build/test/submit cycle
-ConfigureCommand: "C:/mingw64/bin/cmake.exe" "C:/Users/harry/Desktop/Star Trek Red Alert"
-MakeCommand: C:/Program\ Files/CMake/bin/cmake.exe --build . --config "${CTEST_CONFIGURATION_TYPE}"
+ConfigureCommand: "C:/Program Files/CMake/bin/cmake.exe" "C:/Users/Harry/Desktop/Star-Trek-Red-Alert"
+MakeCommand: "C:\Program Files\CMake\bin\cmake.exe" --build . --config "${CTEST_CONFIGURATION_TYPE}"
 DefaultCTestConfigurationType: Release
 
 # version control
@@ -63,7 +63,7 @@ UpdateOptions:
 UpdateType: git
 
 # Compiler info
-Compiler: c:/mingw64/bin/g++.exe
+Compiler: C:/mingw64/bin/g++.exe
 CompilerVersion: 13.1.0
 
 # Dynamic analysis (MemCheck)

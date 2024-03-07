@@ -13,6 +13,12 @@
 },
 {
   "directory": "C:/Users/harry/Desktop/Star Trek Red Alert/build",
+  "command": "c:\\mingw64\\bin\\g++.exe  @CMakeFiles/Star-Trek-Red-Alert.dir/includes_CXX.rsp -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Projectile.cpp.obj -c \"C:\\Users\\harry\\Desktop\\Star Trek Red Alert\\src\\Projectile.cpp\"",
+  "file": "C:/Users/harry/Desktop/Star Trek Red Alert/src/Projectile.cpp",
+  "output": "CMakeFiles/Star-Trek-Red-Alert.dir/src/Projectile.cpp.obj"
+},
+{
+  "directory": "C:/Users/harry/Desktop/Star Trek Red Alert/build",
   "command": "c:\\mingw64\\bin\\g++.exe  @CMakeFiles/Star-Trek-Red-Alert.dir/includes_CXX.rsp -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\main.cpp.obj -c \"C:\\Users\\harry\\Desktop\\Star Trek Red Alert\\src\\main.cpp\"",
   "file": "C:/Users/harry/Desktop/Star Trek Red Alert/src/main.cpp",
   "output": "CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj"

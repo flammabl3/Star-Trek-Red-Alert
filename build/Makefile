@@ -570,6 +570,30 @@ src/NCC-1701-D.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.s
 .PHONY : src/NCC-1701-D.cpp.s
 
+src/Projectile.obj: src/Projectile.cpp.obj
+.PHONY : src/Projectile.obj
+
+# target to build an object file
+src/Projectile.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/Projectile.cpp.obj
+.PHONY : src/Projectile.cpp.obj
+
+src/Projectile.i: src/Projectile.cpp.i
+.PHONY : src/Projectile.i
+
+# target to preprocess a source file
+src/Projectile.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/Projectile.cpp.i
+.PHONY : src/Projectile.cpp.i
+
+src/Projectile.s: src/Projectile.cpp.s
+.PHONY : src/Projectile.s
+
+# target to generate assembly for a file
+src/Projectile.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/Projectile.cpp.s
+.PHONY : src/Projectile.cpp.s
+
 src/main.obj: src/main.cpp.obj
 .PHONY : src/main.obj
 
@@ -688,6 +712,9 @@ help:
 	@echo ... src/NCC-1701-D.obj
 	@echo ... src/NCC-1701-D.i
 	@echo ... src/NCC-1701-D.s
+	@echo ... src/Projectile.obj
+	@echo ... src/Projectile.i
+	@echo ... src/Projectile.s
 	@echo ... src/main.obj
 	@echo ... src/main.i
 	@echo ... src/main.s

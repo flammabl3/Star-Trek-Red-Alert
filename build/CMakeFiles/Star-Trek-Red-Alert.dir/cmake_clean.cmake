@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj.d"
   "CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj"
   "CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj.d"
+  "CMakeFiles/Star-Trek-Red-Alert.dir/src/Projectile.cpp.obj"
+  "CMakeFiles/Star-Trek-Red-Alert.dir/src/Projectile.cpp.obj.d"
   "CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj"
   "CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj.d"
   "CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj"

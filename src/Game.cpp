@@ -1,10 +1,12 @@
-#include "Game.h"
+#include "Game.hpp"
 
 #include <iostream>
 #include <cmath>
+#include <windows.h>
 
 #include "ship.hpp"
 #include "NCC-1701-D.hpp"
+#include "Projectile.hpp"
 
 void Game::initVariables() {
     this->window = nullptr;
@@ -42,30 +44,27 @@ void Game::renderPlayer() {
     this->window->draw(this->playerShip);
 }
 
-
+void Game::renderProjectiles() {
+    for (int i = 0; i < projectilesList.size(); i++) {
+        projectilesList.at(i)->render(this->window);
+    }
+}
 
 // will be run each frame. will eventually need code to check the type of weapon.
 
-//TODO: This doesn't work. The code to render the torpedo itself works, but it seemingly isn't triggered when the mouse button is pressed. The torpedo also has no code to move.
+//TODO: The torpedo also has no code to move.
 void Game::fireWeapon(sf::Sprite firingShip) {
-    if (weaponSelected) {
-        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-            sf::Sprite torpedo;
-            sf::Texture torpedoTexture;
-            if (!torpedoTexture.loadFromFile("../resource/photontorpedo.png")) {
-                std::cout << "Failed to load." << std::endl;
-            }
-            torpedo.setPosition(firingShip.getPosition().x / 2, firingShip.getPosition().y);
-            torpedo.setTexture(torpedoTexture);
-            this->window->draw(torpedo);
-            weaponSelected = false;
-        }
+    if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && weaponSelected){
+        Projectile* torpedo = new Projectile("../resource/photontorpedo.png", firingShip.getPosition());
+
+        this->projectilesList.insert(projectilesList.end(), torpedo);
+        weaponSelected = false;
     }
 }
 
 void Game::movePlayer() {
     // these variables, and this function itself should eventually be moved to the Ship class.
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && !weaponSelected) {
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && !weaponSelected) {
         /* Get the position of the player's ship and the position of the mouse as vectors. 
         Find the vector which is the difference between the 2 vectors and normalize it by dividing by length. The vector is normalized so it can be multiplied by a constant speed.
         Move by the difference vector times speed times deltatime. */
@@ -150,7 +149,7 @@ void Game::update() {
 }
 
 void Game::render() {
-    
+    renderProjectiles();
     renderPlayer();
     this->window->display();
 }

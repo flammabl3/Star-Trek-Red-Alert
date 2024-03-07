@@ -1,6 +1,9 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Network.hpp>
+#include <vector>
+
+#include "Projectile.hpp"
 
 class Game {
     private:
@@ -18,8 +21,10 @@ class Game {
         sf::Sprite playerShip;
         sf::Texture playerTexture;
         sf::Vector2i mousePosition;
-        bool weaponSelected;
-        // a variable for which weapon has been selected will eventually be necessary.
+        bool weaponSelected; // a variable for which weapon has been selected will eventually be necessary.
+
+        std::vector<Projectile*> projectilesList;
+        
 
         float playerSpeedx = 0; // these will eventually belong to the ship class.
         float playerSpeedy = 0;
@@ -42,6 +47,7 @@ class Game {
         void renderPlayer();
 
         void fireWeapon(sf::Sprite firingShip);
+        void renderProjectiles(); 
 
         void render();
         

@@ -9,6 +9,11 @@ Ship::Ship(std::map<std::string, System> shipSystems, int mass, int impulseSpeed
     this->designation = designation;
 }
 
+Ship::Ship() {
+    
+}
+//for some infuriating reason there needs to be a definition for default constructor because it is being called somewhere, and I can't figure out where.
+
 void Ship::setPos(int x, int y, int z) {
     xcoord = x;
     ycoord = y;
@@ -21,6 +26,9 @@ void Ship::setSize(int l, int w, int h) {
     height = h;
 }
 
+void Ship::setDirection(float direction) {
+    this->direction = direction;
+}
 
 System::System(std::string systemType, Room rooms[], Personnel personnel[]){
     this->systemType = systemType;

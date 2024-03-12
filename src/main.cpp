@@ -4,8 +4,6 @@ int main()
 {
     Game game;
 
-    game.initPlayer();
-
     while (game.getWindowIsOpen())
     {
         

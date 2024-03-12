@@ -258,5 +258,7 @@ CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj: \
  c:/SFML/include/SFML/Network/SocketSelector.hpp \
  c:/SFML/include/SFML/Network/TcpListener.hpp \
  c:/SFML/include/SFML/Network/UdpSocket.hpp \
+ C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\ship.hpp \
+ C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\personnel.hpp \
  C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\Projectile.hpp \
  C:/mingw64/include/c++/13.1.0/iostream

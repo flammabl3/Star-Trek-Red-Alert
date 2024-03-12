@@ -7,13 +7,19 @@
 
 class Projectile {
     private:
+        
+    public:
         sf::Sprite projectileSprite;
         sf::Texture projectileTexture;
-        int posX;
-        int posY;
+        float posX;
+        float posY;
+        sf::Vector2f spawnedAt;
+        float rotation;
+        float speed;
         std::string texturePath;
-    public:
-        Projectile(std::string texturePath, sf::Vector2f origin);
+        Projectile(std::string texturePath, float x, float y, float rotation, float speed);
         void render(sf::RenderWindow* window);
         sf::Sprite getSprite();
+        
+        ~Projectile();
 };

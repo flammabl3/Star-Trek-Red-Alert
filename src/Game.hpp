@@ -3,6 +3,7 @@
 #include <SFML/Network.hpp>
 #include <vector>
 
+#include "ship.hpp"
 #include "Projectile.hpp"
 
 class Game {
@@ -20,14 +21,19 @@ class Game {
         //Game Objects
         sf::Sprite playerShip;
         sf::Texture playerTexture;
+        sf::Vector2f playerSize;
         sf::Vector2i mousePosition;
+        sf::Clock clock;
+        float deltaTime;
         bool weaponSelected; // a variable for which weapon has been selected will eventually be necessary.
 
         std::vector<Projectile*> projectilesList;
-        
 
         float playerSpeedx = 0; // these will eventually belong to the ship class.
         float playerSpeedy = 0;
+                
+        //Classes associated with game objects
+        Ship playerShipObj;
 
     public:
         //Constructors and Destructors
@@ -41,13 +47,15 @@ class Game {
         void updateEvents();
         void update();
 
+        void sizePlayerCheck();
         void initPlayer();
         void updatePlayer();
         void movePlayer();
         void renderPlayer();
 
-        void fireWeapon(sf::Sprite firingShip);
+        void fireWeapon(Ship firingShip);
         void renderProjectiles(); 
+        void moveProjectiles(Projectile* projectile, int i);
 
         void render();
         

@@ -1,3 +1,5 @@
+#include <SFML/Graphics.hpp>
+
 #include <string>
 #include "personnel.hpp"
 #include <map>
@@ -13,7 +15,10 @@ class Ship
         
 
     public:
+        //SFML objects
+        sf::Sprite shipSprite;
 
+        //Internal data
         std::map<std::string, System> shipSystems;
         int mass;
         int impulseSpeed;
@@ -25,6 +30,7 @@ class Ship
         int xcoord;
         int ycoord;
         int zcoord;
+        float direction;
 
         //ships will occupy a rectangular space around their base coordinate.
         int length;
@@ -38,7 +44,11 @@ class Ship
         void setPos(int x, int y, int z);
 
         void setSize(int l, int w, int h);
+
+        void setDirection(float direction);
+
         //~Ship();
+        //define destructor later
 
 };
 

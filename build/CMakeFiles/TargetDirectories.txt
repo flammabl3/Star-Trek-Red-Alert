@@ -27,8 +27,6 @@ C:/Users/harry/Desktop/Star Trek Red Alert/build/CMakeFiles/ContinuousCoverage.d
 C:/Users/harry/Desktop/Star Trek Red Alert/build/CMakeFiles/ContinuousMemCheck.dir
 C:/Users/harry/Desktop/Star Trek Red Alert/build/CMakeFiles/ContinuousSubmit.dir
 C:/Users/harry/Desktop/Star Trek Red Alert/build/CMakeFiles/Star-Trek-Red-Alert.dir
-C:/Users/harry/Desktop/Star Trek Red Alert/build/CMakeFiles/package.dir
-C:/Users/harry/Desktop/Star Trek Red Alert/build/CMakeFiles/package_source.dir
 C:/Users/harry/Desktop/Star Trek Red Alert/build/CMakeFiles/test.dir
 C:/Users/harry/Desktop/Star Trek Red Alert/build/CMakeFiles/edit_cache.dir
 C:/Users/harry/Desktop/Star Trek Red Alert/build/CMakeFiles/rebuild_cache.dir

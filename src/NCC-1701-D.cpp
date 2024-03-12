@@ -115,7 +115,7 @@ Ship getEnterprise() {
     Ship enterprise = Ship(systemsList, 5000000, 0.25, 9.4, std::string("USS Enterprise"), std::string("NCC-1701-D")); 
 
     std::cout << "Hello world! ";
-    std::cout << enterprise.name;
+    std::cout << enterprise.name << std::endl;
 
     return enterprise;
 }

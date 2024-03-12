@@ -258,6 +258,8 @@ CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj: \
  c:/SFML/include/SFML/Network/SocketSelector.hpp \
  c:/SFML/include/SFML/Network/TcpListener.hpp \
  c:/SFML/include/SFML/Network/UdpSocket.hpp \
+ C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\ship.hpp \
+ C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\personnel.hpp \
  C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\Projectile.hpp \
  C:/mingw64/include/c++/13.1.0/iostream \
  C:/mingw64/include/c++/13.1.0/cmath \
@@ -520,7 +522,5 @@ CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj: \
  C:/mingw64/x86_64-w64-mingw32/include/winsvc.h \
  C:/mingw64/x86_64-w64-mingw32/include/mcx.h \
  C:/mingw64/x86_64-w64-mingw32/include/imm.h \
- C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\ship.hpp \
- C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\personnel.hpp \
  C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\NCC-1701-D.hpp \
  C:\Users\harry\Desktop\Star\ Trek\ Red\ Alert\src\systems.hpp

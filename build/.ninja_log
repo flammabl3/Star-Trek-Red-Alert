@@ -1,0 +1,8 @@
+# ninja log v5
+29	669	7315386783966007	CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj	2d505ba1468ba1ae
+36	1085	7315386788146520	CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.obj	e1528482f2468727
+12	1944	7315386796744521	CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj	5608c3a0c2cd100e
+23	2256	7315386799879808	CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj	e899a0338218064b
+18	2203	7315386799349874	CMakeFiles/Star-Trek-Red-Alert.dir/src/Projectile.cpp.obj	5cae7188cb0907a4
+6	5378	7315386831067773	CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj	225260362504a5b7
+5382	5722	7315386834365315	Star-Trek-Red-Alert.exe	4fdfeaf40cc1e3fa

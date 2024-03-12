@@ -187,10 +187,10 @@
 				},
 				{
 					"name" : "HELPSTRING",
-					"value" : "No help, variable specified on the command line."
+					"value" : "CXX compiler"
 				}
 			],
-			"type" : "FILEPATH",
+			"type" : "STRING",
 			"value" : "c:/mingw64/bin/g++.exe"
 		},
 		{
@@ -331,10 +331,10 @@
 				},
 				{
 					"name" : "HELPSTRING",
-					"value" : "No help, variable specified on the command line."
+					"value" : "C compiler"
 				}
 			],
-			"type" : "FILEPATH",
+			"type" : "STRING",
 			"value" : "c:/mingw64/bin/gcc.exe"
 		},
 		{
@@ -1603,7 +1603,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/SFML/lib/libsfml-audio-d.a"
+			"value" : "/SFML/lib/libsfml-audio-d.a"
 		},
 		{
 			"name" : "SFML_AUDIO_LIBRARY_DYNAMIC_RELEASE",
@@ -1715,7 +1715,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/SFML/lib/libsfml-graphics-d.a"
+			"value" : "/SFML/lib/libsfml-graphics-d.a"
 		},
 		{
 			"name" : "SFML_GRAPHICS_LIBRARY_DYNAMIC_RELEASE",
@@ -1791,7 +1791,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "C:/SFML/include"
+			"value" : "/SFML/include"
 		},
 		{
 			"name" : "SFML_NETWORK_LIBRARY",
@@ -1839,7 +1839,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/SFML/lib/libsfml-network-d.a"
+			"value" : "/SFML/lib/libsfml-network-d.a"
 		},
 		{
 			"name" : "SFML_NETWORK_LIBRARY_DYNAMIC_RELEASE",
@@ -1951,7 +1951,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/SFML/lib/libsfml-system-d.a"
+			"value" : "/SFML/lib/libsfml-system-d.a"
 		},
 		{
 			"name" : "SFML_SYSTEM_LIBRARY_DYNAMIC_RELEASE",
@@ -2063,7 +2063,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/SFML/lib/libsfml-window-d.a"
+			"value" : "/SFML/lib/libsfml-window-d.a"
 		},
 		{
 			"name" : "SFML_WINDOW_LIBRARY_DYNAMIC_RELEASE",

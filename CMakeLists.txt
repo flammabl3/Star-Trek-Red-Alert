@@ -19,8 +19,10 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
 include_directories(c:/SFML/include)
 
 
-set(SFML_ROOT c:/SFML)
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
+#set(SFML_ROOT c:/SFML)
+#set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
+#Commented out so CMake searches for SFML instead of manually specifying directory.
+#Re-implement if there are issues.
 find_package(SFML REQUIRED audio network graphics window system)
 if (SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR})

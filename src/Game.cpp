@@ -61,13 +61,15 @@ void Game::renderPlayer() {
 void Game::renderProjectiles() {
     for (int i = 0; i < projectilesList.size(); i++) {
         projectilesList.at(i)->render(this->window);
+        //this function, render(), belongs to the Projectile class.
         moveProjectiles(projectilesList.at(i), i);
-        //this function belongs to the Projectile class.
+        //moveProjectiles() should eventually be moved to the update loop.
     }
 }
 
 void Game::moveProjectiles(Projectile* projectile, int i) {
     sf::Vector2f elapsedDistance = projectile->projectileSprite.getPosition() - projectile->spawnedAt;
+    //if the projectile has travelled more than 400 units, delete it.
     if (std::sqrt(elapsedDistance.x * elapsedDistance.x + elapsedDistance.y * elapsedDistance.y) > 400) {
         projectilesList.erase(projectilesList.begin() + i);
         delete projectile;

@@ -177,11 +177,11 @@ Star-Trek-Red-Alert.exe: CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj
 Star-Trek-Red-Alert.exe: CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj
 Star-Trek-Red-Alert.exe: CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.obj
 Star-Trek-Red-Alert.exe: CMakeFiles/Star-Trek-Red-Alert.dir/build.make
-Star-Trek-Red-Alert.exe: C:/SFML/lib/libsfml-audio-d.a
-Star-Trek-Red-Alert.exe: C:/SFML/lib/libsfml-network-d.a
-Star-Trek-Red-Alert.exe: C:/SFML/lib/libsfml-graphics-d.a
-Star-Trek-Red-Alert.exe: C:/SFML/lib/libsfml-window-d.a
-Star-Trek-Red-Alert.exe: C:/SFML/lib/libsfml-system-d.a
+Star-Trek-Red-Alert.exe: /SFML/lib/libsfml-audio-d.a
+Star-Trek-Red-Alert.exe: /SFML/lib/libsfml-network-d.a
+Star-Trek-Red-Alert.exe: /SFML/lib/libsfml-graphics-d.a
+Star-Trek-Red-Alert.exe: /SFML/lib/libsfml-window-d.a
+Star-Trek-Red-Alert.exe: /SFML/lib/libsfml-system-d.a
 Star-Trek-Red-Alert.exe: CMakeFiles/Star-Trek-Red-Alert.dir/linkLibs.rsp
 Star-Trek-Red-Alert.exe: CMakeFiles/Star-Trek-Red-Alert.dir/objects1.rsp
 Star-Trek-Red-Alert.exe: CMakeFiles/Star-Trek-Red-Alert.dir/link.txt

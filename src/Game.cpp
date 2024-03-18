@@ -76,15 +76,15 @@ void Game::moveProjectiles(Projectile* projectile, int i) {
         projectile = nullptr;
     } else {
 
-        sf::Vector2f directionOfTravel;
-        //A vector with magnitude one pointing in the direction of the projectile.
+        sf::Vector2f goTo;
+        //A vector with magnitude one pointing in the direction of the projectile. 
+        //This vector is created by subtracting the vector of the projectile's spawn point
+        //from where the player clicked, stored as the directionOfTravel vector inside the Projectile object.
+        goTo = projectile->directionOfTravel - projectile->spawnedAt;
+        float length = std::sqrt(goTo.x * goTo.x + goTo.y * goTo.y);
+        goTo = goTo / length;
 
-        directionOfTravel.x = cos(projectile->projectileSprite.getRotation() * M_PI/180);
-        directionOfTravel.y = sin(projectile->projectileSprite.getRotation() * M_PI/180);
-        float length = std::sqrt(directionOfTravel.x * directionOfTravel.x + directionOfTravel.y * directionOfTravel.y);
-        directionOfTravel = directionOfTravel / length;
-
-        projectile->projectileSprite.move(directionOfTravel * projectile->speed * deltaTime);
+        projectile->projectileSprite.move(goTo * projectile->speed * deltaTime);
 
     }
 }
@@ -95,10 +95,10 @@ void Game::fireWeapon(Ship firingShip) {
     playerShipObj.shipSprite = playerShip;
 
     sf::Vector2f parentTip = playerShip.getTransform().transformPoint({playerShip.getLocalBounds().height, playerShip.getLocalBounds().height / 2});
-
+    sf::Vector2f directionOfTravel = (sf::Vector2f)sf::Mouse::getPosition(*window);
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && weaponSelected){
         Projectile* torpedo = new Projectile("../resource/photontorpedo.png", parentTip.x, parentTip.y,
-                                            firingShip.shipSprite.getRotation(), 1000.0);                                  
+                                            directionOfTravel, 1000.0);                                  
         this->projectilesList.insert(projectilesList.end(), torpedo);
         weaponSelected = false;
     }

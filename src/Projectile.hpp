@@ -14,10 +14,10 @@ class Projectile {
         float posX;
         float posY;
         sf::Vector2f spawnedAt;
-        float rotation;
+        sf::Vector2f directionOfTravel;
         float speed;
         std::string texturePath;
-        Projectile(std::string texturePath, float x, float y, float rotation, float speed);
+        Projectile(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed);
         void render(sf::RenderWindow* window);
         sf::Sprite getSprite();
         

@@ -1,6 +1,8 @@
 #include "NCC-1701-D.hpp"
 
 //How ships will be stored and selected between, as hpp files.
+//This is a terrible way to do it! We should probably have a generic class that takes some kind of data file to initialize ship parts.
+
 void Bridge::initBridge() {
     //create lt. commander data
     Personnel data = Personnel(std::string("Data"), std::string(""), std::string(""), std::string("Lieutenant Commander"), 

@@ -70,7 +70,12 @@ class System {
         double operationalCapacity; 
         // an array of personnel, the current crew of the system. Determined by adding all the personnel lists of each room.
         Personnel *personnel; 
+
+        int systemX;
+        int systemY;
+
         System(std::string systemType, Room rooms[], Personnel personnel[]); 
+        void defineHitbox(int systemX, int systemY);
         // We define a constructor yet never end up using it. Figure this problem out.
         System() = default;
         

@@ -45,6 +45,11 @@ System::System(std::string systemType, Room rooms[], Personnel personnel[]){
     this->operationalCapacity = 100.0;
 }
 
+void System::defineHitbox(int systemX, int systemY) {
+    this->systemX = systemX;
+    this->systemY = systemY;
+}
+
 Room::Room(std::string roomType, Personnel personnel[], std::map<std::string, Subsystem> subsystems)  {
     this-> roomType = roomType;
     this->personnel = personnel;

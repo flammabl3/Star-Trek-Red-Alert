@@ -3,6 +3,7 @@
 #include <string>
 #include "personnel.hpp"
 #include <map>
+#include <iostream>
 #pragma once
 
 class System;
@@ -17,6 +18,7 @@ class Ship
     public:
         //SFML objects
         sf::Sprite shipSprite;
+        sf::Texture shipTexture;
 
         //Internal data
         std::map<std::string, System> shipSystems;
@@ -40,6 +42,8 @@ class Ship
         Ship(std::map<std::string, System> shipSystems, int mass, int impulseSpeed, int warpSpeed, std::string name, std::string designation);
 
         Ship();
+
+        void setSFMLObjects(sf::Sprite shipSprite, std::string resourcePath);
 
         void setPos(int x, int y, int z);
 

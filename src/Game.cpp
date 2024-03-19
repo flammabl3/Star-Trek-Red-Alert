@@ -8,6 +8,9 @@
 #include "NCC-1701-D.hpp"
 #include "Projectile.hpp"
 
+
+//TODO: See if we can't come up with a shorter way to reference the playerShipObj's shipSprite member
+
 void Game::initVariables() {
     this->window = nullptr;
     this->weaponSelected = false;
@@ -27,35 +30,24 @@ void Game::initWindow() {
 }
 
 void Game::initPlayer() {
-    if (!this->playerTexture.loadFromFile("../resource/Ent-D.png")) {
-        std::cout << "Failed to load." << std::endl;
-    }
-    
-    this->playerShip.setTexture(this->playerTexture);
-    this->playerShip.setPosition(400, 300);
     playerShipObj = getEnterprise(); // The Ship object associated with the player's ship will be made the USS enterprise using a function from NCC-1701-D.hpp.
-    playerShip.setOrigin(playerShip.getLocalBounds().width / 2, playerShip.getLocalBounds().height / 2);
-    playerShipObj.shipSprite = playerShip;
-}
-
-//this is not necessary as we can use playerShip.getLocalBounds() and avoid using this size variable. Leave it here anyways in case it is needed later.
-void Game::sizePlayerCheck() {
-        //vector of ship size. 
-    sf::Vector2f playerSize(
-    playerShip.getTexture()->getSize().x * playerShip.getScale().x,
-    playerShip.getTexture()->getSize().y * playerShip.getScale().y);
-
-    playerShipObj.setSize(playerSize.x, playerSize.y, 0); // no height for now.
+    playerShipObj.setSFMLObjects(playerShip, "../resource/Ent-D.png"); // Call function to set texture and sprite.
 }
 
 void Game::updatePlayer() {
-    this->sizePlayerCheck();
     this->movePlayer();
     this->fireWeapon(playerShipObj);
 }
 
 void Game::renderPlayer() {
-    this->window->draw(this->playerShip);
+    this->window->draw(playerShipObj.shipSprite);
+}
+
+
+//placeholder code will generate another USS enterprise for shooting at.
+void Game::initEnemy() {
+    //TODO: Use the code from initPlayer() and integrate that into the ship class.
+    //playerShip, playerTexture should now be members of the ship class, not the game class.
 }
 
 void Game::renderProjectiles() {
@@ -92,9 +84,8 @@ void Game::moveProjectiles(Projectile* projectile, int i) {
 // will be run each frame. will eventually need code to check the type of weapon.
 void Game::fireWeapon(Ship firingShip) {
     //need to constantly update the sprite object in the Ship object. That's annoying.
-    playerShipObj.shipSprite = playerShip;
 
-    sf::Vector2f parentTip = playerShip.getTransform().transformPoint({playerShip.getLocalBounds().height, playerShip.getLocalBounds().height / 2});
+    sf::Vector2f parentTip = firingShip.shipSprite.getTransform().transformPoint({firingShip.shipSprite.getLocalBounds().height, firingShip.shipSprite.getLocalBounds().height / 2});
     sf::Vector2f directionOfTravel = (sf::Vector2f)sf::Mouse::getPosition(*window);
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && weaponSelected){
         Projectile* torpedo = new Projectile("../resource/photontorpedo.png", parentTip.x, parentTip.y,
@@ -111,7 +102,7 @@ void Game::movePlayer() {
         Find the vector which is the difference between the 2 vectors and normalize it by dividing by length. The vector is normalized so it can be multiplied by a constant speed.
         Move by the difference vector times speed times deltatime. */
         mousePosition = sf::Mouse::getPosition(*window);
-        sf::Vector2f movementDistance = (sf::Vector2f) mousePosition - playerShip.getPosition();
+        sf::Vector2f movementDistance = (sf::Vector2f) mousePosition - playerShipObj.shipSprite.getPosition();
         float length = std::sqrt(movementDistance.x * movementDistance.x + movementDistance.y * movementDistance.y);
         
         if (length != 0.0f) {
@@ -119,7 +110,7 @@ void Game::movePlayer() {
            
 
             float speed = 50.0f; // this should be replaced by the top speed of the ship.
-            playerShip.move(normalizedVector * speed * deltaTime);
+            playerShipObj.shipSprite.move(normalizedVector * speed * deltaTime);
 
 
             /*Find the angle of the distance vector using atan2, and convert to degrees. Then normalize it to be from 0 to 360 degrees. */
@@ -129,19 +120,19 @@ void Game::movePlayer() {
             //Will not trigger if the ship's orientation is within 10 degrees of where the user is currently clicking.
             int cwDistance;
             int ccwDistance;
-            if (abs(playerShip.getRotation() - distanceAngle) > 10) {
-                if (distanceAngle >= playerShip.getRotation()) {
-                    cwDistance = distanceAngle - playerShip.getRotation();
-                    ccwDistance = playerShip.getRotation() + 360.0f - distanceAngle;
+            if (abs(playerShipObj.shipSprite.getRotation() - distanceAngle) > 10) {
+                if (distanceAngle >= playerShipObj.shipSprite.getRotation()) {
+                    cwDistance = distanceAngle - playerShipObj.shipSprite.getRotation();
+                    ccwDistance = playerShipObj.shipSprite.getRotation() + 360.0f - distanceAngle;
                 } else {
-                    cwDistance = 360.0f - playerShip.getRotation() + distanceAngle;
-                    ccwDistance = playerShip.getRotation() - distanceAngle;
+                    cwDistance = 360.0f - playerShipObj.shipSprite.getRotation() + distanceAngle;
+                    ccwDistance = playerShipObj.shipSprite.getRotation() - distanceAngle;
                 }
 
                 if (ccwDistance > cwDistance) {
-                    playerShip.rotate(70 * deltaTime);
+                    playerShipObj.shipSprite.rotate(70 * deltaTime);
                 } else if (ccwDistance < cwDistance) {
-                    playerShip.rotate(-70 * deltaTime);
+                    playerShipObj.shipSprite.rotate(-70 * deltaTime);
                 }
                
             }

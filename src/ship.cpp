@@ -14,6 +14,16 @@ Ship::Ship() {
 }
 //for some infuriating reason there needs to be a definition for default constructor because it is being called somewhere, and I can't figure out where.
 
+void Ship::setSFMLObjects(sf::Sprite shipSprite, std::string resourcePath) {
+    this->shipSprite = shipSprite;
+    if (!this->shipTexture.loadFromFile(resourcePath)) {
+        std::cout << "Failed to load." << std::endl;
+    }
+    this->shipSprite.setTexture(this->shipTexture);
+    this->shipSprite.setPosition(400, 300);
+    this->shipSprite.setOrigin(shipSprite.getLocalBounds().width / 2, shipSprite.getLocalBounds().height / 2);
+}
+
 void Ship::setPos(int x, int y, int z) {
     xcoord = x;
     ycoord = y;

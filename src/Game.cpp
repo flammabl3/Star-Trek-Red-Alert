@@ -10,11 +10,12 @@
 
 
 //TODO: See if we can't come up with a shorter way to reference the playerShipObj's shipSprite member
-
+// Next steps: Creating bounding boxes around the ship's subsystems, and implementing a health system,
+// based on the integrity of all subsystems.
+// Create some kind of enemy AI.
 void Game::initVariables() {
     this->window = nullptr;
     this->weaponSelected = false;
-    //float deltaTime = clock.restart().asSeconds();
 }
 
 void Game::initWindow() {
@@ -31,7 +32,8 @@ void Game::initWindow() {
 
 void Game::initPlayer() {
     playerShipObj = getEnterprise(); // The Ship object associated with the player's ship will be made the USS enterprise using a function from NCC-1701-D.hpp.
-    playerShipObj.setSFMLObjects(playerShip, "../resource/Ent-D.png"); // Call function to set texture and sprite.
+    playerShipObj.setSFMLObjects("../resource/Ent-D.png"); // Call function to set texture and sprite.
+    playerShipObj.shipSprite.setPosition(400, 300);
 }
 
 void Game::updatePlayer() {
@@ -40,14 +42,22 @@ void Game::updatePlayer() {
 }
 
 void Game::renderPlayer() {
-    this->window->draw(playerShipObj.shipSprite);
+    playerShipObj.render(this->window);
 }
 
 
 //placeholder code will generate another USS enterprise for shooting at.
 void Game::initEnemy() {
-    //TODO: Use the code from initPlayer() and integrate that into the ship class.
-    //playerShip, playerTexture should now be members of the ship class, not the game class.
+    Ship* enemyShipObj = getEnterprisePointer();
+    enemyShipObj->setSFMLObjects("../resource/Ent-D.png");
+    enemyShipObj->shipSprite.setPosition(0, 300);
+    enemyShips.insert(enemyShips.end(), enemyShipObj);
+}
+
+void Game::renderEnemy() {
+    for (int i = 0; i < enemyShips.size(); i++) {
+        enemyShips.at(i)->render(this->window);
+    }
 }
 
 void Game::renderProjectiles() {
@@ -107,7 +117,6 @@ void Game::movePlayer() {
         
         if (length != 0.0f) {
             sf::Vector2f normalizedVector = movementDistance / length;
-           
 
             float speed = 50.0f; // this should be replaced by the top speed of the ship.
             playerShipObj.shipSprite.move(normalizedVector * speed * deltaTime);
@@ -134,7 +143,6 @@ void Game::movePlayer() {
                 } else if (ccwDistance < cwDistance) {
                     playerShipObj.shipSprite.rotate(-70 * deltaTime);
                 }
-               
             }
             
         }
@@ -146,6 +154,7 @@ Game::Game() {
     this->initVariables();
     this->initWindow();
     this->initPlayer();
+    this->initEnemy();
 }
 
 Game::~Game() {
@@ -185,5 +194,6 @@ void Game::update() {
 void Game::render() {
     renderProjectiles();
     renderPlayer();
+    renderEnemy();
     this->window->display();
 }

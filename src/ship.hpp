@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 
+#include <memory>
 #include <string>
 #include "personnel.hpp"
 #include <map>
@@ -43,13 +44,15 @@ class Ship
 
         Ship();
 
-        void setSFMLObjects(sf::Sprite shipSprite, std::string resourcePath);
+        void setSFMLObjects(std::string resourcePath);
 
         void setPos(int x, int y, int z);
 
         void setSize(int l, int w, int h);
 
         void setDirection(float direction);
+
+        void render(sf::RenderWindow* window);
 
         //~Ship();
         //define destructor later

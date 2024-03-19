@@ -119,3 +119,16 @@ Ship getEnterprise() {
 
     return enterprise;
 }
+
+Ship* getEnterprisePointer() {
+    std::map<std::string, System> systemsList;
+    Bridge enterpriseBridge = Bridge();
+    systemsList["Bridge"] = enterpriseBridge;
+    // all ships will be assumed to have an impulse speed of 0.25c. for now.
+    Ship* enterprise = new Ship(systemsList, 5000000, 0.25, 9.4, std::string("USS Enterprise"), std::string("NCC-1701-D")); 
+
+    std::cout << "Hello world! ";
+    std::cout << enterprise->name << std::endl;
+
+    return enterprise;
+}

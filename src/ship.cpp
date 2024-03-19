@@ -12,16 +12,14 @@ Ship::Ship(std::map<std::string, System> shipSystems, int mass, int impulseSpeed
 Ship::Ship() {
     
 }
-//for some infuriating reason there needs to be a definition for default constructor because it is being called somewhere, and I can't figure out where.
+//needs to be here for when a Ship is initialized and then just made to be a certain type of ship through a class definition.
 
-void Ship::setSFMLObjects(sf::Sprite shipSprite, std::string resourcePath) {
-    this->shipSprite = shipSprite;
+void Ship::setSFMLObjects(std::string resourcePath) {
     if (!this->shipTexture.loadFromFile(resourcePath)) {
         std::cout << "Failed to load." << std::endl;
     }
-    this->shipSprite.setTexture(this->shipTexture);
-    this->shipSprite.setPosition(400, 300);
-    this->shipSprite.setOrigin(shipSprite.getLocalBounds().width / 2, shipSprite.getLocalBounds().height / 2);
+    shipSprite.setTexture(this->shipTexture);
+    shipSprite.setOrigin(shipSprite.getLocalBounds().width / 2, shipSprite.getLocalBounds().height / 2);
 }
 
 void Ship::setPos(int x, int y, int z) {
@@ -60,3 +58,7 @@ Subsystem::Subsystem(std::string name, Personnel operating)  {
     this->operationalCapacity = 100.0;
     this->operating = operating;
 } 
+
+void Ship::render(sf::RenderWindow* window) {
+    window->draw(this->shipSprite);
+}

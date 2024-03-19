@@ -19,15 +19,14 @@ class Game {
         
 
         //Game Objects
-        sf::Sprite playerShip;
-        sf::Texture playerTexture;
+        
         sf::Vector2i mousePosition;
         sf::Clock clock;
         float deltaTime;
         bool weaponSelected; // a variable for which weapon has been selected will eventually be necessary.
 
         std::vector<Projectile*> projectilesList;
-        std::vector<Ship> enemyShips;
+        std::vector<Ship*> enemyShips;
 
         float playerSpeedx = 0; // these will eventually belong to the ship class.
         float playerSpeedy = 0;
@@ -53,6 +52,7 @@ class Game {
         void renderPlayer();
 
         void initEnemy();
+        void renderEnemy();
 
         void fireWeapon(Ship firingShip);
         void renderProjectiles(); 

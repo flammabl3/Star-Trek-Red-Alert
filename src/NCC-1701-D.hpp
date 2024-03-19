@@ -26,5 +26,6 @@ class Bridge : public System {
 
 Ship getEnterprise();
 
+Ship* getEnterprisePointer();
 
 #endif // BRIDGE_H

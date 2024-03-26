@@ -27,6 +27,7 @@ class Game {
 
         std::vector<Projectile*> projectilesList;
         std::vector<Ship*> enemyShips;
+        std::vector<Ship*> allShips;
 
         float playerSpeedx = 0; // these will eventually belong to the ship class.
         float playerSpeedy = 0;
@@ -57,6 +58,8 @@ class Game {
         void fireWeapon(Ship firingShip);
         void renderProjectiles(); 
         void moveProjectiles(Projectile* projectile, int i);
+
+        void checkCollisions();
 
         void render();
         

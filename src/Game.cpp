@@ -10,9 +10,10 @@
 
 
 //TODO: See if we can't come up with a shorter way to reference the playerShipObj's shipSprite member
-// Next steps: Creating bounding boxes around the ship's subsystems, and implementing a health system,
+// Next steps: change the hitboxes to correctly account for rotation.
 // based on the integrity of all subsystems.
 // Create some kind of enemy AI.
+//
 void Game::initVariables() {
     this->window = nullptr;
     this->weaponSelected = false;
@@ -34,6 +35,10 @@ void Game::initPlayer() {
     playerShipObj = getEnterprise(); // The Ship object associated with the player's ship will be made the USS enterprise using a function from NCC-1701-D.hpp.
     playerShipObj.setSFMLObjects("../resource/Ent-D.png"); // Call function to set texture and sprite.
     playerShipObj.shipSprite.setPosition(400, 300);
+    playerShipObj.setFriendly();
+    //create a pointer to reference our player ship object, and add it to the vector. This seems... non-optimal.
+    Ship* playerShipPointer = &playerShipObj;
+    allShips.push_back(playerShipPointer);
 }
 
 void Game::updatePlayer() {
@@ -51,7 +56,8 @@ void Game::initEnemy() {
     Ship* enemyShipObj = getEnterprisePointer();
     enemyShipObj->setSFMLObjects("../resource/Ent-D.png");
     enemyShipObj->shipSprite.setPosition(0, 300);
-    enemyShips.insert(enemyShips.end(), enemyShipObj);
+    enemyShips.push_back(enemyShipObj);
+    allShips.push_back(enemyShipObj);
 }
 
 void Game::renderEnemy() {
@@ -72,7 +78,12 @@ void Game::renderProjectiles() {
 void Game::moveProjectiles(Projectile* projectile, int i) {
     sf::Vector2f elapsedDistance = projectile->projectileSprite.getPosition() - projectile->spawnedAt;
     //if the projectile has travelled more than 400 units, delete it.
-    if (std::sqrt(elapsedDistance.x * elapsedDistance.x + elapsedDistance.y * elapsedDistance.y) > 400) {
+    float distanceLength = std::sqrt(elapsedDistance.x * elapsedDistance.x + elapsedDistance.y * elapsedDistance.y);
+    if (distanceLength > 900) {
+        //projectile will begin to fade out after 900 units, rather than just disappear at 1000.
+        projectile->projectileSprite.setColor(sf::Color(255,255,255,900-distanceLength));
+    }
+    if (distanceLength > 1000) {
         projectilesList.erase(projectilesList.begin() + i);
         delete projectile;
         projectile = nullptr;
@@ -91,6 +102,41 @@ void Game::moveProjectiles(Projectile* projectile, int i) {
     }
 }
 
+void Game::checkCollisions() {
+    for (Ship* ship : allShips) {
+        for (int i = 0; Projectile* projectile : projectilesList) {
+            //compares the intersection of the sprite's bounding rectangle. 
+            //This should be extended to check the coordinates of the projectile, and see if it
+            // intersects the coordinates of a ship's system or room.
+            sf::FloatRect projectileBounds = projectile->getSprite().getGlobalBounds();
+            sf::FloatRect shipBounds = ship->getBoundingBox();
+            if (projectileBounds.intersects(shipBounds)) {
+                // if both the projectile and the ship do not have the same value for their friendly boolean, collision will be registered.
+                if (!((ship->friendly && projectile->friendly) || (!ship->friendly && !projectile->friendly))) {
+                    std::cout << "BOOM" << std::endl;
+                    //the projectile should now be deleted, but doing it conventionally crashes the game.
+                    // if contact has been made, now we can check if the projectile hit any systems.
+                    // we should eventually also check for hull damage.
+
+                    //iterate over the systems map in the ship that is hit, and see if the projectile has hit any systems.
+                    for (auto& pair : ship->shipSystems) {
+                        System& system = pair.second;
+                        system.setHitbox(ship);
+                        system.checkCollision(projectile);
+                    }
+                    // use the iterator to erase the projectile from list, then delete.
+                    projectilesList.erase(projectilesList.begin() + i);
+                    if (projectile != nullptr) {
+                        delete projectile;
+                        projectile = nullptr; // Set the pointer to null after deletion
+                    }     
+                }  
+            }
+            i++;
+        }
+    }
+}
+
 // will be run each frame. will eventually need code to check the type of weapon.
 void Game::fireWeapon(Ship firingShip) {
     //need to constantly update the sprite object in the Ship object. That's annoying.
@@ -99,7 +145,8 @@ void Game::fireWeapon(Ship firingShip) {
     sf::Vector2f directionOfTravel = (sf::Vector2f)sf::Mouse::getPosition(*window);
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && weaponSelected){
         Projectile* torpedo = new Projectile("../resource/photontorpedo.png", parentTip.x, parentTip.y,
-                                            directionOfTravel, 1000.0);                                  
+                                            directionOfTravel, 1000.0, 10.0);      
+        torpedo->setFriendly(); // the player is the only one to use this function, so it will be a friendly projectile.                            
         this->projectilesList.insert(projectilesList.end(), torpedo);
         weaponSelected = false;
     }
@@ -189,6 +236,7 @@ void Game::update() {
     this->window->clear();
     this->updateEvents();
     this->updatePlayer();
+    this->checkCollisions();
 }
 
 void Game::render() {

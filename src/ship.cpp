@@ -38,6 +38,10 @@ void Ship::setDirection(float direction) {
     this->direction = direction;
 }
 
+void Ship::setFriendly() {
+    friendly = true;
+}
+
 System::System(std::string systemType, Room rooms[], Personnel personnel[]){
     this->systemType = systemType;
     this->rooms = rooms;
@@ -45,9 +49,32 @@ System::System(std::string systemType, Room rooms[], Personnel personnel[]){
     this->operationalCapacity = 100.0;
 }
 
-void System::defineHitbox(int systemX, int systemY) {
-    this->systemX = systemX;
-    this->systemY = systemY;
+
+//this does not correctly account for rotated hitboxes.
+void System::setHitbox(Ship* ship) {
+    sf::FloatRect shipHitbox = ship->getBoundingBox();
+    hitbox = sf::FloatRect(shipHitbox.getPosition().x + systemX, shipHitbox.getPosition().y + systemY, width, length);
+}
+
+void System::setCoordinates(float x, float y, float width, float length) {
+    systemX = x;
+    systemY = y;
+    this->width = width;
+    this->length = length;
+}
+
+
+void System::checkCollision(Projectile* projectile) {
+    if (projectile->getSprite().getGlobalBounds().intersects(hitbox)) {
+        if (operationalCapacity > 0) {
+            this->operationalCapacity -= projectile->damage;
+            std::cout << this->operationalCapacity << std::endl;
+        }
+        //this should eventually be replaced by a function, so that the ship can check for damage every frame, especially from things like fire.
+        if (operationalCapacity <= 0) {
+            std::cout << "BOOOOOOOOOOOOOOOM" << std::endl;
+        }
+    }
 }
 
 Room::Room(std::string roomType, Personnel personnel[], std::map<std::string, Subsystem> subsystems)  {
@@ -66,4 +93,9 @@ Subsystem::Subsystem(std::string name, Personnel operating)  {
 
 void Ship::render(sf::RenderWindow* window) {
     window->draw(this->shipSprite);
+}
+
+sf::FloatRect Ship::getBoundingBox() {
+    boundingBox = shipSprite.getGlobalBounds();
+    return(boundingBox);
 }

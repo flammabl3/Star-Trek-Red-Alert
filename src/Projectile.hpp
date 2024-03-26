@@ -17,10 +17,14 @@ class Projectile {
         sf::Vector2f directionOfTravel;
         float speed;
         std::string texturePath;
+        bool friendly;
+        float damage;
         
-        Projectile(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed);
+        Projectile(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage);
         void render(sf::RenderWindow* window);
         sf::Sprite getSprite();
+
+        void setFriendly();
         
         ~Projectile();
 };

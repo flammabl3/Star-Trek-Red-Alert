@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include "personnel.hpp"
+#include "Projectile.hpp"
 #include <map>
 #include <iostream>
 #pragma once
@@ -20,6 +21,7 @@ class Ship
         //SFML objects
         sf::Sprite shipSprite;
         sf::Texture shipTexture;
+        sf::FloatRect boundingBox;
 
         //Internal data
         std::map<std::string, System> shipSystems;
@@ -34,7 +36,8 @@ class Ship
         int ycoord;
         int zcoord;
         float direction;
-
+        
+        bool friendly;
         //ships will occupy a rectangular space around their base coordinate.
         int length;
         int width;
@@ -46,6 +49,8 @@ class Ship
 
         void setSFMLObjects(std::string resourcePath);
 
+        sf::FloatRect getBoundingBox();
+
         void setPos(int x, int y, int z);
 
         void setSize(int l, int w, int h);
@@ -54,9 +59,12 @@ class Ship
 
         void render(sf::RenderWindow* window);
 
+        void setFriendly();
+
+        void calculateSystemPositions();
         //~Ship();
         //define destructor later
-
+        
 };
 
 class System {
@@ -70,12 +78,23 @@ class System {
         double operationalCapacity; 
         // an array of personnel, the current crew of the system. Determined by adding all the personnel lists of each room.
         Personnel *personnel; 
+        
+        sf::FloatRect hitbox;
+        
+        //these are the basic coordinates relative to a the ship. i.e., if systemX is 20, then the origin of the
+        //System's hitbox will be the ship's origin + 20.
+        float systemX;
+        float systemY;
+        float width;
+        float length;
 
-        int systemX;
-        int systemY;
+        void setHitbox(Ship* ship);
+
+        void setCoordinates(float x, float y, float width, float length);
+
+        void checkCollision(Projectile* projectile);
 
         System(std::string systemType, Room rooms[], Personnel personnel[]); 
-        void defineHitbox(int systemX, int systemY);
         // We define a constructor yet never end up using it. Figure this problem out.
         System() = default;
         

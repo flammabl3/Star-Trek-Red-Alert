@@ -105,10 +105,11 @@ Bridge::Bridge() {
     this->personnel = personnelList;
     this->rooms = roomsList;
     this->operationalCapacity = 100.0;
+    this->setCoordinates(20, 20, 100, 100);
 }
 
 
-
+//our ship should eventually have a size.
 Ship getEnterprise() {
     std::map<std::string, System> systemsList;
     Bridge enterpriseBridge = Bridge();
@@ -123,14 +124,8 @@ Ship getEnterprise() {
 }
 
 Ship* getEnterprisePointer() {
-    std::map<std::string, System> systemsList;
-    Bridge enterpriseBridge = Bridge();
-    systemsList["Bridge"] = enterpriseBridge;
-    // all ships will be assumed to have an impulse speed of 0.25c. for now.
-    Ship* enterprise = new Ship(systemsList, 5000000, 0.25, 9.4, std::string("USS Enterprise"), std::string("NCC-1701-D")); 
+    Ship enterprise = getEnterprise();
+    Ship* enterprisePointer = new Ship(enterprise);
 
-    std::cout << "Hello world! ";
-    std::cout << enterprise->name << std::endl;
-
-    return enterprise;
+    return enterprisePointer;
 }

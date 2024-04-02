@@ -55,7 +55,7 @@ class Game {
         void initEnemy();
         void renderEnemy();
 
-        void fireWeapon(Ship firingShip);
+        void fireWeapon(Ship& firingShip);
         void renderProjectiles(); 
         void moveProjectiles(Projectile* projectile, int i);
 

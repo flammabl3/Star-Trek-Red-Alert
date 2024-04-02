@@ -7,6 +7,7 @@ Ship::Ship(std::map<std::string, System> shipSystems, int mass, int impulseSpeed
     this->mass = mass;
     this->name = name;
     this->designation = designation;
+    this->totalCondition = 100;
 }
 
 Ship::Ship() {
@@ -66,15 +67,17 @@ void System::setCoordinates(float x, float y, float width, float length) {
 
 void System::checkCollision(Projectile* projectile) {
     if (projectile->getSprite().getGlobalBounds().intersects(hitbox)) {
-        if (operationalCapacity > 0) {
-            this->operationalCapacity -= projectile->damage;
-            std::cout << this->operationalCapacity << std::endl;
-        }
+        this->operationalCapacity -= projectile->damage;
+        std::cout << this->operationalCapacity << std::endl;
         //this should eventually be replaced by a function, so that the ship can check for damage every frame, especially from things like fire.
-        if (operationalCapacity <= 0) {
-            std::cout << "BOOOOOOOOOOOOOOOM" << std::endl;
-        }
     }
+}
+
+void Ship::checkDamage() {
+    if (this->totalCondition <= 0) {
+        std::cout << "BOOOOOOOOOOOOOOOM" << std::endl;
+    }
+    //Use a spritesheet to blow up the ship.
 }
 
 Room::Room(std::string roomType, Personnel personnel[], std::map<std::string, Subsystem> subsystems)  {

@@ -11,7 +11,8 @@
 
 //TODO: See if we can't come up with a shorter way to reference the playerShipObj's shipSprite member
 // Next steps: change the hitboxes to correctly account for rotation.
-// based on the integrity of all subsystems.
+// Account for hull damage
+// Create functions to check for and apply damage, and damage rooms, subsystems, and personnel
 // Create some kind of enemy AI.
 //
 void Game::initVariables() {
@@ -114,9 +115,9 @@ void Game::checkCollisions() {
                 // if both the projectile and the ship do not have the same value for their friendly boolean, collision will be registered.
                 if (!((ship->friendly && projectile->friendly) || (!ship->friendly && !projectile->friendly))) {
                     std::cout << "BOOM" << std::endl;
-                    //the projectile should now be deleted, but doing it conventionally crashes the game.
                     // if contact has been made, now we can check if the projectile hit any systems.
-                    // we should eventually also check for hull damage.
+                    // hull damage. Shields should be applied eventually.
+                    ship->totalCondition -= projectile->damage;
 
                     //iterate over the systems map in the ship that is hit, and see if the projectile has hit any systems.
                     for (auto& pair : ship->shipSystems) {
@@ -132,13 +133,15 @@ void Game::checkCollisions() {
                     }     
                 }  
             }
+            //check for whether ship is destroyed or not after all is done.
+            ship->checkDamage();
             i++;
         }
     }
 }
 
 // will be run each frame. will eventually need code to check the type of weapon.
-void Game::fireWeapon(Ship firingShip) {
+void Game::fireWeapon(Ship& firingShip) {
     //need to constantly update the sprite object in the Ship object. That's annoying.
 
     sf::Vector2f parentTip = firingShip.shipSprite.getTransform().transformPoint({firingShip.shipSprite.getLocalBounds().height, firingShip.shipSprite.getLocalBounds().height / 2});

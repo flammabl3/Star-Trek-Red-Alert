@@ -28,10 +28,12 @@ class Ship
         int mass;
         int impulseSpeed;
         int warpSpeed;
+        int totalCondition;
         std::string name;
         std::string designation;
 
         //coordinate of a ship refers to its centre
+        // Is this still true?
         int xcoord;
         int ycoord;
         int zcoord;
@@ -62,6 +64,8 @@ class Ship
         void setFriendly();
 
         void calculateSystemPositions();
+
+        void checkDamage();
         //~Ship();
         //define destructor later
         

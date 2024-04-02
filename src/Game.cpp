@@ -148,7 +148,7 @@ void Game::fireWeapon(Ship& firingShip) {
     sf::Vector2f directionOfTravel = (sf::Vector2f)sf::Mouse::getPosition(*window);
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && weaponSelected){
         Projectile* torpedo = new Projectile("../resource/photontorpedo.png", parentTip.x, parentTip.y,
-                                            directionOfTravel, 1000.0, 10.0);      
+                                            directionOfTravel, 1000.0, 0.1);      
         torpedo->setFriendly(); // the player is the only one to use this function, so it will be a friendly projectile.                            
         this->projectilesList.insert(projectilesList.end(), torpedo);
         weaponSelected = false;

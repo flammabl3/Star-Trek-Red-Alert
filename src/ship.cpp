@@ -7,7 +7,7 @@ Ship::Ship(std::map<std::string, System> shipSystems, int mass, int impulseSpeed
     this->mass = mass;
     this->name = name;
     this->designation = designation;
-    this->totalCondition = 100;
+    this->totalCondition = 1;
 }
 
 Ship::Ship() {
@@ -43,11 +43,11 @@ void Ship::setFriendly() {
     friendly = true;
 }
 
-System::System(std::string systemType, Room rooms[], Personnel personnel[]){
+System::System(std::string systemType, std::vector<Room> rooms, std::vector<Personnel> personnel){
     this->systemType = systemType;
     this->rooms = rooms;
     this->personnel = personnel;
-    this->operationalCapacity = 100.0;
+    this->operationalCapacity = 1;
 }
 
 
@@ -80,17 +80,17 @@ void Ship::checkDamage() {
     //Use a spritesheet to blow up the ship.
 }
 
-Room::Room(std::string roomType, Personnel personnel[], std::map<std::string, Subsystem> subsystems)  {
+Room::Room(std::string roomType, std::vector<Personnel> personnel, std::map<std::string, Subsystem> subsystems)  {
     this-> roomType = roomType;
     this->personnel = personnel;
     this->subsystems = subsystems;
-    this->oxygen = 100.0;
-    this->operationalCapacity = 100.0;
+    this->oxygen = 1.0;
+    this->operationalCapacity = 1;
 }
 
 Subsystem::Subsystem(std::string name, Personnel operating)  {
     this->name = name;
-    this->operationalCapacity = 100.0;
+    this->operationalCapacity = 1;
     this->operating = operating;
 } 
 
@@ -101,4 +101,27 @@ void Ship::render(sf::RenderWindow* window) {
 sf::FloatRect Ship::getBoundingBox() {
     boundingBox = shipSprite.getGlobalBounds();
     return(boundingBox);
+}
+
+void Subsystem::calculateOperationalCapacity() {
+    // The system's effectiveness should be determined by the capacity and skill of the operator, and the damage it has (or hasn't taken)
+    this->operationalCapacity = this->operating.capacity * this->operating.skill * totalCondition;
+}
+
+void Room::calculateOperationalCapacity() {
+    double average = 0;
+    for (auto& pair: this->subsystems) {
+        pair.second.operationalCapacity += average;
+    }
+    average /= this->subsystems.size();
+    this->operationalCapacity = average;
+}
+
+void System::calculateOperationalCapacity() {
+    double average = 0;
+    for (Room room: this->rooms) {
+        room.operationalCapacity += average;
+    }
+    average /= this->rooms.size();
+    this->operationalCapacity = average;
 }

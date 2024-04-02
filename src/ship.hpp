@@ -28,7 +28,7 @@ class Ship
         int mass;
         int impulseSpeed;
         int warpSpeed;
-        int totalCondition;
+        float totalCondition;
         std::string name;
         std::string designation;
 
@@ -76,12 +76,12 @@ class System {
     
     public:
         std::string systemType;
-        //Array of rooms in the system.
-        Room *rooms;
+        //vector of rooms in the system.
+        std::vector<Room> rooms;
         // how well a room is running. Determined by condition of rooms, personnel in rooms.
         double operationalCapacity; 
         // an array of personnel, the current crew of the system. Determined by adding all the personnel lists of each room.
-        Personnel *personnel; 
+        std::vector<Personnel> personnel; 
         
         sf::FloatRect hitbox;
         
@@ -98,7 +98,9 @@ class System {
 
         void checkCollision(Projectile* projectile);
 
-        System(std::string systemType, Room rooms[], Personnel personnel[]); 
+        void calculateOperationalCapacity();
+
+        System(std::string systemType, std::vector<Room> rooms, std::vector<Personnel> personnel); 
         // We define a constructor yet never end up using it. Figure this problem out.
         System() = default;
         
@@ -109,17 +111,19 @@ class Room {
 
     public:
         std::string roomType;
-        Personnel *personnel;
+        std::vector<Personnel> personnel;
         double oxygen;
         double temperature;
         double operationalCapacity; 
         std::map<std::string, Subsystem> subsystems;
     
-        Room(std::string roomType, Personnel personnel[], std::map<std::string, Subsystem> subsystems);
+        Room(std::string roomType, std::vector<Personnel> personnel, std::map<std::string, Subsystem> subsystems);
 
         Room() {
 
         }
+
+        void calculateOperationalCapacity();
 
 };
 
@@ -129,8 +133,11 @@ class Subsystem { // the individual consoles and parts inside a room.
     public:
         std::string name;
         double operationalCapacity; 
+        double totalCondition;
         Personnel operating; // the person at the station
         Subsystem(std::string name, Personnel operating);
 
         Subsystem() = default;
+
+        void calculateOperationalCapacity();
 };

@@ -8,17 +8,17 @@
 #include <string>
 #include <map>
 
-class Bridge : public System {
+class initializeEnterprise{
     private:
     
 
     public:
-
-        Bridge();
+        initializeEnterprise();
         void initBridge();
         
-        Personnel personnelList[11];
-        Room roomsList[1];
+        std::vector<Room> rooms;
+        std::vector<Personnel> personnel; 
+        std::map<std::string, System> systemsList;
         std::map<std::string, Subsystem> subsystemList;
 
         

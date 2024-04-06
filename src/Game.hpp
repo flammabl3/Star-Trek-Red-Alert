@@ -32,8 +32,13 @@ class Game {
         float playerSpeedx = 0; // these will eventually belong to the ship class.
         float playerSpeedy = 0;
                 
-        //Classes associated with game objects
+        //Objects associated with game objects
         Ship playerShipObj;
+
+        //debug objects
+        bool debugMode;
+        std::vector<sf::RectangleShape> debugHitboxes;
+
 
     public:
         //Constructors and Destructors
@@ -60,6 +65,8 @@ class Game {
         void moveProjectiles(Projectile* projectile, int i);
 
         void checkCollisions();
+
+        void renderDebugObjects();
 
         void render();
         

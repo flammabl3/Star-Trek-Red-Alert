@@ -18,6 +18,8 @@
 void Game::initVariables() {
     this->window = nullptr;
     this->weaponSelected = false;
+
+    debugMode = true;
 }
 
 void Game::initWindow() {
@@ -51,14 +53,26 @@ void Game::renderPlayer() {
     playerShipObj.render(this->window);
 }
 
+void Game::renderDebugObjects() {
+    for (sf::RectangleShape rectangle: debugHitboxes) {
+        this->window->draw(rectangle);
+    }
+}
 
 //placeholder code will generate another USS enterprise for shooting at.
 void Game::initEnemy() {
     Ship* enemyShipObj = getEnterprisePointer();
     enemyShipObj->setSFMLObjects("../resource/Ent-D.png");
-    enemyShipObj->shipSprite.setPosition(0, 300);
+    enemyShipObj->shipSprite.setPosition(300, 300);
     enemyShips.push_back(enemyShipObj);
     allShips.push_back(enemyShipObj);
+    enemyShipObj->shipSprite.setRotation(45);
+    debugHitboxes.push_back(enemyShipObj->returnHitbox());
+    for (auto& pair : enemyShipObj->shipSystems) {
+        System& system = pair.second;
+        system.setHitbox(enemyShipObj);
+        debugHitboxes.push_back(system.returnHitbox());
+    }
 }
 
 void Game::renderEnemy() {
@@ -95,6 +109,10 @@ void Game::moveProjectiles(Projectile* projectile, int i) {
         //This vector is created by subtracting the vector of the projectile's spawn point
         //from where the player clicked, stored as the directionOfTravel vector inside the Projectile object.
         goTo = projectile->directionOfTravel - projectile->spawnedAt;
+
+        float rotation = (180.0f / M_PI) * atan2(goTo.y, goTo.x);
+        projectile->projectileSprite.setRotation(rotation);
+
         float length = std::sqrt(goTo.x * goTo.x + goTo.y * goTo.y);
         goTo = goTo / length;
 
@@ -124,6 +142,7 @@ void Game::checkCollisions() {
                         System& system = pair.second;
                         system.setHitbox(ship);
                         system.checkCollision(projectile);
+                        debugHitboxes.push_back(system.returnHitbox());
                     }
                     // use the iterator to erase the projectile from list, then delete.
                     projectilesList.erase(projectilesList.begin() + i);
@@ -237,14 +256,20 @@ void Game::updateEvents() {
 void Game::update() {
     deltaTime = clock.restart().asSeconds();
     this->window->clear();
+
+    
     this->updateEvents();
     this->updatePlayer();
     this->checkCollisions();
+    
+    
 }
 
 void Game::render() {
     renderProjectiles();
     renderPlayer();
     renderEnemy();
+    if (debugMode)
+        renderDebugObjects();
     this->window->display();
 }

@@ -15,7 +15,6 @@ Projectile::Projectile(std::string texturePath, float x, float y, sf::Vector2f d
         std::cout << "Failed to load." << std::endl;
     }
     this->projectileSprite.setPosition(posX, posY);
-    this->projectileSprite.setRotation(0);
     this->projectileSprite.setTexture(projectileTexture);
 }
 

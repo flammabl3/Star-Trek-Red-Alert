@@ -23,6 +23,7 @@ class Ship
         sf::Texture shipTexture;
         sf::FloatRect boundingBox;
 
+
         //Internal data
         std::map<std::string, System> shipSystems;
         int mass;
@@ -66,6 +67,8 @@ class Ship
         void calculateSystemPositions();
 
         void checkDamage();
+
+        sf::RectangleShape returnHitbox();
         //~Ship();
         //define destructor later
         
@@ -83,7 +86,9 @@ class System {
         // an array of personnel, the current crew of the system. Determined by adding all the personnel lists of each room.
         std::vector<Personnel> personnel; 
         
+        sf::Vector2f shipCenter;
         sf::FloatRect hitbox;
+        
         
         //these are the basic coordinates relative to a the ship. i.e., if systemX is 20, then the origin of the
         //System's hitbox will be the ship's origin + 20.
@@ -94,9 +99,11 @@ class System {
 
         void setHitbox(Ship* ship);
 
+        sf::RectangleShape returnHitbox();
+
         void setCoordinates(float x, float y, float width, float length);
 
-        void checkCollision(Projectile* projectile);
+        bool checkCollision(Projectile* projectile);
 
         void calculateOperationalCapacity();
 

@@ -100,7 +100,7 @@ initializeEnterprise::initializeEnterprise() {
     initBridge();
     System Bridge = System("Bridge", rooms, personnel);
     // note that the ship coordinates' origin may be at the center, not top left
-    Bridge.setCoordinates(20, 20, 100, 100);
+    Bridge.setCoordinates(20, 20, 13, 40);
     systemsList["Bridge"] = Bridge;
 }
 

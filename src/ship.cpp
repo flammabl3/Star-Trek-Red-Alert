@@ -1,5 +1,6 @@
 #include "ship.hpp"
 
+
 Ship::Ship(std::map<std::string, System> shipSystems, int mass, int impulseSpeed, int warpSpeed, std::string name, std::string designation) {
     this->shipSystems = shipSystems;
     this->impulseSpeed = impulseSpeed;
@@ -53,9 +54,30 @@ System::System(std::string systemType, std::vector<Room> rooms, std::vector<Pers
 
 //this does not correctly account for rotated hitboxes.
 void System::setHitbox(Ship* ship) {
-    sf::FloatRect shipHitbox = ship->getBoundingBox();
-    hitbox = sf::FloatRect(shipHitbox.getPosition().x + systemX, shipHitbox.getPosition().y + systemY, width, length);
+    sf::Vector2f shipHitbox = ship->shipSprite.getPosition();
+    hitbox = sf::FloatRect(shipHitbox.x + systemX, shipHitbox.y - systemY, width, length);
 }
+
+
+//DEBUG
+sf::RectangleShape System::returnHitbox() {
+    sf::RectangleShape rectangle(hitbox.getSize());
+    rectangle.setPosition(hitbox.left, hitbox.top);
+    rectangle.setFillColor(sf::Color(255,255,255,0));
+    rectangle.setOutlineColor(sf::Color(255,255,0,255));
+    rectangle.setOutlineThickness(1);
+    return(rectangle);
+}
+
+sf::RectangleShape Ship::returnHitbox() {
+    sf::RectangleShape rectangle(getBoundingBox().getSize());
+    rectangle.setPosition(getBoundingBox().top, getBoundingBox().left);
+    rectangle.setFillColor(sf::Color(255,255,255,0));
+    rectangle.setOutlineColor(sf::Color(255,255,0,255));
+    rectangle.setOutlineThickness(1);
+    return(rectangle);
+}
+//DEBUG
 
 void System::setCoordinates(float x, float y, float width, float length) {
     systemX = x;
@@ -65,12 +87,15 @@ void System::setCoordinates(float x, float y, float width, float length) {
 }
 
 
-void System::checkCollision(Projectile* projectile) {
+bool System::checkCollision(Projectile* projectile) {
     if (projectile->getSprite().getGlobalBounds().intersects(hitbox)) {
-        this->operationalCapacity -= projectile->damage;
+        if (this->operationalCapacity > 0) 
+            this->operationalCapacity -= projectile->damage;
         std::cout << this->operationalCapacity << std::endl;
+        return true;
         //this should eventually be replaced by a function, so that the ship can check for damage every frame, especially from things like fire.
     }
+    return false;
 }
 
 void Ship::checkDamage() {

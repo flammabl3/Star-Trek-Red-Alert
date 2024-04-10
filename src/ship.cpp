@@ -55,18 +55,19 @@ System::System(std::string systemType, std::vector<Room> rooms, std::vector<Pers
 //this does not correctly account for rotated hitboxes.
 void System::setHitbox(Ship* ship) {
     sf::Vector2f shipHitbox = ship->shipSprite.getPosition();
-    hitbox = sf::FloatRect(shipHitbox.x + systemX, shipHitbox.y - systemY, width, length);
+    hitbox = sf::RectangleShape(sf::Vector2f(width, length));
+    //hitbox.setOrigin(width/2, length/2);
+    hitbox.setPosition(shipHitbox.x + systemX, shipHitbox.y - systemY);
+    hitbox.setRotation(ship->shipSprite.getRotation());
 }
 
 
 //DEBUG
 sf::RectangleShape System::returnHitbox() {
-    sf::RectangleShape rectangle(hitbox.getSize());
-    rectangle.setPosition(hitbox.left, hitbox.top);
-    rectangle.setFillColor(sf::Color(255,255,255,0));
-    rectangle.setOutlineColor(sf::Color(255,255,0,255));
-    rectangle.setOutlineThickness(1);
-    return(rectangle);
+    hitbox.setFillColor(sf::Color(255,255,255,0));
+    hitbox.setOutlineColor(sf::Color(255,255,0,255));
+    hitbox.setOutlineThickness(1);
+    return(hitbox);
 }
 
 sf::RectangleShape Ship::returnHitbox() {
@@ -88,8 +89,7 @@ void System::setCoordinates(float x, float y, float width, float length) {
 
 
 bool System::checkCollision(Projectile* projectile) {
-    if (projectile->getSprite().getGlobalBounds().intersects(hitbox)) {
-        if (this->operationalCapacity > 0) 
+    if (this->operationalCapacity > 0) {
             this->operationalCapacity -= projectile->damage;
         std::cout << this->operationalCapacity << std::endl;
         return true;

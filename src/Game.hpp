@@ -5,6 +5,7 @@
 
 #include "ship.hpp"
 #include "Projectile.hpp"
+#include "SeparateAxisTheorem.hpp"
 
 class Game {
     private:
@@ -39,6 +40,7 @@ class Game {
         bool debugMode;
         std::vector<sf::RectangleShape> debugHitboxes;
 
+        SATHelper satHelper;
 
     public:
         //Constructors and Destructors

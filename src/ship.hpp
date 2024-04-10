@@ -87,7 +87,7 @@ class System {
         std::vector<Personnel> personnel; 
         
         sf::Vector2f shipCenter;
-        sf::FloatRect hitbox;
+        sf::RectangleShape hitbox;
         
         
         //these are the basic coordinates relative to a the ship. i.e., if systemX is 20, then the origin of the

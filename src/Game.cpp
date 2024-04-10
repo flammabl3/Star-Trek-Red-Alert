@@ -9,6 +9,7 @@
 #include "Projectile.hpp"
 
 
+
 //TODO: See if we can't come up with a shorter way to reference the playerShipObj's shipSprite member
 // Next steps: change the hitboxes to correctly account for rotation.
 // Account for hull damage
@@ -66,7 +67,7 @@ void Game::initEnemy() {
     enemyShipObj->shipSprite.setPosition(300, 300);
     enemyShips.push_back(enemyShipObj);
     allShips.push_back(enemyShipObj);
-    enemyShipObj->shipSprite.setRotation(45);
+    enemyShipObj->shipSprite.setRotation(60);
     debugHitboxes.push_back(enemyShipObj->returnHitbox());
     for (auto& pair : enemyShipObj->shipSystems) {
         System& system = pair.second;
@@ -130,27 +131,31 @@ void Game::checkCollisions() {
             sf::FloatRect projectileBounds = projectile->getSprite().getGlobalBounds();
             sf::FloatRect shipBounds = ship->getBoundingBox();
             if (projectileBounds.intersects(shipBounds)) {
-                // if both the projectile and the ship do not have the same value for their friendly boolean, collision will be registered.
                 if (!((ship->friendly && projectile->friendly) || (!ship->friendly && !projectile->friendly))) {
-                    std::cout << "BOOM" << std::endl;
-                    // if contact has been made, now we can check if the projectile hit any systems.
-                    // hull damage. Shields should be applied eventually.
-                    ship->totalCondition -= projectile->damage;
+                    // if both the projectile and the ship do not have the same value for their friendly boolean, collision will be registered.
+                    if(satHelper.checkCollision(ship->shipSprite, projectile->projectileSprite)) {
+                        std::cout << "BOOM" << std::endl;
+                        // if contact has been made, now we can check if the projectile hit any systems.
+                        // hull damage. Shields should be applied eventually.
+                        ship->totalCondition -= projectile->damage;
 
-                    //iterate over the systems map in the ship that is hit, and see if the projectile has hit any systems.
-                    for (auto& pair : ship->shipSystems) {
-                        System& system = pair.second;
-                        system.setHitbox(ship);
-                        system.checkCollision(projectile);
-                        debugHitboxes.push_back(system.returnHitbox());
-                    }
-                    // use the iterator to erase the projectile from list, then delete.
-                    projectilesList.erase(projectilesList.begin() + i);
-                    if (projectile != nullptr) {
-                        delete projectile;
-                        projectile = nullptr; // Set the pointer to null after deletion
-                    }     
-                }  
+                        //iterate over the systems map in the ship that is hit, and see if the projectile has hit any systems.
+                        for (auto& pair : ship->shipSystems) {
+                            System& system = pair.second;
+                            system.setHitbox(ship);
+                            if (satHelper.checkCollision(projectile->projectileSprite, system.hitbox))
+                                system.checkCollision(projectile);
+                            debugHitboxes.push_back(system.returnHitbox());
+                        }
+                        // use the iterator to erase the projectile from list, then delete.
+                        projectilesList.erase(projectilesList.begin() + i);
+                        if (projectile != nullptr) {
+                            delete projectile;
+                            projectile = nullptr; // Set the pointer to null after deletion
+                            break;
+                        }     
+                    }  
+                }
             }
             //check for whether ship is destroyed or not after all is done.
             ship->checkDamage();

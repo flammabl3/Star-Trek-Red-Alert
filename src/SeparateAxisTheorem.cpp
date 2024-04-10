@@ -103,6 +103,7 @@ bool SATHelper::areProjectionsOverlapping(projection projectionA, projection pro
 }
 
 bool SATHelper::checkCollision(sf::Sprite spriteA, sf::Sprite spriteB) {
+
     bool result = false;
 
     pointsA = getPoints(spriteA);
@@ -146,4 +147,39 @@ bool SATHelper::checkCollision(sf::Sprite spriteA, sf::RectangleShape shapeB) {
     }
 
     return result;
+}
+
+sf::RectangleShape SATHelper::returnBoundingBox(sf::Sprite sprite) {
+    sf::FloatRect sizeRect = sprite.getLocalBounds();
+    sf::RectangleShape returnRectangle(sf::Vector2f(sizeRect.width, sizeRect.height));
+    returnRectangle.setOrigin(sizeRect.width / 2, sizeRect.height / 2);
+    returnRectangle.setRotation(sprite.getRotation());
+    returnRectangle.setPosition(sprite.getPosition());
+
+    returnRectangle.setFillColor(sf::Color(255,255,255,0));
+    returnRectangle.setOutlineColor(sf::Color(255,0,0,255));
+    returnRectangle.setOutlineThickness(1);
+
+    return returnRectangle;
+}
+
+std::vector<sf::RectangleShape> SATHelper::returnNormals(sf::Sprite sprite) {
+    std::vector<sf::RectangleShape> returnVector;
+    std::vector<sf::Vector2f> points = getPoints(sprite);
+
+    for (int i = 0; i < points.size() - 1; i++) {
+        //make a vector given our 2 points joined together.
+        sf::Vector2f edgeVector = points.at(i+1) - points.at(i);
+        //return the perpendicular axis
+        sf::Vector2f normal = sf::Vector2f(-edgeVector.y, edgeVector.x);
+        
+        sf::RectangleShape returnRectangle(sf::Vector2f(1, hypot(normal.x, normal.y)));
+        returnRectangle.setOrigin(0.5, 0);
+        returnRectangle.setRotation(atan(normal.y/normal.x));
+        returnRectangle.setPosition(normal);
+        returnVector.push_back(returnRectangle);
+
+    }
+
+    return returnVector;
 }

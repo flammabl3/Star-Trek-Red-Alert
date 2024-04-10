@@ -62,18 +62,26 @@ void Game::renderDebugObjects() {
 
 //placeholder code will generate another USS enterprise for shooting at.
 void Game::initEnemy() {
+    SATHelper sat; //using the same SATHelper multiple times throughout the code causes errors.
     Ship* enemyShipObj = getEnterprisePointer();
     enemyShipObj->setSFMLObjects("../resource/Ent-D.png");
     enemyShipObj->shipSprite.setPosition(300, 300);
     enemyShips.push_back(enemyShipObj);
     allShips.push_back(enemyShipObj);
     enemyShipObj->shipSprite.setRotation(60);
+    debugHitboxes.push_back(sat.returnBoundingBox(enemyShipObj->shipSprite));
     debugHitboxes.push_back(enemyShipObj->returnHitbox());
     for (auto& pair : enemyShipObj->shipSystems) {
         System& system = pair.second;
         system.setHitbox(enemyShipObj);
         debugHitboxes.push_back(system.returnHitbox());
     }
+
+    std::vector<sf::RectangleShape> normals = sat.returnNormals(enemyShipObj->shipSprite);
+    for (auto& normal: normals) {
+        debugHitboxes.push_back(normal);
+    }
+
 }
 
 void Game::renderEnemy() {

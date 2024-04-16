@@ -6,6 +6,8 @@
 #include "Projectile.hpp"
 #include <map>
 #include <iostream>
+#include <cmath>
+
 #pragma once
 
 class System;

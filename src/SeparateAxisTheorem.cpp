@@ -30,22 +30,25 @@ std::vector<sf::Vector2f> SATHelper::getPoints(sf::RectangleShape shape) {
     sf::FloatRect sizeRect = shape.getLocalBounds();
     shape.setOrigin(sizeRect.width / 2, sizeRect.height / 2);
     sf::Vector2f shapePos = shape.getPosition();
+    //changing the origin of a sf::RectangleShape changes its position, so we have to adjust it and get the position again.
+    shape.setPosition(shapePos.x + sizeRect.width / 2, shapePos.y + sizeRect.height / 2);
+    shapePos = shape.getPosition();
     std::vector<sf::Vector2f> returnVectors;
     float angle = shape.getRotation() * M_PI / 180;
     float c = cos(angle);
     float s = sin(angle);
 
     returnVectors.push_back(sf::Vector2f(shapePos.x + (sizeRect.width/2) * c - (sizeRect.height/2) * s, 
-                    shapePos.y + (sizeRect.width/2) * c + (sizeRect.height/2) * s));
+                    shapePos.y + (sizeRect.width/2) * s + (sizeRect.height/2) * c));
     
     returnVectors.push_back(sf::Vector2f(shapePos.x - (sizeRect.width/2) * c - (sizeRect.height/2) * s, 
-                    shapePos.y + (sizeRect.width/2) * c - (sizeRect.height/2) * s));
+                    shapePos.y - (sizeRect.width/2) * s + (sizeRect.height/2) * c));
     
-    returnVectors.push_back(sf::Vector2f(shapePos.x - (sizeRect.width/2) * c - (sizeRect.height/2) * s, 
-                    shapePos.y - (sizeRect.width/2) * c - (sizeRect.height/2) * s));
+    returnVectors.push_back(sf::Vector2f(shapePos.x - (sizeRect.width/2) * c + (sizeRect.height/2) * s, 
+                    shapePos.y - (sizeRect.width/2) * s - (sizeRect.height/2) * c));
     
-    returnVectors.push_back(sf::Vector2f(shapePos.x + (sizeRect.width/2) * c - (sizeRect.height/2) * s, 
-                    shapePos.y + (sizeRect.width/2) * c - (sizeRect.height/2) * s));
+    returnVectors.push_back(sf::Vector2f(shapePos.x + (sizeRect.width/2) * c + (sizeRect.height/2) * s, 
+                    shapePos.y + (sizeRect.width/2) * s - (sizeRect.height/2) * c));
 
     return returnVectors;
 }
@@ -123,7 +126,7 @@ bool SATHelper::checkCollision(sf::Sprite spriteA, sf::RectangleShape shapeB) {
     pointsA = getPoints(spriteA);
     
     pointsB = getPoints(shapeB);
-    //program lags intensely to the point of freezing even when axes is empty! where is all that compute going
+    
     axes = getAxes(pointsA);
 
     for (auto& axis: axes) {
@@ -192,6 +195,59 @@ std::vector<sf::RectangleShape> SATHelper::returnPoints(sf::Sprite sprite) {
 
         sf::RectangleShape returnRectangle(sf::Vector2f(1,1));
         returnRectangle.setOrigin(0.5, 0.5);
+        returnRectangle.setPosition(points.at(i));
+
+        returnRectangle.setFillColor(sf::Color(255,255,255,0));
+        returnRectangle.setOutlineColor(sf::Color(0,255,0,255));
+        returnRectangle.setOutlineThickness(1);
+
+        returnVector.push_back(returnRectangle);
+
+    }
+
+    return returnVector;
+}
+
+std::vector<sf::RectangleShape> SATHelper::returnNormals(sf::RectangleShape shape) {
+    std::vector<sf::RectangleShape> returnVector;
+    std::vector<sf::Vector2f> points = getPoints(shape);
+
+    for (int i = 0; i < points.size(); i++) {
+        //make a vector given our 2 points joined together.
+        sf::Vector2f edgeVector = points.at((i+1) % points.size()) - points.at(i);
+        //return the perpendicular axis
+        sf::Vector2f normal = sf::Vector2f(-edgeVector.y, edgeVector.x);
+        float angle = atan2(normal.y, normal.x) * 180 / M_PI;
+        float length = hypot(normal.x, normal.y);
+        normal = sf::Vector2f(normal.x / length, normal.y / length);
+        sf::Vector2f midpoint = points.at(i) + 0.5f * edgeVector;
+
+        
+        sf::RectangleShape returnRectangle(sf::Vector2f(1, hypot(edgeVector.x, edgeVector.y)));
+        returnRectangle.setOrigin(0, 0);
+        returnRectangle.setRotation(angle+90);
+        returnRectangle.setPosition(midpoint);
+
+        returnRectangle.setFillColor(sf::Color(255,255,255,0));
+        returnRectangle.setOutlineColor(sf::Color(255,0,0,255));
+        returnRectangle.setOutlineThickness(1);
+
+        returnVector.push_back(returnRectangle);
+
+    }
+
+    return returnVector;
+}
+
+std::vector<sf::RectangleShape> SATHelper::returnPoints(sf::RectangleShape shape) {
+    std::vector<sf::RectangleShape> returnVector;
+    std::vector<sf::Vector2f> points = getPoints(shape);
+
+    for (int i = 0; i < points.size(); i++) {
+        //make a vector given our 2 points joined together.
+
+        sf::RectangleShape returnRectangle(sf::Vector2f(1,1));
+        returnRectangle.setOrigin(0,0);
         returnRectangle.setPosition(points.at(i));
 
         returnRectangle.setFillColor(sf::Color(255,255,255,0));

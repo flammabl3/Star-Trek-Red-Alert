@@ -156,9 +156,6 @@ void Game::checkCollisions() {
                         for (auto& pair : ship->shipSystems) {
                             System& system = pair.second;
                             system.setHitbox(ship);
-                            if (satHelper.checkCollision(projectile->projectileSprite, system.hitbox))
-                                system.checkCollision(projectile);
-                            debugHitboxes.push_back(system.returnHitbox());
                         }
                         // use the iterator to erase the projectile from list, then delete.
                         projectilesList.erase(projectilesList.begin() + i);

@@ -56,6 +56,9 @@ class SATHelper {
         sf::RectangleShape returnProjections(sf::Sprite sprite);
         std::vector<sf::RectangleShape> returnPoints(sf::Sprite sprite);
 
+        std::vector<sf::RectangleShape> returnNormals(sf::RectangleShape sprite);
+        std::vector<sf::RectangleShape> returnPoints(sf::RectangleShape sprite);
+
     private:
 
 };

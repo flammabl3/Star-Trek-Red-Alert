@@ -1,27 +1,29 @@
 #include "SeparateAxisTheorem.hpp"
 
 std::vector<sf::Vector2f> SATHelper::getPoints(sf::Sprite sprite) {
-    
     sf::FloatRect sizeRect = sprite.getLocalBounds();
     sprite.setOrigin(sizeRect.width / 2, sizeRect.height / 2);
     sf::Vector2f spritePos = sprite.getPosition();
     std::vector<sf::Vector2f> returnVectors;
-
+    float angle = sprite.getRotation() * M_PI / 180;
+    float c = cos(angle);
+    float s = sin(angle);
     //find the 4 points surrounding our sprite and return as a vector
-    returnVectors.push_back(sf::Vector2f(spritePos.x + (sizeRect.width/2) * cos(sprite.getRotation()) - (sizeRect.height/2) * sin(sprite.getRotation()), 
-                    spritePos.y + (sizeRect.width/2) * cos(sprite.getRotation()) + (sizeRect.height/2) * sin(sprite.getRotation())));
+    returnVectors.push_back(sf::Vector2f(spritePos.x + (sizeRect.width/2) * c - (sizeRect.height/2) * s, 
+                    spritePos.y + (sizeRect.width/2) * s + (sizeRect.height/2) * c));
     
-    returnVectors.push_back(sf::Vector2f(spritePos.x - (sizeRect.width/2) * cos(sprite.getRotation()) - (sizeRect.height/2) * sin(sprite.getRotation()), 
-                    spritePos.y + (sizeRect.width/2) * cos(sprite.getRotation()) - (sizeRect.height/2) * sin(sprite.getRotation())));
+    returnVectors.push_back(sf::Vector2f(spritePos.x - (sizeRect.width/2) * c - (sizeRect.height/2) * s, 
+                    spritePos.y - (sizeRect.width/2) * s + (sizeRect.height/2) * c));
     
-    returnVectors.push_back(sf::Vector2f(spritePos.x - (sizeRect.width/2) * cos(sprite.getRotation()) - (sizeRect.height/2) * sin(sprite.getRotation()), 
-                    spritePos.y - (sizeRect.width/2) * cos(sprite.getRotation()) - (sizeRect.height/2) * sin(sprite.getRotation())));
+    returnVectors.push_back(sf::Vector2f(spritePos.x - (sizeRect.width/2) * c + (sizeRect.height/2) * s, 
+                    spritePos.y - (sizeRect.width/2) * s - (sizeRect.height/2) * c));
     
-    returnVectors.push_back(sf::Vector2f(spritePos.x + (sizeRect.width/2) * cos(sprite.getRotation()) - (sizeRect.height/2) * sin(sprite.getRotation()), 
-                    spritePos.y + (sizeRect.width/2) * cos(sprite.getRotation()) - (sizeRect.height/2) * sin(sprite.getRotation())));
+    returnVectors.push_back(sf::Vector2f(spritePos.x + (sizeRect.width/2) * c + (sizeRect.height/2) * s, 
+                    spritePos.y + (sizeRect.width/2) * s - (sizeRect.height/2) * c));
 
     return returnVectors;
 }
+
 
 //overloaded function to be used on hitboxes like system items.
 std::vector<sf::Vector2f> SATHelper::getPoints(sf::RectangleShape shape) {
@@ -29,44 +31,39 @@ std::vector<sf::Vector2f> SATHelper::getPoints(sf::RectangleShape shape) {
     shape.setOrigin(sizeRect.width / 2, sizeRect.height / 2);
     sf::Vector2f shapePos = shape.getPosition();
     std::vector<sf::Vector2f> returnVectors;
+    float angle = shape.getRotation() * M_PI / 180;
+    float c = cos(angle);
+    float s = sin(angle);
 
-    returnVectors.push_back(sf::Vector2f(shapePos.x + (sizeRect.width/2) * cos(shape.getRotation()) - (sizeRect.height/2) * sin(shape.getRotation()), 
-                    shapePos.y + (sizeRect.width/2) * cos(shape.getRotation()) + (sizeRect.height/2) * sin(shape.getRotation())));
+    returnVectors.push_back(sf::Vector2f(shapePos.x + (sizeRect.width/2) * c - (sizeRect.height/2) * s, 
+                    shapePos.y + (sizeRect.width/2) * c + (sizeRect.height/2) * s));
     
-    returnVectors.push_back(sf::Vector2f(shapePos.x - (sizeRect.width/2) * cos(shape.getRotation()) - (sizeRect.height/2) * sin(shape.getRotation()), 
-                    shapePos.y + (sizeRect.width/2) * cos(shape.getRotation()) - (sizeRect.height/2) * sin(shape.getRotation())));
+    returnVectors.push_back(sf::Vector2f(shapePos.x - (sizeRect.width/2) * c - (sizeRect.height/2) * s, 
+                    shapePos.y + (sizeRect.width/2) * c - (sizeRect.height/2) * s));
     
-    returnVectors.push_back(sf::Vector2f(shapePos.x - (sizeRect.width/2) * cos(shape.getRotation()) - (sizeRect.height/2) * sin(shape.getRotation()), 
-                    shapePos.y - (sizeRect.width/2) * cos(shape.getRotation()) - (sizeRect.height/2) * sin(shape.getRotation())));
+    returnVectors.push_back(sf::Vector2f(shapePos.x - (sizeRect.width/2) * c - (sizeRect.height/2) * s, 
+                    shapePos.y - (sizeRect.width/2) * c - (sizeRect.height/2) * s));
     
-    returnVectors.push_back(sf::Vector2f(shapePos.x + (sizeRect.width/2) * cos(shape.getRotation()) - (sizeRect.height/2) * sin(shape.getRotation()), 
-                    shapePos.y + (sizeRect.width/2) * cos(shape.getRotation()) - (sizeRect.height/2) * sin(shape.getRotation())));
+    returnVectors.push_back(sf::Vector2f(shapePos.x + (sizeRect.width/2) * c - (sizeRect.height/2) * s, 
+                    shapePos.y + (sizeRect.width/2) * c - (sizeRect.height/2) * s));
 
     return returnVectors;
 }
 
-std::vector<sf::Vector2f> SATHelper::getAxes(std::vector<sf::Vector2f> pointsA, std::vector<sf::Vector2f> pointsB) {
+std::vector<sf::Vector2f> SATHelper::getAxes(std::vector<sf::Vector2f> pointsA) {
     std::vector<sf::Vector2f> returnVector;
     
-    for (int i = 0; i < pointsA.size() - 1; i++) {
+    for (int i = 0; i < pointsA.size(); i++) {
         //make a vector given our 2 points joined together.
-        sf::Vector2f edgeVector = pointsA.at(i+1) - pointsA.at(i);
+        sf::Vector2f edgeVector = pointsA.at((i+1) % pointsA.size()) - pointsA.at(i);
         //return the perpendicular axis
         sf::Vector2f normal = sf::Vector2f(-edgeVector.y, edgeVector.x);
-        
-        returnVector.push_back(normal);
+        float length = hypot(normal.x, normal.y);
+        normal = sf::Vector2f(normal.x / length, normal.y / length);
 
+        returnVector.push_back(normal);
     }
 
-    for (int i = 0; i < pointsB.size() - 1; i++) {
-        sf::Vector2f edgeVector = pointsB.at(i+1) - pointsB.at(i);
-        sf::Vector2f normal = sf::Vector2f(-edgeVector.y, edgeVector.x);
-        
-        returnVector.push_back(normal);
-
-    }
-
-    
     return returnVector;
 }
 
@@ -104,49 +101,40 @@ bool SATHelper::areProjectionsOverlapping(projection projectionA, projection pro
 
 bool SATHelper::checkCollision(sf::Sprite spriteA, sf::Sprite spriteB) {
 
-    bool result = false;
-
     pointsA = getPoints(spriteA);
+    
     pointsB = getPoints(spriteB);
+    //program lags intensely to the point of freezing even when axes is empty! where is all that compute going
+    axes = getAxes(pointsA);
 
-    axes = getAxes(pointsA, pointsB);
     for (auto& axis: axes) {
-        projections.push_back(project(pointsA, axis));
-        projections.push_back(project(pointsB, axis));
-    }
-
-    for (int i = 0; i < projections.size() - 1; i++) {
-        for (int j = i + 1; j < projections.size(); j++) {
-            if (areProjectionsOverlapping(projections.at(i), projections.at(j))) {
-                result = true;
-            }
+        projection projA = (project(pointsA, axis));
+        projection projB = (project(pointsB, axis));
+        if (!areProjectionsOverlapping(projA, projB)) {
+            return false; // The sprites are not colliding
         }
     }
-
-    return result;
+    std::cout << "BOOM" << std::endl;
+    return true;
 }
 
 bool SATHelper::checkCollision(sf::Sprite spriteA, sf::RectangleShape shapeB) {
-    bool result = false;
 
     pointsA = getPoints(spriteA);
+    
     pointsB = getPoints(shapeB);
+    //program lags intensely to the point of freezing even when axes is empty! where is all that compute going
+    axes = getAxes(pointsA);
 
-    axes = getAxes(pointsA, pointsB);
     for (auto& axis: axes) {
-        projections.push_back(project(pointsA, axis));
-        projections.push_back(project(pointsB, axis));
-    }
-
-    for (int i = 0; i < projections.size() - 1; i++) {
-        for (int j = i + 1; j < projections.size(); j++) {
-            if (areProjectionsOverlapping(projections.at(i), projections.at(j))) {
-                result = true;
-            }
+        projection projA = (project(pointsA, axis));
+        projection projB = (project(pointsB, axis));
+        if (!areProjectionsOverlapping(projA, projB)) {
+            return false; // The sprites are not colliding
         }
     }
-
-    return result;
+    std::cout << "BOOM" << std::endl;
+    return true;
 }
 
 sf::RectangleShape SATHelper::returnBoundingBox(sf::Sprite sprite) {
@@ -163,20 +151,53 @@ sf::RectangleShape SATHelper::returnBoundingBox(sf::Sprite sprite) {
     return returnRectangle;
 }
 
+//merely for visualization of SAT.
 std::vector<sf::RectangleShape> SATHelper::returnNormals(sf::Sprite sprite) {
     std::vector<sf::RectangleShape> returnVector;
     std::vector<sf::Vector2f> points = getPoints(sprite);
 
-    for (int i = 0; i < points.size() - 1; i++) {
+    for (int i = 0; i < points.size(); i++) {
         //make a vector given our 2 points joined together.
-        sf::Vector2f edgeVector = points.at(i+1) - points.at(i);
+        sf::Vector2f edgeVector = points.at((i+1) % points.size()) - points.at(i);
         //return the perpendicular axis
         sf::Vector2f normal = sf::Vector2f(-edgeVector.y, edgeVector.x);
+        float angle = atan2(normal.y, normal.x) * 180 / M_PI;
+        float length = hypot(normal.x, normal.y);
+        normal = sf::Vector2f(normal.x / length, normal.y / length);
+        sf::Vector2f midpoint = points.at(i) + 0.5f * edgeVector;
+
         
-        sf::RectangleShape returnRectangle(sf::Vector2f(1, hypot(normal.x, normal.y)));
+        sf::RectangleShape returnRectangle(sf::Vector2f(1, hypot(edgeVector.x, edgeVector.y)));
         returnRectangle.setOrigin(0.5, 0);
-        returnRectangle.setRotation(atan(normal.y/normal.x));
-        returnRectangle.setPosition(normal);
+        returnRectangle.setRotation(angle+90);
+        returnRectangle.setPosition(midpoint);
+
+        returnRectangle.setFillColor(sf::Color(255,255,255,0));
+        returnRectangle.setOutlineColor(sf::Color(255,0,0,255));
+        returnRectangle.setOutlineThickness(1);
+
+        returnVector.push_back(returnRectangle);
+
+    }
+
+    return returnVector;
+}
+
+std::vector<sf::RectangleShape> SATHelper::returnPoints(sf::Sprite sprite) {
+    std::vector<sf::RectangleShape> returnVector;
+    std::vector<sf::Vector2f> points = getPoints(sprite);
+
+    for (int i = 0; i < points.size(); i++) {
+        //make a vector given our 2 points joined together.
+
+        sf::RectangleShape returnRectangle(sf::Vector2f(1,1));
+        returnRectangle.setOrigin(0.5, 0.5);
+        returnRectangle.setPosition(points.at(i));
+
+        returnRectangle.setFillColor(sf::Color(255,255,255,0));
+        returnRectangle.setOutlineColor(sf::Color(0,255,0,255));
+        returnRectangle.setOutlineThickness(1);
+
         returnVector.push_back(returnRectangle);
 
     }

@@ -68,8 +68,8 @@ void Game::initEnemy() {
     enemyShipObj->shipSprite.setPosition(300, 300);
     enemyShips.push_back(enemyShipObj);
     allShips.push_back(enemyShipObj);
-    enemyShipObj->shipSprite.setRotation(60);
-    debugHitboxes.push_back(sat.returnBoundingBox(enemyShipObj->shipSprite));
+    enemyShipObj->shipSprite.setRotation(0);
+
     debugHitboxes.push_back(enemyShipObj->returnHitbox());
     for (auto& pair : enemyShipObj->shipSystems) {
         System& system = pair.second;
@@ -80,6 +80,11 @@ void Game::initEnemy() {
     std::vector<sf::RectangleShape> normals = sat.returnNormals(enemyShipObj->shipSprite);
     for (auto& normal: normals) {
         debugHitboxes.push_back(normal);
+    }
+
+    std::vector<sf::RectangleShape> points = sat.returnPoints(enemyShipObj->shipSprite);
+    for (auto& point: points) {
+        debugHitboxes.push_back(point);
     }
 
 }
@@ -142,12 +147,12 @@ void Game::checkCollisions() {
                 if (!((ship->friendly && projectile->friendly) || (!ship->friendly && !projectile->friendly))) {
                     // if both the projectile and the ship do not have the same value for their friendly boolean, collision will be registered.
                     if(satHelper.checkCollision(ship->shipSprite, projectile->projectileSprite)) {
-                        std::cout << "BOOM" << std::endl;
                         // if contact has been made, now we can check if the projectile hit any systems.
                         // hull damage. Shields should be applied eventually.
                         ship->totalCondition -= projectile->damage;
 
                         //iterate over the systems map in the ship that is hit, and see if the projectile has hit any systems.
+                        //Despite writing all that stuff for separating axis theorem, point in polygon may be better for the systems, since there are many of them!
                         for (auto& pair : ship->shipSystems) {
                             System& system = pair.second;
                             system.setHitbox(ship);

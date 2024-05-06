@@ -20,6 +20,9 @@ void Game::initVariables() {
     this->window = nullptr;
     this->weaponSelected = false;
 
+    //pick a font later.
+    font.loadFromFile("../resource/arial.ttf");
+
     debugMode = true;
 }
 
@@ -150,6 +153,7 @@ void Game::checkCollisions() {
                         // if contact has been made, now we can check if the projectile hit any systems.
                         // hull damage. Shields should be applied eventually.
                         ship->totalCondition -= projectile->damage;
+                        logEvent("Ship has taken damage.");
 
                         //iterate over the systems map in the ship that is hit, and see if the projectile has hit any systems.
                         //Despite writing all that stuff for separating axis theorem, point in polygon may be better for the systems, since there are many of them!
@@ -273,8 +277,6 @@ void Game::updateEvents() {
 void Game::update() {
     deltaTime = clock.restart().asSeconds();
     this->window->clear();
-
-    
     this->updateEvents();
     this->updatePlayer();
     this->checkCollisions();
@@ -286,7 +288,28 @@ void Game::render() {
     renderProjectiles();
     renderPlayer();
     renderEnemy();
+    displayEvents();
     if (debugMode)
         renderDebugObjects();
     this->window->display();
+}
+
+void Game::logEvent(std::string event) {
+    if (eventLog.size() >= 5) {
+        eventLog.pop_back();
+    }
+    eventLog.push_back(event);
+}
+
+//create the text at the bottom of the log, and move up by reducing the offset down the screen.
+void Game::displayEvents() {
+    int positionOffset = 5;
+    for (std::string event: eventLog) {
+        sf::Text text(event, font);
+        //text will become more transparent as it moves up the log.
+        text.setColor(sf::Color(255, 255, 255, 51 * positionOffset));
+        text.setPosition(0, 25 * positionOffset);
+        positionOffset--;
+        window->draw(text);
+    }
 }

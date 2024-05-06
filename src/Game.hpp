@@ -42,6 +42,11 @@ class Game {
 
         SATHelper satHelper;
 
+        sf::Font font;
+
+        //log for recording ship, crew, systems damage and other events.
+        std::vector<std::string> eventLog;
+
     public:
         //Constructors and Destructors
         Game();
@@ -71,5 +76,8 @@ class Game {
         void renderDebugObjects();
 
         void render();
-        
+
+        void logEvent(std::string event);
+
+        void displayEvents();
 };

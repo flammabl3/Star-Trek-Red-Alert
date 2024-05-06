@@ -10,4 +10,7 @@ Personnel::Personnel(std::string firstName, std::string middleName, std::string 
     this-> rank = rank;
     this->species = species;
     this->health = 100.0;
+    this->skill = skill;
 }
+
+//capacity will be based on health, skill, mental state. Can exceed 1.

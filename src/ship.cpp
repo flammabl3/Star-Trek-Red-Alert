@@ -49,6 +49,7 @@ System::System(std::string systemType, std::vector<Room> rooms, std::vector<Pers
     this->rooms = rooms;
     this->personnel = personnel;
     this->operationalCapacity = 1;
+    this->totalCondition = 100;
 }
 
 
@@ -113,12 +114,14 @@ Room::Room(std::string roomType, std::vector<Personnel> personnel, std::map<std:
     this->subsystems = subsystems;
     this->oxygen = 1.0;
     this->operationalCapacity = 1;
+    this->totalCondition = 100;
 }
 
 Subsystem::Subsystem(std::string name, Personnel operating)  {
     this->name = name;
     this->operationalCapacity = 1;
     this->operating = operating;
+    this->totalCondition = 100;
 } 
 
 void Ship::render(sf::RenderWindow* window) {
@@ -132,23 +135,58 @@ sf::FloatRect Ship::getBoundingBox() {
 
 void Subsystem::calculateOperationalCapacity() {
     // The system's effectiveness should be determined by the capacity and skill of the operator, and the damage it has (or hasn't taken)
-    this->operationalCapacity = this->operating.capacity * this->operating.skill * totalCondition;
+    this->operationalCapacity = this->operating.capacity * this->operating.skill * totalCondition / 100;
+    // totalCondition is out of 100, and the total should be out of 1, so divide by 100 to get another number scaled around 1.
 }
 
 void Room::calculateOperationalCapacity() {
     double average = 0;
     for (auto& pair: this->subsystems) {
-        pair.second.operationalCapacity += average;
+        pair.second.calculateOperationalCapacity();
+        average += pair.second.operationalCapacity;
     }
     average /= this->subsystems.size();
     this->operationalCapacity = average;
+    //capacity will be reduced as the room itself takes damage!
+    this->operationalCapacity *= this->totalCondition / 100;
+}
+
+//damage will be passed to the affected room's subsystems after damage is reduced by the shields.
+//damage should also be passed to the room's health itself.
+void Room::dealDamageToRoom(int damage) {
+    //damage dealt to the room itself.
+    //use modifiers to prevent a one hit kill. That being said, an unshielded hit to a room should probably destroy it instantly.
+    this->totalCondition -= damage;
+
+    for (auto& subsystemPair: subsystems) {
+        Subsystem subsystem = subsystemPair.second;
+
+        //damage will not be added to a subsystem if it is already destroyed. Damage will move to the next system.
+        //do not continue if damage is less than 0 (no more damage left to deal to subsystems.)
+        if (subsystem.totalCondition > 0 && damage > 0) {
+            //use random number from 0 to damage for the calculation.
+            std::random_device rd; 
+            std::mt19937 gen(rd()); 
+            std::uniform_int_distribution<> distr(0, damage); 
+
+            int finalDamage = distr(gen);
+
+            subsystem.totalCondition -= finalDamage;
+            subsystem.operating.health -= finalDamage; //crewmember operating will take damage too. Consider reducing or modifying it by a number from 0 to 1.
+            damage -= finalDamage; //damage dealt will be subtracted, dealing less damage until the total is 0.
+        }
+    }
+
+    this->calculateOperationalCapacity();
 }
 
 void System::calculateOperationalCapacity() {
     double average = 0;
     for (Room room: this->rooms) {
-        room.operationalCapacity += average;
+        room.calculateOperationalCapacity();
+        average += room.operationalCapacity;
     }
     average /= this->rooms.size();
     this->operationalCapacity = average;
+    this->operationalCapacity *= this->totalCondition / 100;
 }

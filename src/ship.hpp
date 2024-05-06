@@ -7,6 +7,7 @@
 #include <map>
 #include <iostream>
 #include <cmath>
+#include <random>
 
 #pragma once
 
@@ -87,7 +88,8 @@ class System {
         double operationalCapacity; 
         // an array of personnel, the current crew of the system. Determined by adding all the personnel lists of each room.
         std::vector<Personnel> personnel; 
-        
+        double totalCondition;
+
         sf::Vector2f shipCenter;
         sf::RectangleShape hitbox;
         
@@ -124,6 +126,7 @@ class Room {
         double oxygen;
         double temperature;
         double operationalCapacity; 
+        double totalCondition;
         std::map<std::string, Subsystem> subsystems;
     
         Room(std::string roomType, std::vector<Personnel> personnel, std::map<std::string, Subsystem> subsystems);
@@ -133,6 +136,8 @@ class Room {
         }
 
         void calculateOperationalCapacity();
+
+        void dealDamageToRoom(int damage);
 
 };
 

@@ -202,8 +202,10 @@ void Game::movePlayer() {
         if (length != 0.0f) {
             sf::Vector2f normalizedVector = movementDistance / length;
 
-            float speed = 50.0f; // this should be replaced by the top speed of the ship.
-            playerShipObj.shipSprite.move(normalizedVector * speed * deltaTime);
+            float speed = 500.0f;
+            //ship's impulse speed stat multiplied to give effective speed
+            float pSpeed = playerShipObj.impulseSpeed * speed;
+            playerShipObj.shipSprite.move(normalizedVector * pSpeed * deltaTime);
 
 
             /*Find the angle of the distance vector using atan2, and convert to degrees. Then normalize it to be from 0 to 360 degrees. */
@@ -223,9 +225,9 @@ void Game::movePlayer() {
                 }
 
                 if (ccwDistance > cwDistance) {
-                    playerShipObj.shipSprite.rotate(70 * deltaTime);
+                    playerShipObj.shipSprite.rotate(300 * deltaTime);
                 } else if (ccwDistance < cwDistance) {
-                    playerShipObj.shipSprite.rotate(-70 * deltaTime);
+                    playerShipObj.shipSprite.rotate(-300 * deltaTime);
                 }
             }
             

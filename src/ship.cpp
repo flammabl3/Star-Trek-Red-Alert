@@ -1,7 +1,7 @@
 #include "ship.hpp"
 
 
-Ship::Ship(std::map<std::string, System> shipSystems, int mass, int impulseSpeed, int warpSpeed, std::string name, std::string designation) {
+Ship::Ship(std::map<std::string, System> shipSystems, int mass, float impulseSpeed, float warpSpeed, std::string name, std::string designation) {
     this->shipSystems = shipSystems;
     this->impulseSpeed = impulseSpeed;
     this->warpSpeed = warpSpeed;

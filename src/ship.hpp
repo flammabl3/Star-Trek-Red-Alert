@@ -30,8 +30,8 @@ class Ship
         //Internal data
         std::map<std::string, System> shipSystems;
         int mass;
-        int impulseSpeed;
-        int warpSpeed;
+        double impulseSpeed;
+        double warpSpeed;
         float totalCondition;
         std::string name;
         std::string designation;
@@ -49,7 +49,7 @@ class Ship
         int width;
         int height;
 
-        Ship(std::map<std::string, System> shipSystems, int mass, int impulseSpeed, int warpSpeed, std::string name, std::string designation);
+        Ship(std::map<std::string, System> shipSystems, int mass, float impulseSpeed, float warpSpeed, std::string name, std::string designation);
 
         Ship();
 

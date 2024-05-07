@@ -574,6 +574,30 @@ src/Projectile.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/Projectile.cpp.s
 .PHONY : src/Projectile.cpp.s
 
+src/SeparateAxisTheorem.obj: src/SeparateAxisTheorem.cpp.obj
+.PHONY : src/SeparateAxisTheorem.obj
+
+# target to build an object file
+src/SeparateAxisTheorem.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/SeparateAxisTheorem.cpp.obj
+.PHONY : src/SeparateAxisTheorem.cpp.obj
+
+src/SeparateAxisTheorem.i: src/SeparateAxisTheorem.cpp.i
+.PHONY : src/SeparateAxisTheorem.i
+
+# target to preprocess a source file
+src/SeparateAxisTheorem.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/SeparateAxisTheorem.cpp.i
+.PHONY : src/SeparateAxisTheorem.cpp.i
+
+src/SeparateAxisTheorem.s: src/SeparateAxisTheorem.cpp.s
+.PHONY : src/SeparateAxisTheorem.s
+
+# target to generate assembly for a file
+src/SeparateAxisTheorem.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Star-Trek-Red-Alert.dir\build.make CMakeFiles/Star-Trek-Red-Alert.dir/src/SeparateAxisTheorem.cpp.s
+.PHONY : src/SeparateAxisTheorem.cpp.s
+
 src/main.obj: src/main.cpp.obj
 .PHONY : src/main.obj
 
@@ -693,6 +717,9 @@ help:
 	@echo ... src/Projectile.obj
 	@echo ... src/Projectile.i
 	@echo ... src/Projectile.s
+	@echo ... src/SeparateAxisTheorem.obj
+	@echo ... src/SeparateAxisTheorem.i
+	@echo ... src/SeparateAxisTheorem.s
 	@echo ... src/main.obj
 	@echo ... src/main.i
 	@echo ... src/main.s

@@ -72,6 +72,7 @@ void Game::initEnemy() {
     enemyShips.push_back(enemyShipObj);
     allShips.push_back(enemyShipObj);
     enemyShipObj->shipSprite.setRotation(0);
+    enemyShipObj->friendly = false;
 
     debugHitboxes.push_back(enemyShipObj->returnHitbox());
     for (auto& pair : enemyShipObj->shipSystems) {

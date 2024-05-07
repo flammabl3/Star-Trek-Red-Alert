@@ -73,7 +73,8 @@ void Game::initEnemy() {
     enemyShipObj->shipSprite.setPosition(300, 300);
     enemyShips.push_back(enemyShipObj);
     allShips.push_back(enemyShipObj);
-    enemyShipObj->shipSprite.setRotation(0);
+    enemyShipObj->shipSprite.setRotation(110);
+    int rotation = 0;
     enemyShipObj->friendly = false;
 
     debugHitboxes.push_back(enemyShipObj->returnHitbox());
@@ -143,20 +144,19 @@ void Game::moveProjectiles(Projectile* projectile, int i) {
 
 void Game::checkCollisions() {
     int projectileDamage = 0;
+    std::vector<Projectile*> toRemove;
+
     for (Ship* ship : allShips) {
-        for (int i = 0; Projectile* projectile : projectilesList) {
-            projectileDamage = projectile->damage;
-            //compares the intersection of the sprite's bounding rectangle. 
-            //This should be extended to check the coordinates of the projectile, and see if it
-            // intersects the coordinates of a ship's system or room.
+        for (auto it = projectilesList.begin(); it != projectilesList.end(); ) {
+            Projectile* projectile = *it;
+
             sf::FloatRect projectileBounds = projectile->getSprite().getGlobalBounds();
             sf::FloatRect shipBounds = ship->getBoundingBox();
             if (projectileBounds.intersects(shipBounds)) {
+                
                 if (!((ship->friendly && projectile->friendly) || (!ship->friendly && !projectile->friendly))) {
-                    // if both the projectile and the ship do not have the same value for their friendly boolean, collision will be registered.
-                    if(satHelper.checkCollision(ship->shipSprite, projectile->projectileSprite)) {
-                        // if contact has been made, now we can check if the projectile hit any systems.
-                        // hull damage. Shields should be applied eventually.
+                    if (satHelper.checkCollision(ship->shipSprite, projectile->projectileSprite)) {
+                        projectileDamage = projectile->damage;
                         ship->totalCondition -= projectileDamage;
                         logEvent("Ship has taken damage.");
 
@@ -170,30 +170,26 @@ void Game::checkCollisions() {
                         for (std::string personnelLogged: damagedPersonnel) {
                             logEvent(personnelLogged);
                         }
-                        //iterate over the systems map in the ship that is hit, and see if the projectile has hit any systems.
-                        //Despite writing all that stuff for separating axis theorem, point in polygon may be better for the systems, since there are many of them!
+                        ship->totalCondition -= projectile->damage;
+
                         for (auto& pair : ship->shipSystems) {
-                            System& system = pair.second;
-                            system.setHitbox(ship);
+                            pair.second.setHitbox(ship);
                         }
-                        // use the iterator to erase the projectile from list, then delete.
-                        projectilesList.erase(projectilesList.begin() + i);
-                        if (projectile != nullptr) {
-                            delete projectile;
-                            projectile = nullptr; // Set the pointer to null after deletion
-                            break;
-                        }     
-                    }  
+                        
+                        // Log before erasing
+                        it = projectilesList.erase(it);
+                        delete projectile;
+                        continue; // Move to the next iteration
+                    }
                 }
             }
-            //check for whether ship is destroyed or not after all is done.
             ship->checkDamage();
-
-            i++;
-
+            ++it;
         }
     }
+
 }
+                        
 
 // will be run each frame. will eventually need code to check the type of weapon.
 void Game::fireWeapon(Ship& firingShip) {

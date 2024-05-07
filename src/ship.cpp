@@ -58,14 +58,22 @@ System::System(std::string systemType, std::vector<Room> rooms, std::vector<Pers
 
 //this does not correctly account for rotated hitboxes.
 void System::setHitbox(Ship* ship) {
-    sf::Vector2f shipHitbox = ship->shipSprite.getPosition();
-    hitbox.setRotation(ship->shipSprite.getRotation());
-    float angle = ship->shipSprite.getRotation() * M_PI / 180;
+    sf::Vector2f shipPosition = ship->shipSprite.getPosition();
+    float angle = ship->shipSprite.getRotation() * M_PI / 180; // convert to radians
+
+    // Create the hitbox with the appropriate dimensions
     hitbox = sf::RectangleShape(sf::Vector2f(width, length));
-    hitbox.setOrigin(width/2, length/2);
-    hitbox.setPosition(shipHitbox.x + systemX + width/2, shipHitbox.y - systemY + length/2);
+    hitbox.setOrigin(width/2, length/2); // set origin to the center of the hitbox
+
+    // Calculate the offset of the hitbox from the ship's position, considering rotation
+    float offsetX = systemX * cos(angle) - systemY * sin(angle);
+    float offsetY = systemX * sin(angle) + systemY * cos(angle);
+
+    // Set the position and rotation of the hitbox
+    hitbox.setPosition(shipPosition.x + offsetX, shipPosition.y + offsetY);
     hitbox.setRotation(ship->shipSprite.getRotation());
 }
+
 
 
 //DEBUG

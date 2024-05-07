@@ -13,11 +13,11 @@
 float rotation = 0;
 
 //TODO: See if we can't come up with a shorter way to reference the playerShipObj's shipSprite member
-// Next steps: change the hitboxes to correctly account for rotation.
-// Account for hull damage
-// Create functions to check for and apply damage, and damage rooms, subsystems, and personnel
+// Hull damage has been somewhat accounted for with totalCondition
+// Add shields and shielding system
+// Improve functions to check for and apply damage, and damage rooms, subsystems, and personnel
 // Create some kind of enemy AI.
-//
+// Add systems and system performance, and performance of systems based on crew and rooms
 
 void Game::initVariables() {
     this->window = nullptr;

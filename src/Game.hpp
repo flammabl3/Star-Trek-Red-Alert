@@ -66,6 +66,7 @@ class Game {
 
         void initEnemy();
         void renderEnemy();
+        void updateEnemy();
 
         void fireWeapon(Ship& firingShip);
         void renderProjectiles(); 
@@ -80,4 +81,6 @@ class Game {
         void logEvent(std::string event);
 
         void displayEvents();
+
+        void createEnemyDebugBoxes(Ship* enemyShipObj);
 };

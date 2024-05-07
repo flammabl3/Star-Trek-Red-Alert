@@ -10,7 +10,7 @@
 #include "Projectile.hpp"
 #include "random0_n.hpp"
 
-
+float rotation = 0;
 
 //TODO: See if we can't come up with a shorter way to reference the playerShipObj's shipSprite member
 // Next steps: change the hitboxes to correctly account for rotation.
@@ -74,8 +74,13 @@ void Game::initEnemy() {
     enemyShips.push_back(enemyShipObj);
     allShips.push_back(enemyShipObj);
     enemyShipObj->shipSprite.setRotation(110);
-    int rotation = 0;
     enemyShipObj->friendly = false;
+
+}
+
+void Game::createEnemyDebugBoxes(Ship* enemyShipObj) {
+    SATHelper sat;
+    debugHitboxes.clear();
 
     debugHitboxes.push_back(enemyShipObj->returnHitbox());
     for (auto& pair : enemyShipObj->shipSystems) {
@@ -93,13 +98,19 @@ void Game::initEnemy() {
     for (auto& point: points) {
         debugHitboxes.push_back(point);
     }
-
 }
 
 void Game::renderEnemy() {
     for (int i = 0; i < enemyShips.size(); i++) {
         enemyShips.at(i)->render(this->window);
     }
+}
+
+void Game::updateEnemy() {
+    enemyShips.at(0)->shipSprite.setRotation(rotation);
+    rotation+=0.01;
+
+    createEnemyDebugBoxes(enemyShips.at(0));
 }
 
 void Game::renderProjectiles() {
@@ -166,6 +177,7 @@ void Game::checkCollisions() {
                         std::vector<Room>::iterator randomRoom = randomSystem->second.rooms.begin(); 
                         std::advance(randomRoom, random0_n(randomSystem->second.rooms.size()));
 
+                        //projectile damage should be modulated by the shields.
                         std::vector<std::string> damagedPersonnel = randomRoom->dealDamageToRoom(projectileDamage);
                         for (std::string personnelLogged: damagedPersonnel) {
                             logEvent(personnelLogged);
@@ -301,6 +313,7 @@ void Game::update() {
     this->window->clear();
     this->updateEvents();
     this->updatePlayer();
+    this->updateEnemy();
     this->checkCollisions();
     
     

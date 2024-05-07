@@ -1,3 +1,5 @@
 build/Testing
 build/.cmake
 build/CMakeFiles
+.ninja
+.obj

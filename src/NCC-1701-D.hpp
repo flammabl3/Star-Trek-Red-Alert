@@ -14,7 +14,14 @@ class initializeEnterprise{
 
     public:
         initializeEnterprise();
+
         void initBridge();
+        void initForwardPhasers();
+        void initForwardTorpedoes();
+        void initRightNacelle();
+        void initLeftNacelle();
+        void initEngineering();
+
         
         std::vector<Room> rooms;
         std::vector<Personnel> personnel; 

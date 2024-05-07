@@ -19,7 +19,14 @@ class Personnel {
         Personnel(std::string firstName, std::string middleName, std::string lastName, std::string rank, 
         std::string species, std::string role, double skill);
 
+        //overload for generic or randomized personnel.
+        Personnel(std::string rank, 
+        std::string species, std::string role, double skill);
+
         Personnel() = default;
 
         std::string getLogName();
+
+        void randomName();
+
 };

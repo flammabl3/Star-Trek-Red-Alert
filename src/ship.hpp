@@ -137,7 +137,7 @@ class Room {
 
         void calculateOperationalCapacity();
 
-        void dealDamageToRoom(int damage);
+        std::vector<std::string> dealDamageToRoom(int damage);
 
 };
 

@@ -1,5 +1,7 @@
 #include "ship.hpp"
 
+#include "random0_n.hpp"
+
 
 Ship::Ship(std::map<std::string, System> shipSystems, int mass, float impulseSpeed, float warpSpeed, std::string name, std::string designation) {
     this->shipSystems = shipSystems;
@@ -8,7 +10,8 @@ Ship::Ship(std::map<std::string, System> shipSystems, int mass, float impulseSpe
     this->mass = mass;
     this->name = name;
     this->designation = designation;
-    this->totalCondition = 1;
+    //this should vary with different ship strengths actually. the enterprise and a bird of prey should not be equal in combat.
+    this->totalCondition = 100;
 }
 
 Ship::Ship() {
@@ -104,7 +107,13 @@ bool System::checkCollision(Projectile* projectile) {
 void Ship::checkDamage() {
     if (this->totalCondition <= 0) {
         std::cout << "BOOOOOOOOOOOOOOOM" << std::endl;
+    } else {
+        for (auto& pair: this->shipSystems) {
+            System system = pair.second;
+            system.calculateOperationalCapacity();
+        }
     }
+    
     //Use a spritesheet to blow up the ship.
 }
 
@@ -153,31 +162,47 @@ void Room::calculateOperationalCapacity() {
 
 //damage will be passed to the affected room's subsystems after damage is reduced by the shields.
 //damage should also be passed to the room's health itself.
-void Room::dealDamageToRoom(int damage) {
+std::vector<std::string> Room::dealDamageToRoom(int damage) {
+    std::vector<std::string> outputPersonnel;
     //damage dealt to the room itself.
     //use modifiers to prevent a one hit kill. That being said, an unshielded hit to a room should probably destroy it instantly.
     this->totalCondition -= damage;
+    std::random_device rd; 
+    std::mt19937 gen(rd()); 
+    std::uniform_int_distribution<> distr(0, subsystems.size()); 
+    
+    //pick a random subsystem to damage. Only one can be damaged in one attack. This may be changed later.
+    std::map<std::string, Subsystem>::iterator randomSubsystem = subsystems.begin();
+    std::advance(randomSubsystem, random0_n(subsystems.size()));
 
-    for (auto& subsystemPair: subsystems) {
-        Subsystem subsystem = subsystemPair.second;
+    Subsystem subsystem = randomSubsystem->second;
+    //damage will not be added to a subsystem if it is already destroyed. 
+    if (subsystem.totalCondition > 0 && damage > 0) {
+        //use random number from 0 to damage for the calculation.
+        
+        std::uniform_int_distribution<> distr(0, damage); 
 
-        //damage will not be added to a subsystem if it is already destroyed. Damage will move to the next system.
-        //do not continue if damage is less than 0 (no more damage left to deal to subsystems.)
-        if (subsystem.totalCondition > 0 && damage > 0) {
-            //use random number from 0 to damage for the calculation.
-            std::random_device rd; 
-            std::mt19937 gen(rd()); 
-            std::uniform_int_distribution<> distr(0, damage); 
+        int finalDamage = distr(gen);
 
-            int finalDamage = distr(gen);
+        subsystem.totalCondition -= finalDamage;
+        subsystem.operating.health -= finalDamage; //crewmember operating will take damage too. Consider reducing or modifying it by a number from 0 to 1.
 
-            subsystem.totalCondition -= finalDamage;
-            subsystem.operating.health -= finalDamage; //crewmember operating will take damage too. Consider reducing or modifying it by a number from 0 to 1.
-            damage -= finalDamage; //damage dealt will be subtracted, dealing less damage until the total is 0.
+        //some characters do not have a last name (klingons, vulcans, data). log their first name. 
+        //this should be its own function in personnel later.
+        std::string outputString;
+        if (subsystem.operating.health > 0) {
+                outputString = subsystem.operating.rank + " " + subsystem.operating.getLogName() + " has become hurt!";
+        } else {
+            outputString = subsystem.operating.rank + " " + subsystem.operating.getLogName() + " has been killed!";
         }
+        
+        outputPersonnel.push_back(outputString);
+        
     }
 
     this->calculateOperationalCapacity();
+
+    return outputPersonnel;
 }
 
 void System::calculateOperationalCapacity() {

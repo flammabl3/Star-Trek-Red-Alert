@@ -95,8 +95,8 @@ bool SATHelper::areProjectionsOverlapping(projection projectionA, projection pro
     if ((std::get<1>(projectionA) <= std::get<0>(projectionB)) || (std::get<1>(projectionB) <= std::get<0>(projectionA)))
 		result = false;
     else {
-        std::cout << "Min, Max of projection A: " << std::get<0>(projectionA) << ", " << std::get<1>(projectionA) << std::endl;
-        std::cout << "Min, Max of projection B: " << std::get<0>(projectionB) << ", " << std::get<1>(projectionB) << std::endl;
+        //std::cout << "Min, Max of projection A: " << std::get<0>(projectionA) << ", " << std::get<1>(projectionA) << std::endl;
+        //std::cout << "Min, Max of projection B: " << std::get<0>(projectionB) << ", " << std::get<1>(projectionB) << std::endl;
     }
 
     return result;

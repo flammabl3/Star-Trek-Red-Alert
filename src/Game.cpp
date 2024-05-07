@@ -4,9 +4,11 @@
 #include <cmath>
 #include <windows.h>
 
+
 #include "ship.hpp"
 #include "NCC-1701-D.hpp"
 #include "Projectile.hpp"
+#include "random0_n.hpp"
 
 
 
@@ -16,6 +18,7 @@
 // Create functions to check for and apply damage, and damage rooms, subsystems, and personnel
 // Create some kind of enemy AI.
 //
+
 void Game::initVariables() {
     this->window = nullptr;
     this->weaponSelected = false;
@@ -50,7 +53,6 @@ void Game::initPlayer() {
 
 void Game::updatePlayer() {
     this->movePlayer();
-    this->fireWeapon(playerShipObj);
 }
 
 void Game::renderPlayer() {
@@ -140,8 +142,10 @@ void Game::moveProjectiles(Projectile* projectile, int i) {
 }
 
 void Game::checkCollisions() {
+    int projectileDamage = 0;
     for (Ship* ship : allShips) {
         for (int i = 0; Projectile* projectile : projectilesList) {
+            projectileDamage = projectile->damage;
             //compares the intersection of the sprite's bounding rectangle. 
             //This should be extended to check the coordinates of the projectile, and see if it
             // intersects the coordinates of a ship's system or room.
@@ -153,9 +157,19 @@ void Game::checkCollisions() {
                     if(satHelper.checkCollision(ship->shipSprite, projectile->projectileSprite)) {
                         // if contact has been made, now we can check if the projectile hit any systems.
                         // hull damage. Shields should be applied eventually.
-                        ship->totalCondition -= projectile->damage;
+                        ship->totalCondition -= projectileDamage;
                         logEvent("Ship has taken damage.");
 
+                        std::map<std::string, System>::iterator randomSystem = ship->shipSystems.begin();
+                        std::advance(randomSystem, random0_n(ship->shipSystems.size()));
+
+                        std::vector<Room>::iterator randomRoom = randomSystem->second.rooms.begin(); 
+                        std::advance(randomRoom, random0_n(randomSystem->second.rooms.size()));
+
+                        std::vector<std::string> damagedPersonnel = randomRoom->dealDamageToRoom(projectileDamage);
+                        for (std::string personnelLogged: damagedPersonnel) {
+                            logEvent(personnelLogged);
+                        }
                         //iterate over the systems map in the ship that is hit, and see if the projectile has hit any systems.
                         //Despite writing all that stuff for separating axis theorem, point in polygon may be better for the systems, since there are many of them!
                         for (auto& pair : ship->shipSystems) {
@@ -174,7 +188,9 @@ void Game::checkCollisions() {
             }
             //check for whether ship is destroyed or not after all is done.
             ship->checkDamage();
+
             i++;
+
         }
     }
 }
@@ -182,12 +198,11 @@ void Game::checkCollisions() {
 // will be run each frame. will eventually need code to check the type of weapon.
 void Game::fireWeapon(Ship& firingShip) {
     //need to constantly update the sprite object in the Ship object. That's annoying.
-
     sf::Vector2f parentTip = firingShip.shipSprite.getTransform().transformPoint({firingShip.shipSprite.getLocalBounds().height, firingShip.shipSprite.getLocalBounds().height / 2});
     sf::Vector2f directionOfTravel = (sf::Vector2f)sf::Mouse::getPosition(*window);
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && weaponSelected){
         Projectile* torpedo = new Projectile("../resource/photontorpedo.png", parentTip.x, parentTip.y,
-                                            directionOfTravel, 1000.0, 0.1);      
+                                            directionOfTravel, 1000.0, 10);      
         torpedo->setFriendly(); // the player is the only one to use this function, so it will be a friendly projectile.                            
         this->projectilesList.insert(projectilesList.end(), torpedo);
         weaponSelected = false;
@@ -196,7 +211,7 @@ void Game::fireWeapon(Ship& firingShip) {
 
 void Game::movePlayer() {
     // these variables, and this function itself should eventually be moved to the Ship class.
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Right) && !weaponSelected) {
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
         /* Get the position of the player's ship and the position of the mouse as vectors. 
         Find the vector which is the difference between the 2 vectors and normalize it by dividing by length. The vector is normalized so it can be multiplied by a constant speed.
         Move by the difference vector times speed times deltatime. */
@@ -207,7 +222,7 @@ void Game::movePlayer() {
         if (length != 0.0f) {
             sf::Vector2f normalizedVector = movementDistance / length;
 
-            float speed = 500.0f;
+            float speed = 100.0f;
             //ship's impulse speed stat multiplied to give effective speed
             float pSpeed = playerShipObj.impulseSpeed * speed;
             playerShipObj.shipSprite.move(normalizedVector * pSpeed * deltaTime);
@@ -230,9 +245,9 @@ void Game::movePlayer() {
                 }
 
                 if (ccwDistance > cwDistance) {
-                    playerShipObj.shipSprite.rotate(300 * deltaTime);
+                    playerShipObj.shipSprite.rotate(70 * deltaTime);
                 } else if (ccwDistance < cwDistance) {
-                    playerShipObj.shipSprite.rotate(-300 * deltaTime);
+                    playerShipObj.shipSprite.rotate(-70 * deltaTime);
                 }
             }
             
@@ -272,6 +287,16 @@ void Game::updateEvents() {
                 std::cout << "weapon 1 selected" << std::endl;
             }
         }
+
+        if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+            if (weaponSelected) {
+                fireWeapon(playerShipObj);
+            }
+        }
+
+        if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Right) {
+            
+        }
     }
 }
 
@@ -299,7 +324,7 @@ void Game::logEvent(std::string event) {
     if (eventLog.size() >= 5) {
         eventLog.pop_back();
     }
-    eventLog.push_back(event);
+    eventLog.insert(eventLog.begin(), event);
 }
 
 //create the text at the bottom of the log, and move up by reducing the offset down the screen.

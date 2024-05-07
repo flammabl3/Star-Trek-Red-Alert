@@ -20,4 +20,6 @@ class Personnel {
         std::string species, std::string role, double skill);
 
         Personnel() = default;
+
+        std::string getLogName();
 };

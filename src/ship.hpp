@@ -107,9 +107,10 @@ class System {
 
         void setCoordinates(float x, float y, float width, float length);
 
-        bool checkCollision(Projectile* projectile);
+        std::string checkCollision(Projectile* projectile);
 
         void calculateOperationalCapacity();
+        
 
         System(std::string systemType, std::vector<Room> rooms, std::vector<Personnel> personnel); 
         // We define a constructor yet never end up using it. Figure this problem out.

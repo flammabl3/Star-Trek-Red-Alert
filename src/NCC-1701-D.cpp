@@ -98,27 +98,149 @@
     void initializeEnterprise::initForwardPhasers() {
         rooms.clear();
         personnel.clear();
+        subsystemList.clear();
+
+        for (int i = 0; i < 5; i++) {
+            Personnel placeholder = Personnel(std::string("Ensign"), 
+                                            std::string("Human"), std::string("Command"), 1.0);
+            personnel.push_back(placeholder);
+        }
+
+        subsystemList["Phaser Controls"] = Subsystem("Phaser Controls", personnel.at(0));
+
+        subsystemList["Phaser"] = Subsystem("Phaser", personnel.at(1));
+
+        rooms.push_back(Room("Forward Phasers", personnel, subsystemList));
+
+    }
+
+    void initializeEnterprise::initForwardTorpedoes() {
+        rooms.clear();
+        personnel.clear();
+        subsystemList.clear();
+
+        for (int i = 0; i < 3; i++) {
+            Personnel placeholder = Personnel(std::string("Ensign"), 
+                                            std::string("Human"), std::string("Command"), 1.0);
+            personnel.push_back(placeholder);
+        }
+
+        subsystemList["Torpedo Controls"] = Subsystem("Torpedo Controls", personnel.at(0));
+
+        subsystemList["Torpedo Launcher"] = Subsystem("Torpedo Control", personnel.at(1));
+
+        rooms.push_back(Room("Forward Torpedoes", personnel, subsystemList));
+
     }
             
+    void initializeEnterprise::initLeftNacelle() {
+        rooms.clear();
+        personnel.clear();
+        subsystemList.clear();
 
+        for (int i = 0; i < 3; i++) {
+            Personnel placeholder = Personnel(std::string("Ensign"), 
+                                            std::string("Human"), std::string("Command"), 1.0);
+            personnel.push_back(placeholder);
+        }
+
+        subsystemList["Nacelle Controls"] = Subsystem("Nacelle Controls", personnel.at(0));
+
+        rooms.push_back(Room("Nacelle", personnel, subsystemList));
+
+    }
+
+    void initializeEnterprise::initRightNacelle() {
+        rooms.clear();
+        personnel.clear();
+        subsystemList.clear();
+
+        for (int i = 0; i < 3; i++) {
+            Personnel placeholder = Personnel(std::string("Ensign"), 
+                                            std::string("Human"), std::string("Command"), 1.0);
+            personnel.push_back(placeholder);
+        }
+
+        subsystemList["Nacelle Controls"] = Subsystem("Nacelle Controls", personnel.at(0));
+
+        rooms.push_back(Room("Nacelle", personnel, subsystemList));
+
+    }
+
+    void initializeEnterprise::initEngineering() {
+        rooms.clear();
+        personnel.clear();
+        subsystemList.clear();
+
+        //another set of data structures, since we only have one for the other systems.
+        std::vector<Personnel> personnel2; 
+        std::map<std::string, Subsystem> subsystemList2;
+
+        personnel.push_back(Personnel(std::string("Geordi"), std::string(""), std::string("La Forge"), std::string("Lieutenant Commander"), 
+        std::string("Human"), std::string("Operations"), 2.0));
+
+        for (int i = 0; i < 7; i++) {
+            Personnel placeholder = Personnel(std::string("Ensign"), 
+                                            std::string("Human"), std::string("Command"), 1.0);
+            personnel.push_back(placeholder);
+        }
+
+        subsystemList["Engineering Station I"] = Subsystem("Engineering Station I", personnel.at(0));
+        
+        subsystemList["Engineering Station II"] = Subsystem("Engineering Station II", personnel.at(1));
+        
+        subsystemList["Engineering Station III"] = Subsystem("Engineering Station III", personnel.at(2));
+        
+        subsystemList["Engineering Station IV"] = Subsystem("Engineering Station IV", personnel.at(3));
+
+        rooms.push_back(Room("Engineering Room", personnel, subsystemList));
+
+        for (int i = 0; i < 7; i++) {
+            Personnel placeholder = Personnel(std::string("Ensign"), 
+                                            std::string("Human"), std::string("Command"), 1.0);
+            personnel.push_back(placeholder);
+            personnel2.push_back(placeholder);
+        }
+        
+        subsystemList2["Warp Core"] = Subsystem("Engineering Station I", personnel.at(0));
+
+        rooms.push_back(Room("Warp Core Room", personnel2, subsystemList2));
+    }
                 
 
     // This is now a helper function that will create all parameters and create a System object with the relevant parameters.
     initializeEnterprise::initializeEnterprise() {
         initBridge();
         System Bridge = System("Bridge", rooms, personnel);
-        // note that the ship coordinates' origin may be at the center, not top left
-        Bridge.setCoordinates(10, 0, 20, 40);
+        // note that the ship coordinates' origin are at the center, not top left
+        Bridge.setCoordinates(10, 0, 20, 60);
         systemsList["Bridge"] = Bridge;
 
-        //to be implemented later.
-        /*
-        systemsList["Forward Phasers"];
-        systemsList["Forward Torpedo Bay"];
-        systemsList["Right Nacelle"];
-        systemsList["Left Nacelle"];
-        systemsList["Engineering"];
-        */
+        initForwardPhasers();
+        System ForwardPhasers = System("Forward Phasers", rooms, personnel);
+        ForwardPhasers.setCoordinates(25, 0, 15, 50);
+        systemsList["Forward Phasers"] = ForwardPhasers;
+
+        initForwardTorpedoes();
+        System ForwardTorpedoes = System("Forward Torpedoes", rooms, personnel);
+        ForwardTorpedoes.setCoordinates(0, 0, 10, 10);
+        systemsList["Forward Torpedo Bay"] = ForwardTorpedoes;
+        
+        initRightNacelle();
+        System RightNacelle = System("Right Nacelle", rooms, personnel);
+        RightNacelle.setCoordinates(-19, -12, 22, 10);
+        systemsList["Right Nacelle"] = RightNacelle;
+
+        initLeftNacelle();
+        System LeftNacelle = System("Left Nacelle", rooms, personnel);
+        LeftNacelle.setCoordinates(-19, 12, 22, 10);
+        systemsList["Left Nacelle"] = LeftNacelle;
+
+        initEngineering();
+        System Engineering = System("Engineering", rooms, personnel);
+        Engineering.setCoordinates(-20, 0, 20, 20);
+        systemsList["Engineering"] = Engineering;
+        
     }
 
     //our ship should eventually have a size.

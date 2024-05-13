@@ -19,6 +19,23 @@ float rotation = 0;
 // Create some kind of enemy AI.
 // Add systems and system performance, and performance of systems based on crew and rooms
 
+/*General path to completion
+Systems and damage -> more weapons -> Ship AI -> UI -> sounds and animations -> rest of the game
+
+CODE SHOULD CHECK FOR POINT IN POLYGON COLLISION WITH AN INDIVIDUAL ROOM.
+
+Weapon fire rate should be tied to the respective weapons system.
+Speed and maneuverability should be tied to nacelles/engines.
+Response time to user input should be tied to the bridge.
+The bridge and power from engineering should be tied to everything. Reduced bridge/warp core should 
+affect all systems.
+
+Dead crewmembers should be replaced by live ones in the same room not assigned to a station.
+Rank checks should take place (an ensign should not take the captain's chair unless there are no other options)
+
+Fire and Oxygen should affect rooms.
+*/
+
 void Game::initVariables() {
     this->window = nullptr;
     this->weaponSelected = false;
@@ -186,6 +203,10 @@ void Game::checkCollisions() {
 
                         for (auto& pair : ship->shipSystems) {
                             pair.second.setHitbox(ship);
+                            //check for collision and log the string returned by checkCollision
+                            std::string systemLogged = pair.second.checkCollision(projectile);
+                            if (systemLogged.size() > 0)
+                                logEvent(systemLogged);
                         }
                         
                         // Log before erasing
@@ -195,6 +216,7 @@ void Game::checkCollisions() {
                     }
                 }
             }
+            //should this only be called once?
             ship->checkDamage();
             ++it;
         }

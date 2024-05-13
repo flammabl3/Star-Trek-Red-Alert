@@ -102,14 +102,24 @@ void System::setCoordinates(float x, float y, float width, float length) {
 }
 
 
-bool System::checkCollision(Projectile* projectile) {
-    if (this->operationalCapacity > 0) {
+std::string System::checkCollision(Projectile* projectile) {
+    std::string outputString;
+    sf::Vector2f projectilePos = projectile->projectileSprite.getPosition();
+
+    float angle = hitbox.getRotation() * M_PI / 180;
+
+    float offsetX = systemX * cos(angle) - systemY * sin(angle);
+    float offsetY = systemX * sin(angle) + systemY * cos(angle);
+
+    if (this->systemX <= projectilePos.x <= offsetX && this->systemY <= projectilePos.y <= offsetY) {
+        if (this->operationalCapacity > 0) {
             this->operationalCapacity -= projectile->damage;
-        std::cout << this->operationalCapacity << std::endl;
-        return true;
+            outputString = this->systemType + " has been hit!";
         //this should eventually be replaced by a function, so that the ship can check for damage every frame, especially from things like fire.
+        }
     }
-    return false;
+    
+    return outputString;
 }
 
 void Ship::checkDamage() {
@@ -183,7 +193,7 @@ std::vector<std::string> Room::dealDamageToRoom(int damage) {
     std::map<std::string, Subsystem>::iterator randomSubsystem = subsystems.begin();
     std::advance(randomSubsystem, random0_n(subsystems.size()));
 
-    Subsystem subsystem = randomSubsystem->second;
+    Subsystem& subsystem = randomSubsystem->second;
     //damage will not be added to a subsystem if it is already destroyed. 
     if (subsystem.totalCondition > 0 && damage > 0) {
         //use random number from 0 to damage for the calculation.
@@ -196,15 +206,19 @@ std::vector<std::string> Room::dealDamageToRoom(int damage) {
         subsystem.operating.health -= finalDamage; //crewmember operating will take damage too. Consider reducing or modifying it by a number from 0 to 1.
 
         //some characters do not have a last name (klingons, vulcans, data). log their first name. 
+        //some HUMANS do not have a last name either. cultures which use patrynomics or otherwise do not have a last name.
         //this should be its own function in personnel later.
         std::string outputString;
-        if (subsystem.operating.health > 0) {
+        //do not output a string if the crewmember was killed by past damage or if no damage dealt
+        if (finalDamage > 0 && subsystem.operating.health + finalDamage > 0) {
+            std::cout << subsystem.operating.getLogName() << " has hp: " << subsystem.operating.health << std::endl;
+            if (subsystem.operating.health > 0) {
                 outputString = subsystem.operating.rank + " " + subsystem.operating.getLogName() + " has become hurt!";
-        } else {
-            outputString = subsystem.operating.rank + " " + subsystem.operating.getLogName() + " has been killed!";
-        }
-        
-        outputPersonnel.push_back(outputString);
+            } else {
+                outputString = subsystem.operating.rank + " " + subsystem.operating.getLogName() + " has been killed!";
+            }
+            outputPersonnel.push_back(outputString);
+        }   
         
     }
 

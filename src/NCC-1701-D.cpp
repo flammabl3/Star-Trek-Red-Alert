@@ -106,7 +106,7 @@
             personnel.push_back(placeholder);
         }
 
-        subsystemList["Phaser Controls"] = Subsystem("Phaser Controls", personnel.at(0));
+        subsystemList["Forward Phaser Controls"] = Subsystem("Forward Phaser Controls", personnel.at(0));
 
         subsystemList["Phaser"] = Subsystem("Phaser", personnel.at(1));
 
@@ -125,9 +125,9 @@
             personnel.push_back(placeholder);
         }
 
-        subsystemList["Torpedo Controls"] = Subsystem("Torpedo Controls", personnel.at(0));
+        subsystemList["Forward Torpedo Controls"] = Subsystem("Forward Torpedo Controls", personnel.at(0));
 
-        subsystemList["Torpedo Launcher"] = Subsystem("Torpedo Control", personnel.at(1));
+        subsystemList["Torpedo Launcher"] = Subsystem("Torpedo Launcher", personnel.at(1));
 
         rooms.push_back(Room("Forward Torpedoes", personnel, subsystemList));
 
@@ -144,7 +144,7 @@
             personnel.push_back(placeholder);
         }
 
-        subsystemList["Nacelle Controls"] = Subsystem("Nacelle Controls", personnel.at(0));
+        subsystemList["Left Nacelle Controls"] = Subsystem("Left Nacelle Controls", personnel.at(0));
 
         rooms.push_back(Room("Nacelle", personnel, subsystemList));
 
@@ -161,7 +161,7 @@
             personnel.push_back(placeholder);
         }
 
-        subsystemList["Nacelle Controls"] = Subsystem("Nacelle Controls", personnel.at(0));
+        subsystemList["Right Nacelle Controls"] = Subsystem("Right Nacelle Controls", personnel.at(0));
 
         rooms.push_back(Room("Nacelle", personnel, subsystemList));
 
@@ -225,7 +225,7 @@
         System ForwardTorpedoes = System("Forward Torpedoes", rooms, personnel);
         ForwardTorpedoes.setCoordinates(0, 0, 10, 10);
         systemsList["Forward Torpedo Bay"] = ForwardTorpedoes;
-        
+
         initRightNacelle();
         System RightNacelle = System("Right Nacelle", rooms, personnel);
         RightNacelle.setCoordinates(-19, -12, 22, 10);

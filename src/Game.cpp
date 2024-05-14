@@ -22,7 +22,12 @@ float rotation = 0;
 /*General path to completion
 Systems and damage -> more weapons -> Ship AI -> UI -> sounds and animations -> rest of the game
 
-CODE SHOULD CHECK FOR POINT IN POLYGON COLLISION WITH AN INDIVIDUAL ROOM.
+Our conundrum: Some systems are "inside" others given the top down view. Some systems cannot be hit from the outside of the ship's hitbox.
+Solutions:
+Let the projectile hit the ship, but don't delete it till hit hits a system.
+Hit the ship but let it hit several things, having a chance to be deleted each frame. (NOT optimal for torpedoes).
+Let the player target individual systems. (Like FTL.)
+Keep the current system and let beam weapons have multihit capability.
 
 Weapon fire rate should be tied to the respective weapons system.
 Speed and maneuverability should be tied to nacelles/engines.
@@ -64,7 +69,7 @@ void Game::initPlayer() {
     playerShipObj.shipSprite.setPosition(400, 300);
     playerShipObj.setFriendly();
     //create a pointer to reference our player ship object, and add it to the vector. This seems... non-optimal.
-    Ship* playerShipPointer = &playerShipObj;
+    playerShipPointer = &playerShipObj;
     allShips.push_back(playerShipPointer);
 }
 
@@ -95,9 +100,8 @@ void Game::initEnemy() {
 
 }
 
-void Game::createEnemyDebugBoxes(Ship* enemyShipObj) {
+void Game::createDebugBoxes(Ship* enemyShipObj) {
     SATHelper sat;
-    debugHitboxes.clear();
 
     debugHitboxes.push_back(enemyShipObj->returnHitbox());
     for (auto& pair : enemyShipObj->shipSystems) {
@@ -127,7 +131,21 @@ void Game::updateEnemy() {
     enemyShips.at(0)->shipSprite.setRotation(rotation);
     rotation+=0.01;
 
-    createEnemyDebugBoxes(enemyShips.at(0));
+    debugHitboxes.clear();
+    createDebugBoxes(enemyShips.at(0));
+
+    //The player's bounding box appears in the wrong spot.
+    //createDebugBoxes(playerShipPointer);
+}
+
+void Game::updateAllShips() {
+    //This should be split to log enemy and player events separately.
+    for (Ship* ship: allShips) {
+        std::vector<std::string> outputLog = ship->checkDamage();
+        for (std::string string: outputLog) {
+            logEvent(string);
+        }
+    }
 }
 
 void Game::renderProjectiles() {
@@ -184,9 +202,20 @@ void Game::checkCollisions() {
                 
                 if (!((ship->friendly && projectile->friendly) || (!ship->friendly && !projectile->friendly))) {
                     if (satHelper.checkCollision(ship->shipSprite, projectile->projectileSprite)) {
-                        projectileDamage = projectile->damage;
-                        ship->totalCondition -= projectileDamage;
-                        logEvent("Ship has taken damage.");
+                        projectileDamage = projectile->damage - ship->shields/5;
+                        
+                        if (ship->shields > 0) {
+                            ship->shields -= projectile->damage;
+                            logEvent("Shields at " + std::to_string(ship->shields) + " percent.");
+                        } 
+
+                        if (projectileDamage > 0) {
+                            ship->totalCondition -= projectileDamage;
+                            logEvent("Ship has taken damage.");
+                            if (debugMode) {
+                                std::cout << projectileDamage << std::endl;
+                            }
+                        }
 
                         std::map<std::string, System>::iterator randomSystem = ship->shipSystems.begin();
                         std::advance(randomSystem, random0_n(ship->shipSystems.size()));
@@ -207,6 +236,7 @@ void Game::checkCollisions() {
                             std::string systemLogged = pair.second.checkCollision(projectile);
                             if (systemLogged.size() > 0)
                                 logEvent(systemLogged);
+                                pair.second.dealDamageToSystem(projectileDamage);
                         }
                         
                         // Log before erasing
@@ -217,7 +247,7 @@ void Game::checkCollisions() {
                 }
             }
             //should this only be called once?
-            ship->checkDamage();
+            //ship->checkDamage();
             ++it;
         }
     }
@@ -337,7 +367,7 @@ void Game::update() {
     this->updatePlayer();
     this->updateEnemy();
     this->checkCollisions();
-    
+    this->updateAllShips();
     
 }
 
@@ -352,7 +382,7 @@ void Game::render() {
 }
 
 void Game::logEvent(std::string event) {
-    if (eventLog.size() >= 5) {
+    if (eventLog.size() >= 10) {
         eventLog.pop_back();
     }
     eventLog.insert(eventLog.begin(), event);
@@ -360,12 +390,13 @@ void Game::logEvent(std::string event) {
 
 //create the text at the bottom of the log, and move up by reducing the offset down the screen.
 void Game::displayEvents() {
-    int positionOffset = 5;
+    int positionOffset = 10;
     for (std::string event: eventLog) {
         sf::Text text(event, font);
+        text.setScale(0.5, 0.5);
         //text will become more transparent as it moves up the log.
-        text.setColor(sf::Color(255, 255, 255, 51 * positionOffset));
-        text.setPosition(0, 25 * positionOffset);
+        text.setColor(sf::Color(255, 255, 255, 25 * positionOffset));
+        text.setPosition(0, 12 * positionOffset);
         positionOffset--;
         window->draw(text);
     }

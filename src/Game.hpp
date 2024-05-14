@@ -35,6 +35,7 @@ class Game {
                 
         //Objects associated with game objects
         Ship playerShipObj;
+        Ship* playerShipPointer;
 
         //debug objects
         bool debugMode;
@@ -68,6 +69,8 @@ class Game {
         void renderEnemy();
         void updateEnemy();
 
+        void updateAllShips();
+
         void fireWeapon(Ship& firingShip);
         void renderProjectiles(); 
         void moveProjectiles(Projectile* projectile, int i);
@@ -82,5 +85,5 @@ class Game {
 
         void displayEvents();
 
-        void createEnemyDebugBoxes(Ship* enemyShipObj);
+        void createDebugBoxes(Ship* enemyShipObj);
 };

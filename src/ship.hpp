@@ -30,6 +30,8 @@ class Ship
         //Internal data
         std::map<std::string, System> shipSystems;
         int mass;
+        int shields;
+        int power;
         double impulseSpeed;
         double warpSpeed;
         float totalCondition;
@@ -69,9 +71,11 @@ class Ship
 
         void calculateSystemPositions();
 
-        void checkDamage();
+        std::vector<std::string> checkDamage();
 
         sf::RectangleShape returnHitbox();
+
+        std::vector<std::string> fireOxygenPersonnelSwap();
         //~Ship();
         //define destructor later
         
@@ -89,6 +93,7 @@ class System {
         // an array of personnel, the current crew of the system. Determined by adding all the personnel lists of each room.
         std::vector<Personnel> personnel; 
         double totalCondition;
+        int power;
 
         sf::Vector2f shipCenter;
         sf::RectangleShape hitbox;
@@ -109,8 +114,11 @@ class System {
 
         std::string checkCollision(Projectile* projectile);
 
-        void calculateOperationalCapacity();
+        std::vector<std::string> calculateOperationalCapacity();
+
+        std::vector<std::string> dealDamageToSystem(int damage);
         
+        std::vector<std::string> fireOxygenPersonnelSwap();
 
         System(std::string systemType, std::vector<Room> rooms, std::vector<Personnel> personnel); 
         // We define a constructor yet never end up using it. Figure this problem out.
@@ -125,7 +133,8 @@ class Room {
         std::string roomType;
         std::vector<Personnel> personnel;
         double oxygen;
-        double temperature;
+        float fire;
+        int hullIntegrity;
         double operationalCapacity; 
         double totalCondition;
         std::map<std::string, Subsystem> subsystems;
@@ -136,10 +145,11 @@ class Room {
 
         }
 
-        void calculateOperationalCapacity();
+        std::vector<std::string> calculateOperationalCapacity();
 
         std::vector<std::string> dealDamageToRoom(int damage);
 
+        std::vector<std::string> fireOxygenPersonnelSwap();
 };
 
 class Subsystem { // the individual consoles and parts inside a room.
@@ -151,8 +161,11 @@ class Subsystem { // the individual consoles and parts inside a room.
         double totalCondition;
         Personnel operating; // the person at the station
         Subsystem(std::string name, Personnel operating);
+        float fire;
 
         Subsystem() = default;
 
-        void calculateOperationalCapacity();
+        std::vector<std::string> calculateOperationalCapacity();
+
+        std::vector<std::string> fireOxygenPersonnelSwap();
 };

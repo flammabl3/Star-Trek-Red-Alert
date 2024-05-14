@@ -15,6 +15,7 @@ Personnel::Personnel(std::string firstName, std::string middleName, std::string 
     this->species = species;
     this->health = 10.0;
     this->skill = skill;
+    this->capacity = 1.0;
 }
 
 Personnel::Personnel(std::string rank, 
@@ -94,3 +95,7 @@ void Personnel::randomName() {
 
 }
 
+void Personnel::calculateCapacity() {
+    this->capacity = skill * health / 10; 
+    //mental state should be added.
+}

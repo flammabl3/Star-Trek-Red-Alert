@@ -69,6 +69,8 @@ class Game {
         void renderEnemy();
         void updateEnemy();
 
+        void showRoomDamageEnemy();
+
         void updateAllShips();
 
         void fireWeapon(Ship& firingShip);

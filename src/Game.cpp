@@ -81,6 +81,40 @@ void Game::renderPlayer() {
     playerShipObj.render(this->window);
 }
 
+void Game::showRoomDamageEnemy() {
+    int positionOffset = 10;
+    for (Ship* ship: enemyShips) {
+        for (auto& pair: ship->shipSystems) {
+            System& system = pair.second;
+            for (Room& room: system.rooms) {
+                std::string fireSize;
+                if (room.fire == 0)
+                    fireSize = "no fire";
+                else if (25 > room.fire > 0) 
+                    fireSize = "small fire";
+                else if (room.fire > 25) 
+                    fireSize = "medium fire";
+                else if (room.fire > 50)
+                    fireSize = "large fire";
+                else if (room.fire > 75)
+                    fireSize = "huge fire";   
+                else if (room.fire > 100) 
+                    fireSize = "massive fire";
+                    
+                std::string roomStats = room.roomType + ": " + fireSize + " " + std::to_string((int)room.oxygen) + "% oxygen " + std::to_string((int)system.power) + "% power";
+                sf::Text text(roomStats, font);
+                text.setScale(0.5, 0.5);
+                //text will become more transparent as it moves up the log.
+                text.setColor(sf::Color(255, 255 - room.fire, 255 - room.fire, 255));
+                text.setPosition(0, 400 + 12 * positionOffset);
+                positionOffset--;
+                window->draw(text);
+            }
+        }
+        
+    }
+}
+
 void Game::renderDebugObjects() {
     for (sf::RectangleShape rectangle: debugHitboxes) {
         this->window->draw(rectangle);
@@ -212,9 +246,6 @@ void Game::checkCollisions() {
                         if (projectileDamage > 0) {
                             ship->totalCondition -= projectileDamage;
                             logEvent("Ship has taken damage.");
-                            if (debugMode) {
-                                std::cout << projectileDamage << std::endl;
-                            }
                         }
 
                         std::map<std::string, System>::iterator randomSystem = ship->shipSystems.begin();
@@ -376,6 +407,8 @@ void Game::render() {
     renderPlayer();
     renderEnemy();
     displayEvents();
+    showRoomDamageEnemy();
+
     if (debugMode)
         renderDebugObjects();
     this->window->display();

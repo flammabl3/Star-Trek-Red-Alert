@@ -14,6 +14,7 @@ Ship::Ship(std::map<std::string, System> shipSystems, int mass, float impulseSpe
     this->totalCondition = 200;
     this->shields = 100;
     this->power = 100;
+    this->time = clock.getElapsedTime();
 }
 
 Ship::Ship() {
@@ -125,6 +126,10 @@ std::string System::checkCollision(Projectile* projectile) {
 }
 
 std::vector<std::string> Ship::checkDamage() {
+    if (time.asSeconds() > 0.99999)
+        time = clock.restart();
+    time = clock.getElapsedTime();
+
     std::vector<std::string> outputEvents;
 
     if (this->totalCondition <= 0) {
@@ -132,8 +137,8 @@ std::vector<std::string> Ship::checkDamage() {
     } else {
         for (auto& pair: this->shipSystems) {
             System& system = pair.second;
-            std::vector<std::string> opEvents = system.calculateOperationalCapacity();
-            std::vector<std::string> oxyEvents = system.fireOxygenPersonnelSwap();
+            std::vector<std::string> opEvents = system.calculateOperationalCapacity(time);
+            std::vector<std::string> oxyEvents = system.fireOxygenPersonnelSwap(time);
 
             outputEvents.insert(outputEvents.end(), opEvents.begin(), opEvents.end());
             outputEvents.insert(outputEvents.end(), oxyEvents.begin(), oxyEvents.end());
@@ -172,7 +177,7 @@ sf::FloatRect Ship::getBoundingBox() {
     return(boundingBox);
 }
 
-std::vector<std::string> Subsystem::calculateOperationalCapacity() {
+std::vector<std::string> Subsystem::calculateOperationalCapacity(sf::Time time) {
     std::vector<std::string> events;
     // The system's effectiveness should be determined by the capacity and skill of the operator, and the damage it has (or hasn't taken)
     this->operationalCapacity = this->operating->capacity * this->operating->skill * totalCondition / 100;
@@ -180,7 +185,7 @@ std::vector<std::string> Subsystem::calculateOperationalCapacity() {
     return events;
 }
 
-std::vector<std::string> Room::calculateOperationalCapacity() {
+std::vector<std::string> Room::calculateOperationalCapacity(sf::Time time) {
     std::vector<std::string> events;
 
     double average = 0;
@@ -188,7 +193,7 @@ std::vector<std::string> Room::calculateOperationalCapacity() {
         crewmate->calculateCapacity();
     }
     for (auto& pair: this->subsystems) {
-        std::vector<std::string> events2 = pair.second.calculateOperationalCapacity();
+        std::vector<std::string> events2 = pair.second.calculateOperationalCapacity(time);
         events.insert(events.end(), events2.begin(), events2.end());
         average += pair.second.operationalCapacity;
     }
@@ -234,6 +239,7 @@ std::vector<std::string> Room::dealDamageToRoom(int damage) {
                 outputPersonnel.push_back(subsystem.name + " has caught fire!");
             }
             subsystem.fire += damage;
+            this->fire += damage;
         }
 
         //some characters do not have a last name (klingons, vulcans, data). log their first name. 
@@ -244,7 +250,6 @@ std::vector<std::string> Room::dealDamageToRoom(int damage) {
         
 
         if (finalDamage > 0 && subsystem.operating->health + finalDamage > 0) {
-            std::cout << subsystem.operating->getLogName() << " has hp: " << subsystem.operating->health << std::endl;
             if (subsystem.operating->health > 0) {
                 outputString = subsystem.operating->rank + " " + subsystem.operating->getLogName() + " has become hurt!";
             } else {
@@ -263,17 +268,17 @@ std::vector<std::string> System::dealDamageToSystem(int damage) {
     std::vector<std::string> events;
     std::vector<Room>::iterator randomRoom = rooms.begin(); 
     std::advance(randomRoom, random0_n(rooms.size()));
-
+    
     randomRoom->dealDamageToRoom(damage);
     return events;
 }
 
-std::vector<std::string> System::calculateOperationalCapacity() {
+std::vector<std::string> System::calculateOperationalCapacity(sf::Time time) {
     std::vector<std::string> events;
 
     double average = 0;
     for (Room& room: this->rooms) {
-        std::vector<std::string> events2 = room.calculateOperationalCapacity();
+        std::vector<std::string> events2 = room.calculateOperationalCapacity(time);
         events.insert(events.end(), events2.begin(), events2.end());
         average += room.operationalCapacity;
     }
@@ -288,68 +293,74 @@ std::vector<std::string> System::calculateOperationalCapacity() {
     return events;
 }
 
-std::vector<std::string> Ship::fireOxygenPersonnelSwap() {
+//I don't think this is called. calling fireOxygenPersonnelSwap() is done in checkDamage() for the system objects.
+std::vector<std::string> Ship::fireOxygenPersonnelSwap(sf::Time time) {
     std::vector<std::string> events;
     for (auto& pair: this->shipSystems) {
         System& system = pair.second;
-        std::vector<std::string> events2 = system.fireOxygenPersonnelSwap();
+        std::vector<std::string> events2 = system.fireOxygenPersonnelSwap(time);
         events.insert(events.end(), events2.begin(), events2.end());
     }
     return events;
 }
 
-std::vector<std::string> System::fireOxygenPersonnelSwap() {
+std::vector<std::string> System::fireOxygenPersonnelSwap(sf::Time time) {
     std::vector<std::string> events;
 
     for (auto& room: this->rooms) {
-        std::vector<std::string> events2 = room.fireOxygenPersonnelSwap();
+        std::vector<std::string> events2 = room.fireOxygenPersonnelSwap(time);
         events.insert(events.end(), events2.begin(), events2.end());
         //air will drain out of a room with no power.
-        if (power <= 0) {
-            room.oxygen -= 0.25;
-        } 
+        if (time.asSeconds() > 0.99999) {
+            if (power <= 0) {
+                room.oxygen -= 0.25;
+            } 
+        }
     }
     return events;
 }
 
-std::vector<std::string> Room::fireOxygenPersonnelSwap() {
+std::vector<std::string> Room::fireOxygenPersonnelSwap(sf::Time time) {
     std::vector<std::string> events;
-
-    for (Personnel* crewman: personnel) {
-            if (fire > 0) {
-                if (random0_n(100-fire) == 1) {
-                    crewman->health -= 1;
+    if (time.asSeconds() > 0.99999) {
+        for (Personnel* crewman: personnel) {
+                if (fire > 0 && crewman->health > 0) {
+                    if (random0_n(1000-fire*10) == 1) {
+                        events.push_back(crewman->rank + " " + crewman->getLogName() + " is being burned!");
+                        crewman->health -= 1;
+                    }
                 }
-            }
+        }
     }
 
+    
     for (auto& pair: this->subsystems) {
         Subsystem& subsystem = pair.second;
-        if (hullIntegrity < 80) {
-            oxygen -= random0_n((100-hullIntegrity)/ 10);
-            // oxygen will drain faster with a more compromised hull. 0 integrity means essentially there's a big hole into space.
-        } 
-        //If this room is on fire, there is a 1/10 chance of the fire spreading to another subsystem.
-        if (fire > 0) {
-            if (random0_n(10) == 5) {
-                subsystem.fire += 1;
-                events.push_back("Fire has spread to " + subsystem.name + "!");
-            }
-            fire += randomfloat0_n(1);
-            
-            //random chance to be damaged by fire. Higher with more fire.
-            totalCondition -= randomfloat0_n(fire/100);
-        }
 
+        if (time.asSeconds() > 0.99999) {
+            if (hullIntegrity < 80) {
+                oxygen -= random0_n((100-hullIntegrity)/ 10);
+                // oxygen will drain faster with a more compromised hull. 0 integrity means essentially there's a big hole into space.
+            } 
+            //If this room is on fire, there is a small chance of the fire spreading to another subsystem.
+            if (fire > 0) {
+                if (random0_n(1000) == 5) {
+                    subsystem.fire += 1;
+                    events.push_back("Fire has spread to " + subsystem.name + "!");
+                }
+                fire += randomfloat0_n(1);
+                
+                //random chance to be damaged by fire. Higher with more fire.
+                totalCondition -= randomfloat0_n(fire/100);
+            }
+        }
         //replace dead crewmates with living ones.
 
         //a crewmate will be killed, but their health will reset to 10. What is happening?
         if (subsystem.operating->health <= 0) {
-            std::cout << subsystem.operating->getLogName() << " is dead." << std::endl;
             subsystem.operating->usingSubsystem = false;
             for (Personnel* crewmate: personnel) {
                 if (crewmate->health > 0 && crewmate->usingSubsystem == false) {
-                    std::cout << crewmate->getLogName() << " has hp: " << crewmate->health << std::endl;
                     events.push_back(subsystem.operating->getLogName() + " has been replaced by " + crewmate->getLogName());
                     subsystem.operating = crewmate;
                     break;
@@ -357,7 +368,7 @@ std::vector<std::string> Room::fireOxygenPersonnelSwap() {
             }
         }
 
-        std::vector<std::string> events2 = subsystem.fireOxygenPersonnelSwap();
+        std::vector<std::string> events2 = subsystem.fireOxygenPersonnelSwap(time);
         events.insert(events.end(), events2.begin(), events2.end());
     }
 
@@ -365,21 +376,24 @@ std::vector<std::string> Room::fireOxygenPersonnelSwap() {
     return events;
 }
 
-std::vector<std::string> Subsystem::fireOxygenPersonnelSwap() {
+std::vector<std::string> Subsystem::fireOxygenPersonnelSwap(sf::Time time) {
     std::vector<std::string> events;
 
-    if (fire > 0) {
-        fire += randomfloat0_n(1);
-        int random = random0_n(1);
-        if (operating->health > 0) {
-            operating->health -= random;
-            if (random > 0) {
-                events.push_back(operating->rank + " " + operating->getLogName() + " is being burned!");
+    if (time.asSeconds() > 0.99999) {
+        if (fire > 0) {
+            fire += randomfloat0_n(1);
+            if (randomfloat0_n(1) == 1) {
+                int random = random0_n(2);
+                if (operating->health > 0) {
+                    operating->health -= random;
+                    if (random > 0) {
+                        events.push_back(operating->rank + " " + operating->getLogName() + " is being burned!");
+                    }
+                }
+                totalCondition -= randomfloat0_n(1);
             }
         }
-        totalCondition -= randomfloat0_n(1);
     }
-    
     //fire will grow randomly each frame, if the subsystem is on fire. 
     //Fire has a chance to harm the operator each frame, and will damage the subsystem.
     return events;

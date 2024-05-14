@@ -21,6 +21,8 @@ class Ship
         
 
     public:
+        sf::Time time;
+        sf::Clock clock;
         //SFML objects
         sf::Sprite shipSprite;
         sf::Texture shipTexture;
@@ -75,7 +77,8 @@ class Ship
 
         sf::RectangleShape returnHitbox();
 
-        std::vector<std::string> fireOxygenPersonnelSwap();
+        std::vector<std::string> fireOxygenPersonnelSwap(sf::Time time);
+        
         //~Ship();
         //define destructor later
         
@@ -114,11 +117,11 @@ class System {
 
         std::string checkCollision(Projectile* projectile);
 
-        std::vector<std::string> calculateOperationalCapacity();
+        std::vector<std::string> calculateOperationalCapacity(sf::Time time);
 
         std::vector<std::string> dealDamageToSystem(int damage);
         
-        std::vector<std::string> fireOxygenPersonnelSwap();
+        std::vector<std::string> fireOxygenPersonnelSwap(sf::Time time);
 
         System(std::string systemType, std::vector<Room> rooms, std::vector<Personnel*> personnel); 
         // We define a constructor yet never end up using it. Figure this problem out.
@@ -145,11 +148,11 @@ class Room {
 
         }
 
-        std::vector<std::string> calculateOperationalCapacity();
+        std::vector<std::string> calculateOperationalCapacity(sf::Time time);
 
         std::vector<std::string> dealDamageToRoom(int damage);
 
-        std::vector<std::string> fireOxygenPersonnelSwap();
+        std::vector<std::string> fireOxygenPersonnelSwap(sf::Time time);
 };
 
 class Subsystem { // the individual consoles and parts inside a room.
@@ -165,7 +168,7 @@ class Subsystem { // the individual consoles and parts inside a room.
 
         Subsystem() = default;
 
-        std::vector<std::string> calculateOperationalCapacity();
+        std::vector<std::string> calculateOperationalCapacity(sf::Time time);
 
-        std::vector<std::string> fireOxygenPersonnelSwap();
+        std::vector<std::string> fireOxygenPersonnelSwap(sf::Time time);
 };

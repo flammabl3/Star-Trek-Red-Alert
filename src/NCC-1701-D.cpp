@@ -6,42 +6,42 @@
     void initializeEnterprise::initBridge() {
         rooms.clear();
         personnel.clear();
-        std::vector<Personnel> randomCrew;
+        std::vector<Personnel*> randomCrew;
         //create lt. commander data
-        Personnel data = Personnel(std::string("Data"), std::string(""), std::string(""), std::string("Lieutenant Commander"), 
+        Personnel* data = new Personnel(std::string("Data"), std::string(""), std::string(""), std::string("Lieutenant Commander"), 
         std::string("Soong-type Android"), std::string("Operations"), 2.0);
 
         //add him to the personnel list of the bridge.
         personnel.push_back(data);
 
-        Personnel picard = Personnel(std::string("Jean-Luc"), std::string(""), std::string("Picard"), std::string("Captain"), 
+        Personnel* picard = new Personnel(std::string("Jean-Luc"), std::string(""), std::string("Picard"), std::string("Captain"), 
         std::string("Human"), std::string("Command"), 1.8);
 
         personnel.push_back(picard);
 
-        Personnel riker = Personnel(std::string("William"), std::string("T."), std::string("Riker"), std::string("Commander"), 
+        Personnel* riker = new Personnel(std::string("William"), std::string("T."), std::string("Riker"), std::string("Commander"), 
         std::string("Human"), std::string("Command"), 1.5);
 
         personnel.push_back(riker);
 
-        Personnel worf = Personnel(std::string("Worf"), std::string(""), std::string(""), std::string("Lieutenant"), 
+        Personnel*worf = new Personnel(std::string("Worf"), std::string(""), std::string(""), std::string("Lieutenant"), 
         std::string("Klingon"), std::string("Operations"), 1.5);
 
         personnel.push_back(worf);
 
-        Personnel troi = Personnel(std::string("Deanna"), std::string(""), std::string("Troi"), std::string("Lt. Commander"), 
+        Personnel*troi = new Personnel(std::string("Deanna"), std::string(""), std::string("Troi"), std::string("Lt. Commander"), 
         std::string("Human/Betazoid"), std::string("Science"), 1.3);
 
         personnel.push_back(troi);
 
-        Personnel ro = Personnel(std::string("Laren"), std::string(""), std::string("Ro"), std::string("Ensign"), 
+        Personnel*ro = new Personnel(std::string("Laren"), std::string(""), std::string("Ro"), std::string("Ensign"), 
         std::string("Bajoran"), std::string("Command"), 1.2);
         
         personnel.push_back(ro);
 
         
         for (int i = 0; i < 5; i++) {
-            Personnel placeholder = Personnel(std::string("Ensign"), 
+            Personnel*placeholder = new Personnel(std::string("Ensign"), 
                                             std::string("Human"), std::string("Command"), 1.0);
             personnel.push_back(placeholder);
             randomCrew.push_back(placeholder);
@@ -101,7 +101,7 @@
         subsystemList.clear();
 
         for (int i = 0; i < 5; i++) {
-            Personnel placeholder = Personnel(std::string("Ensign"), 
+            Personnel*placeholder = new Personnel(std::string("Ensign"), 
                                             std::string("Human"), std::string("Command"), 1.0);
             personnel.push_back(placeholder);
         }
@@ -120,7 +120,7 @@
         subsystemList.clear();
 
         for (int i = 0; i < 3; i++) {
-            Personnel placeholder = Personnel(std::string("Ensign"), 
+            Personnel*placeholder = new Personnel(std::string("Ensign"), 
                                             std::string("Human"), std::string("Command"), 1.0);
             personnel.push_back(placeholder);
         }
@@ -139,7 +139,7 @@
         subsystemList.clear();
 
         for (int i = 0; i < 3; i++) {
-            Personnel placeholder = Personnel(std::string("Ensign"), 
+            Personnel*placeholder = new Personnel(std::string("Ensign"), 
                                             std::string("Human"), std::string("Command"), 1.0);
             personnel.push_back(placeholder);
         }
@@ -156,7 +156,7 @@
         subsystemList.clear();
 
         for (int i = 0; i < 3; i++) {
-            Personnel placeholder = Personnel(std::string("Ensign"), 
+            Personnel*placeholder = new Personnel(std::string("Ensign"), 
                                             std::string("Human"), std::string("Command"), 1.0);
             personnel.push_back(placeholder);
         }
@@ -173,14 +173,14 @@
         subsystemList.clear();
 
         //another set of data structures, since we only have one for the other systems.
-        std::vector<Personnel> personnel2; 
+        std::vector<Personnel*> personnel2; 
         std::map<std::string, Subsystem> subsystemList2;
 
-        personnel.push_back(Personnel(std::string("Geordi"), std::string(""), std::string("La Forge"), std::string("Lieutenant Commander"), 
+        personnel.push_back(new Personnel(std::string("Geordi"), std::string(""), std::string("La Forge"), std::string("Lieutenant Commander"), 
         std::string("Human"), std::string("Operations"), 2.0));
 
         for (int i = 0; i < 7; i++) {
-            Personnel placeholder = Personnel(std::string("Ensign"), 
+            Personnel*placeholder = new Personnel(std::string("Ensign"), 
                                             std::string("Human"), std::string("Command"), 1.0);
             personnel.push_back(placeholder);
         }
@@ -196,7 +196,7 @@
         rooms.push_back(Room("Engineering Room", personnel, subsystemList));
 
         for (int i = 0; i < 7; i++) {
-            Personnel placeholder = Personnel(std::string("Ensign"), 
+            Personnel* placeholder = new Personnel(std::string("Ensign"), 
                                             std::string("Human"), std::string("Command"), 1.0);
             personnel.push_back(placeholder);
             personnel2.push_back(placeholder);
@@ -249,6 +249,16 @@
         // all ships will be assumed to have an impulse speed of 0.25c. for now.
         Ship enterprise = Ship(enterpriseHelper.systemsList, 5000000, 0.25, 9.4, std::string("USS Enterprise"), std::string("NCC-1701-D")); 
 
+        for (auto& pair: enterprise.shipSystems) {
+            System& system = pair.second;
+            for (Room& room: system.rooms) {
+                for (auto& pair2: room.subsystems) {
+                    Subsystem subsystem = pair2.second;
+                    subsystem.operating->usingSubsystem = true;
+                }
+            }
+        }
+
         std::cout << "Hello world! ";
         std::cout << enterprise.name << std::endl;
 
@@ -257,6 +267,17 @@
 
     Ship* getEnterprisePointer() {
         Ship enterprise = getEnterprise();
+
+        for (auto& pair: enterprise.shipSystems) {
+            System& system = pair.second;
+            for (Room& room: system.rooms) {
+                for (auto& pair2: room.subsystems) {
+                    Subsystem subsystem = pair2.second;
+                    subsystem.operating->usingSubsystem = true;
+                }
+            }
+        }
+
         Ship* enterprisePointer = new Ship(enterprise);
 
         return enterprisePointer;

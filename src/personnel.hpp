@@ -15,6 +15,7 @@ class Personnel {
         double skill;
         double health;
         double capacity; // changes with mental state, health
+        bool usingSubsystem;
         
         Personnel(std::string firstName, std::string middleName, std::string lastName, std::string rank, 
         std::string species, std::string role, double skill);

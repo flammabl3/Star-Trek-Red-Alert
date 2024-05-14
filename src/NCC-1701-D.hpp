@@ -24,7 +24,7 @@ class initializeEnterprise{
 
         
         std::vector<Room> rooms;
-        std::vector<Personnel> personnel; 
+        std::vector<Personnel*> personnel; 
         std::map<std::string, System> systemsList;
         std::map<std::string, Subsystem> subsystemList;
 

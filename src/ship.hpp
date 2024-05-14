@@ -91,7 +91,7 @@ class System {
         // how well a room is running. Determined by condition of rooms, personnel in rooms.
         double operationalCapacity; 
         // an array of personnel, the current crew of the system. Determined by adding all the personnel lists of each room.
-        std::vector<Personnel> personnel; 
+        std::vector<Personnel*> personnel; 
         double totalCondition;
         int power;
 
@@ -120,7 +120,7 @@ class System {
         
         std::vector<std::string> fireOxygenPersonnelSwap();
 
-        System(std::string systemType, std::vector<Room> rooms, std::vector<Personnel> personnel); 
+        System(std::string systemType, std::vector<Room> rooms, std::vector<Personnel*> personnel); 
         // We define a constructor yet never end up using it. Figure this problem out.
         System() = default;
         
@@ -131,7 +131,7 @@ class Room {
 
     public:
         std::string roomType;
-        std::vector<Personnel> personnel;
+        std::vector<Personnel*> personnel;
         double oxygen;
         float fire;
         int hullIntegrity;
@@ -139,7 +139,7 @@ class Room {
         double totalCondition;
         std::map<std::string, Subsystem> subsystems;
     
-        Room(std::string roomType, std::vector<Personnel> personnel, std::map<std::string, Subsystem> subsystems);
+        Room(std::string roomType, std::vector<Personnel*> personnel, std::map<std::string, Subsystem> subsystems);
 
         Room() {
 
@@ -159,8 +159,8 @@ class Subsystem { // the individual consoles and parts inside a room.
         std::string name;
         double operationalCapacity; 
         double totalCondition;
-        Personnel operating; // the person at the station
-        Subsystem(std::string name, Personnel operating);
+        Personnel* operating; // the person at the station
+        Subsystem(std::string name, Personnel* operating);
         float fire;
 
         Subsystem() = default;

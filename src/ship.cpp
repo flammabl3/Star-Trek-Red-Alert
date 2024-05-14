@@ -49,7 +49,7 @@ void Ship::setFriendly() {
     friendly = true;
 }
 
-System::System(std::string systemType, std::vector<Room> rooms, std::vector<Personnel> personnel){
+System::System(std::string systemType, std::vector<Room> rooms, std::vector<Personnel*> personnel){
     this->systemType = systemType;
     this->rooms = rooms;
     this->personnel = personnel;
@@ -144,7 +144,7 @@ std::vector<std::string> Ship::checkDamage() {
     //Use a spritesheet to blow up the ship.
 }
 
-Room::Room(std::string roomType, std::vector<Personnel> personnel, std::map<std::string, Subsystem> subsystems)  {
+Room::Room(std::string roomType, std::vector<Personnel*> personnel, std::map<std::string, Subsystem> subsystems)  {
     this-> roomType = roomType;
     this->personnel = personnel;
     this->subsystems = subsystems;
@@ -155,7 +155,7 @@ Room::Room(std::string roomType, std::vector<Personnel> personnel, std::map<std:
     this->hullIntegrity = 100;
 }
 
-Subsystem::Subsystem(std::string name, Personnel operating)  {
+Subsystem::Subsystem(std::string name, Personnel* operating)  {
     this->name = name;
     this->operationalCapacity = 1;
     this->operating = operating;
@@ -175,7 +175,7 @@ sf::FloatRect Ship::getBoundingBox() {
 std::vector<std::string> Subsystem::calculateOperationalCapacity() {
     std::vector<std::string> events;
     // The system's effectiveness should be determined by the capacity and skill of the operator, and the damage it has (or hasn't taken)
-    this->operationalCapacity = this->operating.capacity * this->operating.skill * totalCondition / 100;
+    this->operationalCapacity = this->operating->capacity * this->operating->skill * totalCondition / 100;
     // totalCondition is out of 100, and the total should be out of 1, so divide by 100 to get another number scaled around 1.
     return events;
 }
@@ -184,8 +184,8 @@ std::vector<std::string> Room::calculateOperationalCapacity() {
     std::vector<std::string> events;
 
     double average = 0;
-    for (Personnel& crewmate: personnel) {
-        crewmate.calculateCapacity();
+    for (Personnel* crewmate: personnel) {
+        crewmate->calculateCapacity();
     }
     for (auto& pair: this->subsystems) {
         std::vector<std::string> events2 = pair.second.calculateOperationalCapacity();
@@ -226,7 +226,7 @@ std::vector<std::string> Room::dealDamageToRoom(int damage) {
         int finalDamage = distr(gen);
 
         subsystem.totalCondition -= finalDamage;
-        subsystem.operating.health -= finalDamage; //crewmember operating will take damage too. Consider reducing or modifying it by a number from 0 to 1.
+        subsystem.operating->health -= finalDamage; //crewmember operating will take damage too. Consider reducing or modifying it by a number from 0 to 1.
 
         //If the damage is significant, a subsystem may be set on fire.
         if (damage > 5) {
@@ -241,15 +241,18 @@ std::vector<std::string> Room::dealDamageToRoom(int damage) {
         //this should be its own function in personnel later.
         std::string outputString;
         //do not output a string if the crewmember was killed by past damage or if no damage dealt
-        if (finalDamage > 0 && subsystem.operating.health + finalDamage > 0) {
-            std::cout << subsystem.operating.getLogName() << " has hp: " << subsystem.operating.health << std::endl;
-            if (subsystem.operating.health > 0) {
-                outputString = subsystem.operating.rank + " " + subsystem.operating.getLogName() + " has become hurt!";
+        
+
+        if (finalDamage > 0 && subsystem.operating->health + finalDamage > 0) {
+            std::cout << subsystem.operating->getLogName() << " has hp: " << subsystem.operating->health << std::endl;
+            if (subsystem.operating->health > 0) {
+                outputString = subsystem.operating->rank + " " + subsystem.operating->getLogName() + " has become hurt!";
             } else {
-                outputString = subsystem.operating.rank + " " + subsystem.operating.getLogName() + " has been killed!";
+                outputString = subsystem.operating->rank + " " + subsystem.operating->getLogName() + " has been killed!";
+                subsystem.operating->usingSubsystem = false;
             }
             outputPersonnel.push_back(outputString);
-        }   
+        } 
         
     }
 
@@ -310,23 +313,14 @@ std::vector<std::string> System::fireOxygenPersonnelSwap() {
 }
 
 std::vector<std::string> Room::fireOxygenPersonnelSwap() {
-
     std::vector<std::string> events;
 
-    Personnel& lastAlive = personnel.at(0);
-
-    for (Personnel& crewman: personnel) {
-        if (crewman.health > 0) {
-            //last living crewmember in the room.
-            if (lastAlive.health <= 0 && crewman.health > 0) {
-                lastAlive = crewman;
-            }
+    for (Personnel* crewman: personnel) {
             if (fire > 0) {
                 if (random0_n(100-fire) == 1) {
-                    crewman.health -= 1;
+                    crewman->health -= 1;
                 }
             }
-        }
     }
 
     for (auto& pair: this->subsystems) {
@@ -348,11 +342,19 @@ std::vector<std::string> Room::fireOxygenPersonnelSwap() {
         }
 
         //replace dead crewmates with living ones.
-        if (subsystem.operating.health <= 0) {
-            events.push_back(subsystem.operating.rank + " " + subsystem.operating.getLogName() + " has been killed!");
-            events.push_back(subsystem.operating.getLogName() + " was replaced by " + lastAlive.getLogName());
-            
-            subsystem.operating = lastAlive;
+
+        //a crewmate will be killed, but their health will reset to 10. What is happening?
+        if (subsystem.operating->health <= 0) {
+            std::cout << subsystem.operating->getLogName() << " is dead." << std::endl;
+            subsystem.operating->usingSubsystem = false;
+            for (Personnel* crewmate: personnel) {
+                if (crewmate->health > 0 && crewmate->usingSubsystem == false) {
+                    std::cout << crewmate->getLogName() << " has hp: " << crewmate->health << std::endl;
+                    events.push_back(subsystem.operating->getLogName() + " has been replaced by " + crewmate->getLogName());
+                    subsystem.operating = crewmate;
+                    break;
+                }
+            }
         }
 
         std::vector<std::string> events2 = subsystem.fireOxygenPersonnelSwap();
@@ -364,16 +366,15 @@ std::vector<std::string> Room::fireOxygenPersonnelSwap() {
 }
 
 std::vector<std::string> Subsystem::fireOxygenPersonnelSwap() {
-
     std::vector<std::string> events;
 
     if (fire > 0) {
         fire += randomfloat0_n(1);
         int random = random0_n(1);
-        if (operating.health > 0) {
-            operating.health -= random;
+        if (operating->health > 0) {
+            operating->health -= random;
             if (random > 0) {
-                events.push_back(operating.rank + " " + operating.getLogName() + " is being burned!");
+                events.push_back(operating->rank + " " + operating->getLogName() + " is being burned!");
             }
         }
         totalCondition -= randomfloat0_n(1);

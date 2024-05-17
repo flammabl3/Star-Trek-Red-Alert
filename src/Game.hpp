@@ -5,7 +5,6 @@
 
 #include "ship.hpp"
 #include "Projectile.hpp"
-#include "SeparateAxisTheorem.hpp"
 
 class Game {
     private:
@@ -23,6 +22,7 @@ class Game {
         
         sf::Vector2i mousePosition;
         sf::Clock clock;
+        sf::Clock timer;
         float deltaTime;
         bool weaponSelected; // a variable for which weapon has been selected will eventually be necessary.
 
@@ -40,6 +40,10 @@ class Game {
         //debug objects
         bool debugMode;
         std::vector<sf::RectangleShape> debugHitboxes;
+
+        //for moving the enemy for test purposes
+        float mov = 0.2;
+
 
         SATHelper satHelper;
 

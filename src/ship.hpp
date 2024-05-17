@@ -8,6 +8,7 @@
 #include <iostream>
 #include <cmath>
 #include <random>
+#include "SeparateAxisTheorem.hpp"
 
 #pragma once
 
@@ -42,9 +43,7 @@ class Ship
 
         //coordinate of a ship refers to its centre
         // Is this still true?
-        int xcoord;
-        int ycoord;
-        int zcoord;
+        sf::Vector2f* position;
         float direction;
         
         bool friendly;
@@ -61,8 +60,6 @@ class Ship
 
         sf::FloatRect getBoundingBox();
 
-        void setPos(int x, int y, int z);
-
         void setSize(int l, int w, int h);
 
         void setDirection(float direction);
@@ -72,6 +69,8 @@ class Ship
         void setFriendly();
 
         void calculateSystemPositions();
+
+        bool checkCollision(sf::Vector2f position);
 
         std::vector<std::string> checkDamage();
 

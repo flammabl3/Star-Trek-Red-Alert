@@ -19,6 +19,7 @@ class Projectile {
         std::string texturePath;
         bool friendly;
         float damage;
+        sf::Vector2f* targetPos;
         
         Projectile(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage);
         void render(sf::RenderWindow* window);

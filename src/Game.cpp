@@ -44,6 +44,7 @@ Fire and Oxygen should affect rooms.
 void Game::initVariables() {
     this->window = nullptr;
     this->weaponSelected = false;
+    timer.getElapsedTime();
 
     //pick a font later.
     font.loadFromFile("../resource/arial.ttf");
@@ -52,9 +53,9 @@ void Game::initVariables() {
 }
 
 void Game::initWindow() {
-    this->videoMode.width = 800;
-    this->videoMode.height = 600;
-    this->window = new sf::RenderWindow(sf::VideoMode(800, 600), "Star Trek: Red Alert");
+    this->videoMode.width = 1366;
+    this->videoMode.height = 768;
+    this->window = new sf::RenderWindow(sf::VideoMode(1366, 600), "Star Trek: Red Alert");
     this->window->setKeyRepeatEnabled(false);
 
     sf::Vector2u size = this->window->getSize();
@@ -66,7 +67,8 @@ void Game::initWindow() {
 void Game::initPlayer() {
     playerShipObj = getEnterprise(); // The Ship object associated with the player's ship will be made the USS enterprise using a function from NCC-1701-D.hpp.
     playerShipObj.setSFMLObjects("../resource/Ent-D.png"); // Call function to set texture and sprite.
-    playerShipObj.shipSprite.setPosition(400, 300);
+    playerShipObj.shipSprite.setPosition(700, 500);
+    playerShipObj.shipSprite.setRotation(180);
     playerShipObj.setFriendly();
     //create a pointer to reference our player ship object, and add it to the vector. This seems... non-optimal.
     playerShipPointer = &playerShipObj;
@@ -126,7 +128,7 @@ void Game::initEnemy() {
     SATHelper sat; //using the same SATHelper multiple times throughout the code causes errors.
     Ship* enemyShipObj = getEnterprisePointer();
     enemyShipObj->setSFMLObjects("../resource/Ent-D.png");
-    enemyShipObj->shipSprite.setPosition(300, 300);
+    enemyShipObj->shipSprite.setPosition(300, 100);
     enemyShips.push_back(enemyShipObj);
     allShips.push_back(enemyShipObj);
     enemyShipObj->shipSprite.setRotation(110);
@@ -165,6 +167,14 @@ void Game::updateEnemy() {
     enemyShips.at(0)->shipSprite.setRotation(rotation);
     rotation+=0.01;
 
+    if (enemyShips.at(0)->shipSprite.getPosition().x > 1000) {
+        mov = -0.5;
+    } else if (enemyShips.at(0)->shipSprite.getPosition().x < 0) {
+        mov = 0.5;
+    }
+    
+    enemyShips.at(0)->shipSprite.move(sf::Vector2f(mov, 0));
+
     debugHitboxes.clear();
     createDebugBoxes(enemyShips.at(0));
 
@@ -176,6 +186,8 @@ void Game::updateAllShips() {
     //This should be split to log enemy and player events separately.
     for (Ship* ship: allShips) {
         std::vector<std::string> outputLog = ship->checkDamage();
+        delete ship->position;
+        ship->position = new sf::Vector2f(ship->shipSprite.getPosition());
         for (std::string string: outputLog) {
             logEvent(string);
         }
@@ -209,7 +221,14 @@ void Game::moveProjectiles(Projectile* projectile, int i) {
         //A vector with magnitude one pointing in the direction of the projectile. 
         //This vector is created by subtracting the vector of the projectile's spawn point
         //from where the player clicked, stored as the directionOfTravel vector inside the Projectile object.
-        goTo = projectile->directionOfTravel - projectile->spawnedAt;
+
+        //this is the default value, indicating that no value for a target was assigned.
+        
+        if (projectile->targetPos != nullptr) {
+            goTo = *projectile->targetPos - projectile->getSprite().getPosition();
+        } else { 
+            goTo = projectile->directionOfTravel - projectile->spawnedAt;
+        } 
 
         float rotation = (180.0f / M_PI) * atan2(goTo.y, goTo.x);
         projectile->projectileSprite.setRotation(rotation);
@@ -218,7 +237,6 @@ void Game::moveProjectiles(Projectile* projectile, int i) {
         goTo = goTo / length;
 
         projectile->projectileSprite.move(goTo * projectile->speed * deltaTime);
-
     }
 }
 
@@ -265,6 +283,8 @@ void Game::checkCollisions() {
                             pair.second.setHitbox(ship);
                             //check for collision and log the string returned by checkCollision
                             std::string systemLogged = pair.second.checkCollision(projectile);
+
+                            //if a string was returned there was a collision
                             if (systemLogged.size() > 0)
                                 logEvent(systemLogged);
                                 pair.second.dealDamageToSystem(projectileDamage);
@@ -290,11 +310,24 @@ void Game::checkCollisions() {
 void Game::fireWeapon(Ship& firingShip) {
     //need to constantly update the sprite object in the Ship object. That's annoying.
     sf::Vector2f parentTip = firingShip.shipSprite.getTransform().transformPoint({firingShip.shipSprite.getLocalBounds().height, firingShip.shipSprite.getLocalBounds().height / 2});
-    sf::Vector2f directionOfTravel = (sf::Vector2f)sf::Mouse::getPosition(*window);
+    sf::Vector2f mousePosition = (sf::Vector2f)sf::Mouse::getPosition(*window);
+    
+    sf::Vector2f directionOfTravel = mousePosition;
+
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && weaponSelected){
         Projectile* torpedo = new Projectile("../resource/photontorpedo.png", parentTip.x, parentTip.y,
-                                            directionOfTravel, 1000.0, 10);      
-        torpedo->setFriendly(); // the player is the only one to use this function, so it will be a friendly projectile.                            
+                                            directionOfTravel, 1000.0, 10);  
+        for (Ship* ship: enemyShips) {
+            sf::FloatRect shipBounds = ship->shipSprite.getGlobalBounds();
+            if (shipBounds.contains(mousePosition)) {
+                torpedo->targetPos = ship->position;
+            } else {
+                torpedo->targetPos = nullptr;
+            }
+        }   
+
+        if (firingShip.friendly)
+            torpedo->setFriendly(); 
         this->projectilesList.insert(projectilesList.end(), torpedo);
         weaponSelected = false;
     }
@@ -393,6 +426,12 @@ void Game::updateEvents() {
 
 void Game::update() {
     deltaTime = clock.restart().asSeconds();
+
+    //use this to fix the homing weapons issue.
+    if (timer.getElapsedTime().asSeconds() > 0.00100001)
+        timer.restart();
+    timer.getElapsedTime();
+
     this->window->clear();
     this->updateEvents();
     this->updatePlayer();

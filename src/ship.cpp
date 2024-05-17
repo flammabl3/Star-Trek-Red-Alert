@@ -15,6 +15,7 @@ Ship::Ship(std::map<std::string, System> shipSystems, int mass, float impulseSpe
     this->shields = 100;
     this->power = 100;
     this->time = clock.getElapsedTime();
+    this->position = nullptr;
 }
 
 Ship::Ship() {
@@ -30,12 +31,6 @@ void Ship::setSFMLObjects(std::string resourcePath) {
     shipSprite.setOrigin(shipSprite.getLocalBounds().width / 2, shipSprite.getLocalBounds().height / 2);
 }
 
-void Ship::setPos(int x, int y, int z) {
-    xcoord = x;
-    ycoord = y;
-    zcoord = z;
-}
-
 void Ship::setSize(int l, int w, int h) {
     length = l;
     width = w;
@@ -48,6 +43,17 @@ void Ship::setDirection(float direction) {
 
 void Ship::setFriendly() {
     friendly = true;
+}
+
+//PIP collision for a ship.
+bool Ship::checkCollision(sf::Vector2f position) {
+    SATHelper sat = SATHelper();
+    std::vector<sf::Vector2f> points = sat.getPoints(returnHitbox());
+    this->getBoundingBox();
+    if (points.at(0).x <= position.x <= points.at(1).x && points.at(0).y <= position.y <= points.at(2).y) {
+        return true;
+    }
+    return false;
 }
 
 System::System(std::string systemType, std::vector<Room> rooms, std::vector<Personnel*> personnel){
@@ -89,7 +95,7 @@ sf::RectangleShape System::returnHitbox() {
 
 sf::RectangleShape Ship::returnHitbox() {
     sf::RectangleShape rectangle(getBoundingBox().getSize());
-    rectangle.setPosition(getBoundingBox().top, getBoundingBox().left);
+    rectangle.setPosition(getBoundingBox().left, getBoundingBox().top);
     rectangle.setFillColor(sf::Color(255,255,255,0));
     rectangle.setOutlineColor(sf::Color(255,255,0,255));
     rectangle.setOutlineThickness(1);
@@ -108,13 +114,15 @@ void System::setCoordinates(float x, float y, float width, float length) {
 std::string System::checkCollision(Projectile* projectile) {
     std::string outputString;
     sf::Vector2f projectilePos = projectile->projectileSprite.getPosition();
+    float x = this->hitbox.getPosition().x;
+    float y = this->hitbox.getPosition().y;
 
     float angle = hitbox.getRotation() * M_PI / 180;
 
-    float offsetX = systemX * cos(angle) - systemY * sin(angle);
-    float offsetY = systemX * sin(angle) + systemY * cos(angle);
+    float offsetX = x * cos(angle) - y * sin(angle);
+    float offsetY = x * sin(angle) + y * cos(angle);
 
-    if (this->systemX <= projectilePos.x <= offsetX && this->systemY <= projectilePos.y <= offsetY) {
+    if (x <= projectilePos.x <= offsetX && y <= projectilePos.y <= offsetY) {
         if (this->operationalCapacity > 0) {
             this->operationalCapacity -= projectile->damage;
             outputString = this->systemType + " has been hit!";

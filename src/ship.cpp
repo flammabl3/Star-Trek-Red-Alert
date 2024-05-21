@@ -1,4 +1,5 @@
 #include "ship.hpp"
+#include <memory>
 
 #include "random0_n.hpp"
 
@@ -15,7 +16,6 @@ Ship::Ship(std::map<std::string, System> shipSystems, int mass, float impulseSpe
     this->shields = 100;
     this->power = 100;
     this->time = clock.getElapsedTime();
-    this->position = nullptr;
 }
 
 Ship::Ship() {
@@ -131,6 +131,21 @@ std::string System::checkCollision(Projectile* projectile) {
     }
     
     return outputString;
+}
+
+bool System::checkCollision(sf::Vector2f vector) {
+    float x = this->hitbox.getPosition().x;
+    float y = this->hitbox.getPosition().y;
+
+    float angle = hitbox.getRotation() * M_PI / 180;
+
+    float offsetX = x * cos(angle) - y * sin(angle);
+    float offsetY = x * sin(angle) + y * cos(angle);
+
+    if (x <= vector.x <= offsetX && y <= vector.y <= offsetY) {
+        return true;
+    }
+    return false;
 }
 
 std::vector<std::string> Ship::checkDamage() {

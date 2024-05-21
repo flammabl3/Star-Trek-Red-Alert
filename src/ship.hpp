@@ -42,8 +42,7 @@ class Ship
         std::string designation;
 
         //coordinate of a ship refers to its centre
-        // Is this still true?
-        sf::Vector2f* position;
+        std::shared_ptr<sf::Vector2f> position;
         float direction;
         
         bool friendly;
@@ -115,6 +114,8 @@ class System {
         void setCoordinates(float x, float y, float width, float length);
 
         std::string checkCollision(Projectile* projectile);
+
+        bool checkCollision(sf::Vector2f vector);
 
         std::vector<std::string> calculateOperationalCapacity(sf::Time time);
 

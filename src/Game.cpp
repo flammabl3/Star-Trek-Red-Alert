@@ -18,6 +18,7 @@ float rotation = 0;
 // Improve functions to check for and apply damage, and damage rooms, subsystems, and personnel
 // Create some kind of enemy AI.
 // Add systems and system performance, and performance of systems based on crew and rooms
+// ALL MOVEMENT MUST BE DELTATIMED.
 
 /*General path to completion
 Systems and damage -> more weapons -> Ship AI -> UI -> sounds and animations -> rest of the game
@@ -45,6 +46,7 @@ void Game::initVariables() {
     this->window = nullptr;
     this->weaponSelected = false;
     timer.getElapsedTime();
+    torpedoTime = 0;
 
     //pick a font later.
     font.loadFromFile("../resource/arial.ttf");
@@ -62,13 +64,16 @@ void Game::initWindow() {
     unsigned int width = size.x;
     unsigned int height = size.y;
 
+    view = sf::View(sf::FloatRect(0.f, 0.f, 1366.f, 768.f));
+    //view.zoom(1.0f);
+
 }
 
 void Game::initPlayer() {
     playerShipObj = getEnterprise(); // The Ship object associated with the player's ship will be made the USS enterprise using a function from NCC-1701-D.hpp.
     playerShipObj.setSFMLObjects("../resource/Ent-D.png"); // Call function to set texture and sprite.
     playerShipObj.shipSprite.setPosition(700, 500);
-    playerShipObj.shipSprite.setRotation(180);
+    playerShipObj.shipSprite.setRotation(270);
     playerShipObj.setFriendly();
     //create a pointer to reference our player ship object, and add it to the vector. This seems... non-optimal.
     playerShipPointer = &playerShipObj;
@@ -119,7 +124,11 @@ void Game::showRoomDamageEnemy() {
 
 void Game::renderDebugObjects() {
     for (sf::RectangleShape rectangle: debugHitboxes) {
-        this->window->draw(rectangle);
+        sf::Vector2f mousePosition = (sf::Vector2f)sf::Mouse::getPosition(*window);
+        if (checkCollisionRectangleShape(rectangle, mousePosition)) {
+            std::cout << mousePosition.x << std::endl;
+            this->window->draw(rectangle);
+        }
     }
 }
 
@@ -173,7 +182,7 @@ void Game::updateEnemy() {
         mov = 0.5;
     }
     
-    enemyShips.at(0)->shipSprite.move(sf::Vector2f(mov, 0));
+    enemyShips.at(0)->shipSprite.move(sf::Vector2f(mov, 0) * 100.0f * deltaTime);
 
     debugHitboxes.clear();
     createDebugBoxes(enemyShips.at(0));
@@ -186,8 +195,7 @@ void Game::updateAllShips() {
     //This should be split to log enemy and player events separately.
     for (Ship* ship: allShips) {
         std::vector<std::string> outputLog = ship->checkDamage();
-        delete ship->position;
-        ship->position = new sf::Vector2f(ship->shipSprite.getPosition());
+        ship->position = std::make_shared<sf::Vector2f>(ship->shipSprite.getPosition());
         for (std::string string: outputLog) {
             logEvent(string);
         }
@@ -204,6 +212,7 @@ void Game::renderProjectiles() {
 }
 
 void Game::moveProjectiles(Projectile* projectile, int i) {
+    torpedoTime += deltaTime;
     sf::Vector2f elapsedDistance = projectile->projectileSprite.getPosition() - projectile->spawnedAt;
     //if the projectile has travelled more than 400 units, delete it.
     float distanceLength = std::sqrt(elapsedDistance.x * elapsedDistance.x + elapsedDistance.y * elapsedDistance.y);
@@ -224,11 +233,33 @@ void Game::moveProjectiles(Projectile* projectile, int i) {
 
         //this is the default value, indicating that no value for a target was assigned.
         
-        if (projectile->targetPos != nullptr) {
-            goTo = *projectile->targetPos - projectile->getSprite().getPosition();
-        } else { 
-            goTo = projectile->directionOfTravel - projectile->spawnedAt;
-        } 
+
+        //linear interpolation
+        //create a vector that represents the direction to the target. Normalize the vector where the projectile
+        //starts pointing to and where it should end pointing to, then curve it to the target based on distance.
+        //t is squared to cause more aggressive curving as the distance increases.
+        if (projectile->targetingSystem) {
+            if (torpedoTime > 0.01f || !projectile->hasPositionInitialized) {
+                torpedoTime = 0;
+                float t = std::min(1.0f, std::max(0.0f, distanceLength / 100.0f));
+                sf::Vector2f directionToTarget = *projectile->targetPos - projectile->spawnedAt;
+
+                float length0 = std::sqrt(projectile->directionOfTravel.x * projectile->directionOfTravel.x + projectile->directionOfTravel.y * projectile->directionOfTravel.y);
+                float length1 = std::sqrt(directionToTarget.x * directionToTarget.x + directionToTarget.y * directionToTarget.y);
+                projectile->lastCalculatedPosition = (1 - t) * projectile->directionOfTravel / length0 + t * directionToTarget / length1;
+                projectile->hasPositionInitialized = true;
+            } 
+            goTo = projectile->lastCalculatedPosition;
+            
+        } else {
+            float t = std::min(1.0f, std::max(0.0f, distanceLength / 100.0f));
+            sf::Vector2f directionToTarget = projectile->targetPos2 - projectile->spawnedAt;
+
+            float length0 = std::sqrt(projectile->directionOfTravel.x * projectile->directionOfTravel.x + projectile->directionOfTravel.y * projectile->directionOfTravel.y);
+            float length1 = std::sqrt(directionToTarget.x * directionToTarget.x + directionToTarget.y * directionToTarget.y);
+            goTo = (1 - t) * projectile->directionOfTravel / length0 + t * directionToTarget / length1;
+        }
+        
 
         float rotation = (180.0f / M_PI) * atan2(goTo.y, goTo.x);
         projectile->projectileSprite.setRotation(rotation);
@@ -308,21 +339,31 @@ void Game::checkCollisions() {
 
 // will be run each frame. will eventually need code to check the type of weapon.
 void Game::fireWeapon(Ship& firingShip) {
-    //need to constantly update the sprite object in the Ship object. That's annoying.
-    sf::Vector2f parentTip = firingShip.shipSprite.getTransform().transformPoint({firingShip.shipSprite.getLocalBounds().height, firingShip.shipSprite.getLocalBounds().height / 2});
-    sf::Vector2f mousePosition = (sf::Vector2f)sf::Mouse::getPosition(*window);
+    //need to constantly update the sprite object in the Ship object. 
     
-    sf::Vector2f directionOfTravel = mousePosition;
-
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && weaponSelected){
+        sf::Vector2f parentTip = firingShip.shipSprite.getTransform().transformPoint({firingShip.shipSprite.getLocalBounds().height, firingShip.shipSprite.getLocalBounds().height / 2});
+        sf::Vector2f mousePosition = (sf::Vector2f)sf::Mouse::getPosition(*window);
+        float cosValue = cos(firingShip.shipSprite.getRotation() * M_PI / 180);
+        float sinValue = sin(firingShip.shipSprite.getRotation() * M_PI / 180);
+        
+        if (abs(cosValue) < 0.0001) {
+            cosValue = 0;
+        }
+        if (abs(sinValue) < 0.0001) {
+            sinValue = 0;
+        }
+        sf::Vector2f directionOfTravel = sf::Vector2f(cosValue, sinValue);
+        
         Projectile* torpedo = new Projectile("../resource/photontorpedo.png", parentTip.x, parentTip.y,
                                             directionOfTravel, 1000.0, 10);  
         for (Ship* ship: enemyShips) {
             sf::FloatRect shipBounds = ship->shipSprite.getGlobalBounds();
             if (shipBounds.contains(mousePosition)) {
                 torpedo->targetPos = ship->position;
+                torpedo->targetingSystem = true;
             } else {
-                torpedo->targetPos = nullptr;
+                torpedo->targetPos2 = mousePosition;
             }
         }   
 
@@ -436,9 +477,8 @@ void Game::update() {
     this->updateEvents();
     this->updatePlayer();
     this->updateEnemy();
-    this->checkCollisions();
     this->updateAllShips();
-    
+    this->checkCollisions();
 }
 
 void Game::render() {
@@ -451,6 +491,7 @@ void Game::render() {
     if (debugMode)
         renderDebugObjects();
     this->window->display();
+    //this->window->setView(view);
 }
 
 void Game::logEvent(std::string event) {
@@ -472,4 +513,19 @@ void Game::displayEvents() {
         positionOffset--;
         window->draw(text);
     }
+}
+
+bool Game::checkCollisionRectangleShape(sf::RectangleShape rect, sf::Vector2f vect) {
+    float x = rect.getPosition().x;
+    float y = rect.getPosition().y;
+
+    float angle = rect.getRotation() * M_PI / 180;
+
+    float offsetX = x * cos(angle) - y * sin(angle);
+    float offsetY = x * sin(angle) + y * cos(angle);
+
+    if (x <= vect.x <= offsetX && y <= vect.y <= offsetY) {
+        return true;
+    }
+    return false;
 }

@@ -16,6 +16,11 @@ Projectile::Projectile(std::string texturePath, float x, float y, sf::Vector2f d
     }
     this->projectileSprite.setPosition(posX, posY);
     this->projectileSprite.setTexture(projectileTexture);
+    this->targetPos = nullptr;
+    
+    this->targetingSystem = false;
+    this->missed = false;
+    this->hasPositionInitialized = false;
 }
 
 void Projectile::render(sf::RenderWindow* window) {

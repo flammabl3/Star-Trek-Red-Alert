@@ -12,6 +12,7 @@ class Game {
         sf::RenderWindow* window;
         sf::VideoMode videoMode;
         sf::Event event;
+        sf::View view;
 
         //Private functions
         void initVariables();
@@ -24,6 +25,7 @@ class Game {
         sf::Clock clock;
         sf::Clock timer;
         float deltaTime;
+        float torpedoTime;
         bool weaponSelected; // a variable for which weapon has been selected will eventually be necessary.
 
         std::vector<Projectile*> projectilesList;
@@ -92,4 +94,6 @@ class Game {
         void displayEvents();
 
         void createDebugBoxes(Ship* enemyShipObj);
+
+        bool checkCollisionRectangleShape(sf::RectangleShape rect, sf::Vector2f vect);
 };

@@ -117,7 +117,7 @@ bool SATHelper::checkCollision(sf::Sprite spriteA, sf::Sprite spriteB) {
             return false; // The sprites are not colliding
         }
     }
-    std::cout << "BOOM" << std::endl;
+    //std::cout << "BOOM" << std::endl;
     return true;
 }
 
@@ -136,7 +136,7 @@ bool SATHelper::checkCollision(sf::Sprite spriteA, sf::RectangleShape shapeB) {
             return false; // The sprites are not colliding
         }
     }
-    std::cout << "BOOM" << std::endl;
+    //std::cout << "BOOM" << std::endl;
     return true;
 }
 

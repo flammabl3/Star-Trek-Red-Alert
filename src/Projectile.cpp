@@ -42,4 +42,10 @@ Projectile(texturePath, x, y, directionOfTravel, speed, damage) {
     this->targetingSystem = false;
 }
 
+Disruptor::Disruptor(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage) : 
+Projectile(texturePath, x, y, directionOfTravel, speed, damage) {
+    this->hitChance = 70;
+    secondShot = false;
+    secondShotDelay = 0;
+}
 

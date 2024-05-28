@@ -418,7 +418,7 @@ std::vector<std::string> Room::fireOxygenPersonnelSwap(sf::Time time) {
             subsystem.operating->usingSubsystem = false;
             for (Personnel* crewmate: personnel) {
                 if (crewmate->health > 0 && crewmate->usingSubsystem == false) {
-                    events.push_back(subsystem.operating->getLogName() + " has been replaced by " + crewmate->getLogName());
+                    events.push_back(subsystem.operating->getLogName() + " has been replaced by " + crewmate->getLogName() + ".");
                     subsystem.operating = crewmate;
                     break;
                 }

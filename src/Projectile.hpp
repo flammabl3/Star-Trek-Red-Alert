@@ -7,6 +7,7 @@
 #include <memory>
 
 class System;
+class Ship;
 
 class Projectile {
     private:
@@ -31,7 +32,7 @@ class Projectile {
 
         void setFriendly();
         
-        ~Projectile();
+        virtual ~Projectile();
 };
 
 class Torpedo: public Projectile {
@@ -46,4 +47,21 @@ class Torpedo: public Projectile {
         
         Torpedo(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage);
         
+};
+
+class Disruptor: public Projectile {
+    private:
+
+    public: 
+        bool secondShot;
+        float secondShotDelay;
+        Ship* firingShip;
+        Disruptor(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage);
+};
+
+class Phaser: public Projectile {
+    private:
+        
+    public: 
+        Phaser(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage);
 };

@@ -26,9 +26,9 @@ class Game {
         sf::Clock timer;
         float deltaTime;
         float torpedoTime;
-        bool weaponSelected; // a variable for which weapon has been selected will eventually be necessary.
+        int weaponSelected; // a variable for which weapon has been selected will eventually be necessary.
 
-        std::vector<Torpedo*> projectilesList;
+        std::vector<Projectile*> projectilesList;
         std::vector<Ship*> enemyShips;
         std::vector<Ship*> allShips;
 
@@ -82,11 +82,16 @@ class Game {
 
         void updateAllShips();
 
-        void fireWeapon(Ship& firingShip);
+        void fireTorpedo(Ship& firingShip);
+        void fireDisruptor(Ship& firingShip);
+        void firePhaser(Ship& firingShip);
         void renderProjectiles(); 
     
 
         void moveTorpedoes(Torpedo* projectile, int i);
+        void moveDisruptors(Disruptor* projectile, int i);
+        void movePhasers(Phaser* phaser, int i);
+
 
         void checkCollisions();
 

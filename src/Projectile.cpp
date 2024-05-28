@@ -4,8 +4,6 @@ Projectile::Projectile(std::string texturePath, float x, float y, sf::Vector2f d
     projectileSprite.setOrigin(projectileSprite.getLocalBounds().width / 2, 0);
     friendly = false;
     this->speed = speed;
-    this->posX = x;
-    this->posY = y;
     this->spawnedAt.x = x;
     this->spawnedAt.y = y;
     this->directionOfTravel = directionOfTravel;
@@ -14,13 +12,13 @@ Projectile::Projectile(std::string texturePath, float x, float y, sf::Vector2f d
     if (!this->projectileTexture.loadFromFile(texturePath)) {
         std::cout << "Failed to load." << std::endl;
     }
-    this->projectileSprite.setPosition(posX, posY);
+    this->projectileSprite.setPosition(x, y);
     this->projectileSprite.setTexture(projectileTexture);
-    this->targetPos = nullptr;
     
-    this->targetingSystem = false;
+    this->touchingTarget = false;
     this->missed = false;
     this->hasPositionInitialized = false;
+    this->hitChance = 100;
 }
 
 void Projectile::render(sf::RenderWindow* window) {
@@ -38,3 +36,10 @@ void Projectile::setFriendly() {
 Projectile::~Projectile() {
     
 }
+
+Torpedo::Torpedo(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage) : 
+Projectile(texturePath, x, y, directionOfTravel, speed, damage) {
+    this->targetingSystem = false;
+}
+
+

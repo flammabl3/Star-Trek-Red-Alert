@@ -28,21 +28,26 @@ class Ship
         sf::Sprite shipSprite;
         sf::Texture shipTexture;
         sf::FloatRect boundingBox;
+        sf::RectangleShape shieldRect;
+        sf::Sprite shieldSprite;
+        sf::Texture shieldTexture;
 
 
         //Internal data
         std::map<std::string, System> shipSystems;
         int mass;
         int shields;
+        float shieldBubbleRadius;
         int power;
         double impulseSpeed;
         double warpSpeed;
         float totalCondition;
+        int shieldOpac;
         std::string name;
         std::string designation;
 
         //coordinate of a ship refers to its centre
-        std::shared_ptr<sf::Vector2f> position;
+        //std::shared_ptr<sf::Vector2f> position;
         float direction;
         
         bool friendly;
@@ -51,7 +56,7 @@ class Ship
         int width;
         int height;
 
-        Ship(std::map<std::string, System> shipSystems, int mass, float impulseSpeed, float warpSpeed, std::string name, std::string designation);
+        Ship(std::map<std::string, System> shipSystems, int mass, float impulseSpeed, float warpSpeed, float shields, std::string name, std::string designation);
 
         Ship();
 
@@ -69,6 +74,10 @@ class Ship
 
         void calculateSystemPositions();
 
+        void shieldHit(sf::Vector2f hitPos);
+
+        void shieldOpacMod();
+
         bool checkCollision(sf::Vector2f position);
 
         std::vector<std::string> checkDamage();
@@ -76,6 +85,8 @@ class Ship
         sf::RectangleShape returnHitbox();
 
         std::vector<std::string> fireOxygenPersonnelSwap(sf::Time time);
+
+        sf::RectangleShape setShield(int setShieldRadius);
         
         //~Ship();
         //define destructor later
@@ -113,13 +124,11 @@ class System {
 
         void setCoordinates(float x, float y, float width, float length);
 
-        std::string checkCollision(Projectile* projectile);
-
         bool checkCollision(sf::Vector2f vector);
 
         std::vector<std::string> calculateOperationalCapacity(sf::Time time);
 
-        std::vector<std::string> dealDamageToSystem(int damage);
+        std::string dealDamageToSystem(int damage);
         
         std::vector<std::string> fireOxygenPersonnelSwap(sf::Time time);
 

@@ -6,25 +6,23 @@
 #include <iostream>
 #include <memory>
 
+class System;
+
 class Projectile {
     private:
         
     public:
         sf::Sprite projectileSprite;
         sf::Texture projectileTexture;
-        float posX;
-        float posY;
         sf::Vector2f spawnedAt;
         sf::Vector2f directionOfTravel;
         float speed;
         std::string texturePath;
         bool friendly;
-        bool targetingSystem;
+        bool touchingTarget;
         bool missed;
         float damage;
-        std::shared_ptr<sf::Vector2f> targetPos;
-        sf::Vector2f targetPos2;
-        sf::Vector2f lastCalculatedPosition;
+        float hitChance;
         bool hasPositionInitialized;
         
         Projectile(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage);
@@ -36,32 +34,16 @@ class Projectile {
         ~Projectile();
 };
 
-class Torpedo: Projectile {
+class Torpedo: public Projectile {
     private:
         
     public:
-        sf::Sprite projectileSprite;
-        sf::Texture projectileTexture;
-        float posX;
-        float posY;
-        sf::Vector2f spawnedAt;
-        sf::Vector2f directionOfTravel;
-        float speed;
-        std::string texturePath;
-        bool friendly;
         bool targetingSystem;
-        bool missed;
-        float damage;
-        sf::Vector2f* targetPos;
-        sf::Vector2f targetPos2;
+        System* targetSystemObj;
+        sf::Vector2f targetPos;
+        std::string targetSystem;
         sf::Vector2f lastCalculatedPosition;
-        bool hasPositionInitialized;
         
         Torpedo(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage);
-        void render(sf::RenderWindow* window);
-        sf::Sprite getSprite();
-
-        void setFriendly();
         
-        ~Torpedo();
 };

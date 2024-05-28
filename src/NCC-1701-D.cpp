@@ -247,7 +247,7 @@
     Ship getEnterprise() {
         initializeEnterprise enterpriseHelper = initializeEnterprise();
         // all ships will be assumed to have an impulse speed of 0.25c. for now.
-        Ship enterprise = Ship(enterpriseHelper.systemsList, 5000000, 0.25, 9.4, std::string("USS Enterprise"), std::string("NCC-1701-D")); 
+        Ship enterprise = Ship(enterpriseHelper.systemsList, 5000000, 0.25, 9.4, 100, std::string("USS Enterprise"), std::string("NCC-1701-D")); 
 
         for (auto& pair: enterprise.shipSystems) {
             System& system = pair.second;

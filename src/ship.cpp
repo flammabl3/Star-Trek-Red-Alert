@@ -4,10 +4,11 @@
 #include "random0_n.hpp"
 
 
-Ship::Ship(std::map<std::string, System> shipSystems, int mass, float impulseSpeed, float warpSpeed, std::string name, std::string designation) {
+Ship::Ship(std::map<std::string, System> shipSystems, int mass, float impulseSpeed, float warpSpeed, float shields, std::string name, std::string designation) {
     this->shipSystems = shipSystems;
     this->impulseSpeed = impulseSpeed;
     this->warpSpeed = warpSpeed;
+    this->shields = shields;
     this->mass = mass;
     this->name = name;
     this->designation = designation;
@@ -16,6 +17,7 @@ Ship::Ship(std::map<std::string, System> shipSystems, int mass, float impulseSpe
     this->shields = 100;
     this->power = 100;
     this->time = clock.getElapsedTime();
+    this->shieldOpac = 0;
 }
 
 Ship::Ship() {
@@ -29,6 +31,15 @@ void Ship::setSFMLObjects(std::string resourcePath) {
     }
     shipSprite.setTexture(this->shipTexture);
     shipSprite.setOrigin(shipSprite.getLocalBounds().width / 2, shipSprite.getLocalBounds().height / 2);
+
+    if (!this->shieldTexture.loadFromFile("../resource/shield.png")) {
+        std::cout << "Failed to load." << std::endl;
+    }
+    shieldSprite.setColor(sf::Color(255, 255, 255, 0));
+
+    shieldSprite.setTexture(this->shieldTexture);
+    shieldSprite.setOrigin(50, 50);
+    
 }
 
 void Ship::setSize(int l, int w, int h) {
@@ -54,6 +65,30 @@ bool Ship::checkCollision(sf::Vector2f position) {
         return true;
     }
     return false;
+}
+
+//use dot product and vector magnitude to find the angle at which the projectile hit, to show the shield hit at that spot.
+void Ship::shieldHit(sf::Vector2f b) {
+    sf::Vector2f a = this->shipSprite.getPosition();
+    sf::Vector2f c = a - b;
+    double dotProduct = a.x * c.x + a.y * c.y;
+    double magnitudeA = std::sqrt(a.x * a.x + a.y * a.y);
+    double magnitudeB = std::sqrt(c.x * c.x + c.y * c.y);
+
+    double angle = dotProduct / (magnitudeA * magnitudeB);
+    angle = acos(angle);
+    angle = angle * 180.0 / M_PI;
+
+    //adjust the position to be correct
+    shieldSprite.setRotation(180 - angle);
+    shieldOpac = 255;
+    shieldSprite.setColor(sf::Color(255, 255, 255, shieldOpac));
+}
+
+void Ship::shieldOpacMod() {
+    if (shieldOpac > 0) 
+        shieldOpac--;
+    shieldSprite.setColor(sf::Color(255, 255, 255, shieldOpac));
 }
 
 System::System(std::string systemType, std::vector<Room> rooms, std::vector<Personnel*> personnel){
@@ -84,6 +119,26 @@ void System::setHitbox(Ship* ship) {
     hitbox.setRotation(ship->shipSprite.getRotation());
 }
 
+sf::RectangleShape Ship::setShield(int shieldBubbleRadius) {
+    this->shieldBubbleRadius = shieldBubbleRadius;
+    sf::Vector2f shipPosition = this->shipSprite.getPosition();
+    float angle = this->shipSprite.getRotation() * M_PI / 180; // convert to radians
+
+    // Create the hitbox with the appropriate dimensions
+    shieldRect = sf::RectangleShape(sf::Vector2f(shieldBubbleRadius, shieldBubbleRadius));
+    shieldRect.setOrigin(shieldBubbleRadius/2, shieldBubbleRadius/2); // set origin to the center of the hitbox
+
+    // Set the position and rotation of the hitbox
+    shieldRect.setPosition(shipSprite.getPosition());
+    shieldRect.setRotation(shipSprite.getRotation());
+
+    shieldRect.setFillColor(sf::Color(255,255,255,0));
+    shieldRect.setOutlineColor(sf::Color(255,255,0,255));
+    shieldRect.setOutlineThickness(1);
+
+    return shieldRect;
+}
+
 
 //DEBUG
 sf::RectangleShape System::returnHitbox() {
@@ -110,39 +165,17 @@ void System::setCoordinates(float x, float y, float width, float length) {
     this->length = length;
 }
 
-
-std::string System::checkCollision(Projectile* projectile) {
-    std::string outputString;
-    sf::Vector2f projectilePos = projectile->projectileSprite.getPosition();
-    float x = this->hitbox.getPosition().x;
-    float y = this->hitbox.getPosition().y;
-
-    float angle = hitbox.getRotation() * M_PI / 180;
-
-    float offsetX = x * cos(angle) - y * sin(angle);
-    float offsetY = x * sin(angle) + y * cos(angle);
-
-    if (x <= projectilePos.x <= offsetX && y <= projectilePos.y <= offsetY) {
-        if (this->operationalCapacity > 0) {
-            this->operationalCapacity -= projectile->damage;
-            outputString = this->systemType + " has been hit!";
-        //this should eventually be replaced by a function, so that the ship can check for damage every frame, especially from things like fire.
-        }
-    }
-    
-    return outputString;
-}
-
 bool System::checkCollision(sf::Vector2f vector) {
-    float x = this->hitbox.getPosition().x;
-    float y = this->hitbox.getPosition().y;
+    sf::Vector2f translatedVect = vector - hitbox.getPosition();
 
-    float angle = hitbox.getRotation() * M_PI / 180;
+    float theta = -hitbox.getRotation() * M_PI / 180.0f;
+    sf::Vector2f rotatedVect;
+    rotatedVect.x = translatedVect.x * cos(theta) - translatedVect.y * sin(theta);
+    rotatedVect.y = translatedVect.x * sin(theta) + translatedVect.y * cos(theta);
 
-    float offsetX = x * cos(angle) - y * sin(angle);
-    float offsetY = x * sin(angle) + y * cos(angle);
-
-    if (x <= vector.x <= offsetX && y <= vector.y <= offsetY) {
+    float hw = hitbox.getSize().x / 2.0f; 
+    float hh = hitbox.getSize().y / 2.0f; 
+    if ((-hw <= rotatedVect.x && rotatedVect.x <= hw) && (-hh <= rotatedVect.y && rotatedVect.y <= hh)) {
         return true;
     }
     return false;
@@ -287,11 +320,12 @@ std::vector<std::string> Room::dealDamageToRoom(int damage) {
     return outputPersonnel;
 }
 
-std::vector<std::string> System::dealDamageToSystem(int damage) {
-    std::vector<std::string> events;
+std::string System::dealDamageToSystem(int damage) {
+    std::string events;
     std::vector<Room>::iterator randomRoom = rooms.begin(); 
     std::advance(randomRoom, random0_n(rooms.size()));
-    
+    events = this->systemType + " has been hit!";
+
     randomRoom->dealDamageToRoom(damage);
     return events;
 }

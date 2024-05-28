@@ -28,7 +28,7 @@ class Game {
         float torpedoTime;
         bool weaponSelected; // a variable for which weapon has been selected will eventually be necessary.
 
-        std::vector<Projectile*> projectilesList;
+        std::vector<Torpedo*> projectilesList;
         std::vector<Ship*> enemyShips;
         std::vector<Ship*> allShips;
 
@@ -42,9 +42,10 @@ class Game {
         //debug objects
         bool debugMode;
         std::vector<sf::RectangleShape> debugHitboxes;
+        std::vector<sf::RectangleShape> enemyHitboxes;
 
         //for moving the enemy for test purposes
-        float mov = 0.2;
+        float mov;
 
 
         SATHelper satHelper;
@@ -71,9 +72,11 @@ class Game {
         void movePlayer();
         void renderPlayer();
 
+        void createEnemyHitboxes(Ship* enemyShip);
         void initEnemy();
         void renderEnemy();
         void updateEnemy();
+        void renderEnemyHitboxes();
 
         void showRoomDamageEnemy();
 
@@ -81,7 +84,9 @@ class Game {
 
         void fireWeapon(Ship& firingShip);
         void renderProjectiles(); 
-        void moveProjectiles(Projectile* projectile, int i);
+    
+
+        void moveTorpedoes(Torpedo* projectile, int i);
 
         void checkCollisions();
 

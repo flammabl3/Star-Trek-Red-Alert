@@ -63,5 +63,9 @@ class Phaser: public Projectile {
     private:
         
     public: 
+        float phaserTimer;
+        float phaserScaleX;
+        sf::RectangleShape phaserRect;
+        bool hasCollided;
         Phaser(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage);
 };

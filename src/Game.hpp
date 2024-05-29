@@ -54,7 +54,7 @@ class Game {
 
         //log for recording ship, crew, systems damage and other events.
         std::vector<std::string> eventLog;
-
+        std::vector<std::tuple<sf::Text, int>> miniTextVect;
     public:
         //Constructors and Destructors
         Game();
@@ -85,6 +85,7 @@ class Game {
         void fireTorpedo(Ship& firingShip);
         void fireDisruptor(Ship& firingShip);
         void firePhaser(Ship& firingShip);
+        void fireTorpedoSpread(Ship& firingShip);
         void renderProjectiles(); 
     
 
@@ -102,6 +103,10 @@ class Game {
         void logEvent(std::string event);
 
         void displayEvents();
+
+        void miniTextCreate(std::string text, sf::Vector2f pos);
+
+        void displayMiniText();
 
         void createDebugBoxes(Ship* enemyShipObj);
 

@@ -18,6 +18,7 @@ Ship::Ship(std::map<std::string, System> shipSystems, int mass, float impulseSpe
     this->power = 100;
     this->time = clock.getElapsedTime();
     this->shieldOpac = 0;
+    this->shieldOffset = sf::Vector2f(0, 0);
 }
 
 Ship::Ship() {
@@ -39,7 +40,7 @@ void Ship::setSFMLObjects(std::string resourcePath) {
 
     shieldSprite.setTexture(this->shieldTexture);
     shieldSprite.setOrigin(50, 50);
-    
+    shieldSprite.setScale(0.25, 1);
 }
 
 void Ship::setSize(int l, int w, int h) {
@@ -69,6 +70,9 @@ bool Ship::checkCollision(sf::Vector2f position) {
 
 //use dot product and vector magnitude to find the angle at which the projectile hit, to show the shield hit at that spot.
 void Ship::shieldHit(sf::Vector2f b) {
+
+    //move the shield sprite to the edge of the shield square radius.
+    shieldOffset = this->shipSprite.getPosition() - b;
     sf::Vector2f a = this->shipSprite.getPosition();
     sf::Vector2f c = a - b;
     double dotProduct = a.x * c.x + a.y * c.y;
@@ -86,6 +90,9 @@ void Ship::shieldHit(sf::Vector2f b) {
 }
 
 void Ship::shieldOpacMod() {
+    shieldSprite.setPosition(this->shipSprite.getPosition() - shieldOffset);
+    shieldRect.setPosition(shipSprite.getPosition());
+    shieldRect.setRotation(shipSprite.getRotation());
     if (shieldOpac > 0) 
         shieldOpac--;
     shieldSprite.setColor(sf::Color(255, 255, 255, shieldOpac));

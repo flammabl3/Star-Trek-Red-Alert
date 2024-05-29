@@ -47,5 +47,26 @@ Projectile(texturePath, x, y, directionOfTravel, speed, damage) {
     this->hitChance = 70;
     secondShot = false;
     secondShotDelay = 0;
+    this->projectileSprite.setScale(4, 1);
+}
+
+Phaser::Phaser(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage) : 
+Projectile(texturePath, x, y, directionOfTravel, speed, damage) {
+    this->hitChance = 100;
+    this->projectileSprite.setScale(1, 0.25);
+    phaserTimer = 0;
+    phaserScaleX = 0;
+
+    //hide sprite for testing
+    //this->projectileSprite.setColor(sf::Color(255, 255, 255, 0));
+
+    sf::Rect localBounds = projectileSprite.getLocalBounds();
+
+    phaserRect = sf::RectangleShape(sf::Vector2f(localBounds.getSize().x, localBounds.getSize().y));
+    phaserRect.setRotation(projectileSprite.getRotation());
+    phaserRect.setPosition(projectileSprite.getPosition());
+
+    phaserRect.setFillColor(sf::Color(255,255,0,128));
+
 }
 

@@ -89,13 +89,20 @@ void Game::updatePlayer() {
             fireDisruptor(playerShipObj); 
             weaponSelected = 0;
         }
+        if (weaponSelected == 3) {
+            firePhaser(playerShipObj);
+            weaponSelected = 0;
+        }
+        if (weaponSelected == 4) {
+            fireTorpedoSpread(playerShipObj); 
+            weaponSelected = 0;
+        }
     }
     playerShipObj.shieldOpacMod();
 }
 
 void Game::renderPlayer() {
     playerShipObj.render(this->window);
-    playerShipObj.shieldSprite.setPosition(playerShipObj.shieldRect.getPosition());
     this->window->draw(playerShipObj.shieldSprite);
 }
 
@@ -154,10 +161,11 @@ void Game::initEnemy() {
     Ship* enemyShipObj = getEnterprisePointer();
     enemyShipObj->setSFMLObjects("../resource/Ent-D.png");
     enemyShipObj->shipSprite.setPosition(300, 100);
-    enemyShips.push_back(enemyShipObj);
-    allShips.push_back(enemyShipObj);
     enemyShipObj->shipSprite.setRotation(110);
     enemyShipObj->friendly = false;
+    enemyShipObj->setShield(300);
+    enemyShips.push_back(enemyShipObj);
+    allShips.push_back(enemyShipObj);
 }
 
 void Game::createEnemyHitboxes(Ship* enemyShipObj) {
@@ -172,6 +180,7 @@ void Game::createDebugBoxes(Ship* enemyShipObj) {
     SATHelper sat;
 
     debugHitboxes.push_back(enemyShipObj->returnHitbox());
+    debugHitboxes.push_back(enemyShipObj->shieldRect);
 
     for (auto& pair : enemyShipObj->shipSystems) {
         System& system = pair.second;
@@ -188,12 +197,17 @@ void Game::createDebugBoxes(Ship* enemyShipObj) {
     for (auto& point: points) {
         debugHitboxes.push_back(point);
     }
+    for (int i = 0; i < projectilesList.size(); i++) {
+        if (dynamic_cast<Phaser*>(projectilesList.at(i)) != nullptr) {
+            Phaser* p = dynamic_cast<Phaser*>(projectilesList.at(i));
+            debugHitboxes.push_back(p->phaserRect);
+        }
+    }
 }
 
 void Game::renderEnemy() {
     for (int i = 0; i < enemyShips.size(); i++) {
         enemyShips.at(i)->render(this->window);
-        enemyShips.at(i)->shieldSprite.setPosition(enemyShips.at(i)->shieldRect.getPosition());
         this->window->draw(enemyShips.at(i)->shieldSprite);
     }
 }
@@ -229,15 +243,17 @@ void Game::updateAllShips() {
         for (std::string string: outputLog) {
             logEvent(string);
         }
-        debugHitboxes.push_back(ship->setShield(300));
     }
 }
 
 void Game::renderProjectiles() {
     for (int i = 0; i < projectilesList.size(); i++) {
-        //this function, render(), belongs to the Projectile class.
+        
+        //don't render if the disruptor shot has the secondShot condition, which will hide the projectile until it is time to fire.
         if (dynamic_cast<Disruptor*>(projectilesList.at(i)) == nullptr || !dynamic_cast<Disruptor*>(projectilesList.at(i))->secondShot)
             projectilesList.at(i)->render(this->window);
+            //this function, render(), belongs to the Projectile class.
+
         //if the dynamic cast does not return nullptr, that means it is that type.
         //necessary because pushing a subclass to a vector of base class results in an implicit upcast
         if (dynamic_cast<Torpedo*>(projectilesList.at(i)) != nullptr) {
@@ -245,9 +261,9 @@ void Game::renderProjectiles() {
         }
         else if (dynamic_cast<Disruptor*>(projectilesList.at(i)) != nullptr)
             moveDisruptors(dynamic_cast<Disruptor*>(projectilesList.at(i)), i);
-        //moveTorpedoes() should eventually be moved to the update loop.
 
-        //don't render if the disruptor shot has the secondShot condition, which will hide the projectile until it is time to fire.
+        else if (dynamic_cast<Phaser*>(projectilesList.at(i)) != nullptr)
+            movePhasers(dynamic_cast<Phaser*>(projectilesList.at(i)), i);
     }
 }
 
@@ -354,6 +370,30 @@ void Game::moveDisruptors(Disruptor* projectile, int i) {
     }       
 }
 
+void Game::movePhasers(Phaser* projectile, int i) {
+            sf::Vector2f goTo;
+            goTo = projectile->directionOfTravel - projectile->spawnedAt;
+
+            float rotation = (180.0f / M_PI) * atan2(goTo.y, goTo.x);
+            projectile->projectileSprite.setRotation(rotation);
+
+
+            projectile->phaserTimer += deltaTime;
+            if (projectile->phaserTimer > 0.01 && !projectile->hasCollided) {
+                projectile->phaserScaleX += 5;
+                projectile->projectileSprite.setScale(projectile->phaserScaleX, 0.25);
+                projectile->phaserTimer = 0;
+                projectile->phaserRect.setScale(projectile->phaserScaleX, 0.25);
+                projectile->phaserRect.setPosition(projectile->projectileSprite.getPosition());
+                projectile->phaserRect.setRotation(rotation);
+            }
+            if (projectile->phaserScaleX > 300) {
+                projectilesList.erase(projectilesList.begin() + i);
+                delete projectile;
+                projectile = nullptr;
+            }
+}
+
 void Game::checkCollisions() {
     bool hit = false;
     int projectileDamage = 0;
@@ -408,6 +448,7 @@ void Game::checkCollisions() {
                                             } else {
                                                 std::cout << "MISS" << std::endl;
                                                 projectile->missed = true;
+                                                miniTextCreate("MISS", projectile->projectileSprite.getPosition());
                                             }
                                         }
                                     }
@@ -452,8 +493,9 @@ void Game::checkCollisions() {
                                     
                                     continue; // Move to the next iteration
                                 } else {
-                                    torpedo->missed = true;
                                     std::cout << "MISS" << std::endl;
+                                    torpedo->missed = true;
+                                    miniTextCreate("MISS", projectile->projectileSprite.getPosition());
                                 }
                             }
                         } else if (Disruptor* disruptor = dynamic_cast<Disruptor*>(projectile); disruptor != nullptr) {
@@ -496,6 +538,7 @@ void Game::checkCollisions() {
                                 } else {
                                     disruptor->missed = true;
                                     std::cout << "MISS" << std::endl;
+                                    miniTextCreate("MISS", projectile->projectileSprite.getPosition());
                                 }
                             }
                         }
@@ -529,7 +572,7 @@ void Game::fireTorpedo(Ship& firingShip) {
     sf::Vector2f directionOfTravel = sf::Vector2f(cosValue, sinValue);
     
     Torpedo* torpedo = new Torpedo("../resource/photontorpedo.png", parentTip.x, parentTip.y,
-                                        directionOfTravel, 1000.0, 10);  
+                                        directionOfTravel, 1000.0, 10);
     for (Ship* ship: enemyShips) {
         sf::FloatRect shipBounds = ship->shipSprite.getGlobalBounds();
         if (shipBounds.contains(mousePosition)) {
@@ -568,6 +611,55 @@ void Game::fireTorpedo(Ship& firingShip) {
         torpedo->setFriendly(); 
     this->projectilesList.insert(projectilesList.end(), torpedo);
 
+}
+
+void Game::fireTorpedoSpread(Ship& firingShip) {
+
+    //need to constantly update the sprite object in the Ship object. 
+    
+    sf::Vector2f parentTip = firingShip.shipSprite.getTransform().transformPoint({firingShip.shipSprite.getLocalBounds().height, firingShip.shipSprite.getLocalBounds().height / 2});
+    
+    float cosValue = cos(firingShip.shipSprite.getRotation() * M_PI / 180);
+    float sinValue = sin(firingShip.shipSprite.getRotation() * M_PI / 180);
+    
+    if (abs(cosValue) < 0.0001) {
+        cosValue = 0;
+    }
+    if (abs(sinValue) < 0.0001) {
+        sinValue = 0;
+    }
+
+    for (int i = 0; i < 5; i++) {
+        sf::Vector2f mousePosition = (sf::Vector2f)sf::Mouse::getPosition(*window);
+        sf::Vector2f directionOfTravel = sf::Vector2f(cosValue, sinValue);
+        
+        Torpedo* torpedo = new Torpedo("../resource/photontorpedo.png", parentTip.x, parentTip.y,
+                                            directionOfTravel, 1000.0, 10);
+        for (Ship* ship: enemyShips) {
+            sf::FloatRect shipBounds = ship->shipSprite.getGlobalBounds();
+            if (shipBounds.contains(mousePosition)) {
+                // if the ship is clicked but not a system, just target a random system.
+                std::map<std::string, System>::iterator randomSystem = ship->shipSystems.begin();
+                std::advance(randomSystem, random0_n(ship->shipSystems.size()));
+                if (randomSystem != ship->shipSystems.end()) {
+                    System& system = randomSystem->second;
+                    torpedo->targetSystem = system.systemType;
+                    torpedo->targetSystemObj = &system;
+                    torpedo->targetPos = torpedo->targetSystemObj->hitbox.getPosition();
+                    torpedo->targetingSystem = true;
+                }
+            } else {
+                mousePosition += sf::Vector2f(randomNegPos() * random0_n(150), randomNegPos() * random0_n(150));
+                torpedo->targetPos = mousePosition;
+            }
+        }   
+
+        torpedo->damage = 2;
+        torpedo->hitChance = 50;
+        if (firingShip.friendly)
+            torpedo->setFriendly(); 
+        this->projectilesList.insert(projectilesList.end(), torpedo);
+    }
 }
 
 void Game::fireDisruptor(Ship& firingShip) {
@@ -637,6 +729,21 @@ void Game::movePlayer() {
 
 }
 
+void Game::firePhaser(Ship& firingShip) {
+    sf::Vector2f parentTip = firingShip.shipSprite.getTransform().transformPoint({firingShip.shipSprite.getLocalBounds().height, firingShip.shipSprite.getLocalBounds().height / 2});
+    sf::Vector2f mousePosition = (sf::Vector2f)sf::Mouse::getPosition(*window);
+    
+    Phaser* phaser = new Phaser("../resource/phaser.png", parentTip.x, parentTip.y,
+                                        mousePosition, 1700.0, 6);  
+
+    if (firingShip.friendly) {
+        phaser->setFriendly();
+    }
+    phaser->damage = 1;
+
+    this->projectilesList.insert(projectilesList.end(), phaser);
+}
+
 Game::Game() {
     this->initVariables();
     this->initWindow();
@@ -673,6 +780,20 @@ void Game::updateEvents() {
                 // 1 key was pressed, weapon in slot 1 is now active. For now it will be a photon torpedo.
                 weaponSelected = 2;
                 std::cout << "weapon 2 selected" << std::endl;
+            }
+
+            if (event.key.scancode == sf::Keyboard::Scan::Num3)
+            {
+                // 1 key was pressed, weapon in slot 1 is now active. For now it will be a photon torpedo.
+                weaponSelected = 3;
+                std::cout << "weapon 3 selected" << std::endl;
+            }
+
+            if (event.key.scancode == sf::Keyboard::Scan::Num4)
+            {
+                // 1 key was pressed, weapon in slot 1 is now active. For now it will be a photon torpedo.
+                weaponSelected = 4;
+                std::cout << "weapon 4 selected" << std::endl;
             }
 
             if (event.key.scancode == sf::Keyboard::Scan::Num0)
@@ -712,6 +833,7 @@ void Game::render() {
     renderPlayer();
     renderEnemy();
     displayEvents();
+    displayMiniText();
     showRoomDamageEnemy();
     renderEnemyHitboxes();
 
@@ -740,6 +862,30 @@ void Game::displayEvents() {
         positionOffset--;
         window->draw(text);
     }
+}
+
+void Game::miniTextCreate(std::string text, sf::Vector2f pos) {
+    sf::Text miniText(text, font);
+    miniText.setScale(0.5, 0.5);
+    //text will become more transparent as it moves up the log.
+    miniText.setColor(sf::Color(255, 255, 255, 255));
+    miniText.setPosition(pos);
+    miniTextVect.push_back(std::tuple(miniText, 255));
+}
+
+void Game::displayMiniText() {
+    std::vector<std::tuple<sf::Text, int>>::iterator it;
+    for (it = miniTextVect.begin(); it < miniTextVect.end(); it++) {
+        auto& tuple = *it;
+        if (std::get<1>(tuple) > 0) {
+            std::get<0>(tuple).setColor(sf::Color(255, 255, 255, std::get<1>(tuple)));
+            std::get<1>(tuple)--;
+            window->draw(std::get<0>(tuple));
+        } else {
+            miniTextVect.erase(it);
+        }
+    }
+    
 }
 
 bool Game::checkCollisionRectangleShape(sf::RectangleShape rect, sf::Vector2f vect) {

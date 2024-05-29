@@ -31,6 +31,7 @@ class Ship
         sf::RectangleShape shieldRect;
         sf::Sprite shieldSprite;
         sf::Texture shieldTexture;
+        sf::Vector2f shieldOffset;
 
 
         //Internal data

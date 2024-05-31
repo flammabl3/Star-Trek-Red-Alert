@@ -30,9 +30,6 @@ std::vector<sf::Vector2f> SATHelper::getPoints(sf::RectangleShape shape) {
     sf::FloatRect sizeRect = shape.getLocalBounds();
     shape.setOrigin(sizeRect.width / 2, sizeRect.height / 2);
     sf::Vector2f shapePos = shape.getPosition();
-    //changing the origin of a sf::RectangleShape changes its position, so we have to adjust it and get the position again.
-    shape.setPosition(shapePos.x + sizeRect.width / 2, shapePos.y + sizeRect.height / 2);
-    shapePos = shape.getPosition();
     std::vector<sf::Vector2f> returnVectors;
     float angle = shape.getRotation() * M_PI / 180;
     float c = cos(angle);
@@ -52,6 +49,7 @@ std::vector<sf::Vector2f> SATHelper::getPoints(sf::RectangleShape shape) {
 
     return returnVectors;
 }
+
 
 std::vector<sf::Vector2f> SATHelper::getAxes(std::vector<sf::Vector2f> pointsA) {
     std::vector<sf::Vector2f> returnVector;
@@ -124,6 +122,25 @@ bool SATHelper::checkCollision(sf::Sprite spriteA, sf::Sprite spriteB) {
 bool SATHelper::checkCollision(sf::Sprite spriteA, sf::RectangleShape shapeB) {
 
     pointsA = getPoints(spriteA);
+    
+    pointsB = getPoints(shapeB);
+    
+    axes = getAxes(pointsA);
+
+    for (auto& axis: axes) {
+        projection projA = (project(pointsA, axis));
+        projection projB = (project(pointsB, axis));
+        if (!areProjectionsOverlapping(projA, projB)) {
+            return false; // The sprites are not colliding
+        }
+    }
+    //std::cout << "BOOM" << std::endl;
+    return true;
+}
+
+bool SATHelper::checkCollision(sf::RectangleShape shapeA, sf::RectangleShape shapeB) {
+
+    pointsA = getPoints(shapeA);
     
     pointsB = getPoints(shapeB);
     

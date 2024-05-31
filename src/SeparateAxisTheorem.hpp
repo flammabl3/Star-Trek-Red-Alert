@@ -51,6 +51,8 @@ class SATHelper {
 
         bool checkCollision(sf::Sprite spriteA, sf::RectangleShape shapeB);
 
+        bool checkCollision(sf::RectangleShape shapeA, sf::RectangleShape shapeB);
+
         sf::RectangleShape returnBoundingBox(sf::Sprite sprite);
         std::vector<sf::RectangleShape> returnNormals(sf::Sprite sprite);
         sf::RectangleShape returnProjections(sf::Sprite sprite);

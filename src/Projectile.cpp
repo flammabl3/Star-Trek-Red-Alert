@@ -52,6 +52,8 @@ Projectile(texturePath, x, y, directionOfTravel, speed, damage) {
 
 Phaser::Phaser(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage) : 
 Projectile(texturePath, x, y, directionOfTravel, speed, damage) {
+    collidedDeleteTimer = 0;
+    hasCollided = false;
     this->hitChance = 100;
     this->projectileSprite.setScale(1, 0.25);
     phaserTimer = 0;
@@ -61,12 +63,14 @@ Projectile(texturePath, x, y, directionOfTravel, speed, damage) {
     //this->projectileSprite.setColor(sf::Color(255, 255, 255, 0));
 
     sf::Rect localBounds = projectileSprite.getLocalBounds();
-
+    
     phaserRect = sf::RectangleShape(sf::Vector2f(localBounds.getSize().x, localBounds.getSize().y));
+    phaserRect.setOrigin(phaserRect.getSize().x / 2, phaserRect.getSize().y / 2);
     phaserRect.setRotation(projectileSprite.getRotation());
     phaserRect.setPosition(projectileSprite.getPosition());
 
     phaserRect.setFillColor(sf::Color(255,255,0,128));
+    //phaserRect.setOutlineColor(sf::Color(255,255,0,0));
 
 }
 

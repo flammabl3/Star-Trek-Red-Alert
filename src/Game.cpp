@@ -376,38 +376,42 @@ void Game::moveDisruptors(Disruptor* projectile, int i) {
 }
 
 void Game::movePhasers(Phaser* projectile, int i) {
-            sf::Vector2f goTo;
-            goTo = projectile->directionOfTravel - projectile->spawnedAt;
+    sf::Vector2f goTo;
+    if (projectile->targetShip != nullptr) {
+        goTo = projectile->targetShip->shipSprite.getPosition() - projectile->spawnedAt;
+    } else { 
+        goTo = projectile->directionOfTravel - projectile->spawnedAt;
+    }
 
-            float rotation = (180.0f / M_PI) * atan2(goTo.y, goTo.x);
-            projectile->projectileSprite.setRotation(rotation);
+
+    float rotation = (180.0f / M_PI) * atan2(goTo.y, goTo.x);
+    projectile->projectileSprite.setRotation(rotation);
 
 
-            projectile->phaserTimer += deltaTime;
-            if (projectile->phaserTimer > 0.01 && !projectile->hasCollided) {
-                projectile->phaserScaleX += 5;
-                projectile->projectileSprite.setScale(projectile->phaserScaleX, 0.25);
-                projectile->phaserTimer = 0;
+    projectile->phaserTimer += deltaTime;
+    if (projectile->phaserTimer > 0.01 && !projectile->hasCollided) {
+        projectile->phaserScaleX += 5;
+        projectile->projectileSprite.setScale(projectile->phaserScaleX, 0.25);
+        projectile->phaserTimer = 0;
 
-                //send phaserRect to the end of the phaser for collision.
-                sf::Transform transform = projectile->projectileSprite.getTransform();
-                sf::FloatRect bounds = projectile->projectileSprite.getLocalBounds();
+        //send phaserRect to the end of the phaser for collision.
+        sf::Transform transform = projectile->projectileSprite.getTransform();
+        sf::FloatRect bounds = projectile->projectileSprite.getLocalBounds();
 
-                // local point at the end of the sprite
-                sf::Vector2f localPoint(bounds.width, bounds.height / 2);
+        // local point at the end of the sprite
+        sf::Vector2f localPoint(bounds.width, bounds.height / 2);
 
-                // transform this point
-                sf::Vector2f globalPoint = transform.transformPoint(localPoint);
+        // transform this point
+        sf::Vector2f globalPoint = transform.transformPoint(localPoint);
 
-                projectile->phaserRect.setPosition(globalPoint);
-                projectile->phaserRect.setRotation(projectile->projectileSprite.getRotation());
-
-            }
-            if (projectile->phaserScaleX > 300) {
-                projectilesList.erase(projectilesList.begin() + i);
-                delete projectile;
-                projectile = nullptr;
-            }
+        projectile->phaserRect.setPosition(globalPoint);
+        projectile->phaserRect.setRotation(projectile->projectileSprite.getRotation());
+    }
+    if (projectile->phaserScaleX > 300) {
+        projectilesList.erase(projectilesList.begin() + i);
+        delete projectile;
+        projectile = nullptr;
+    }
 }
 
 void Game::checkCollisions() {
@@ -455,6 +459,7 @@ void Game::checkCollisions() {
                 if (!((ship->friendly && projectile->friendly) || (!ship->friendly && !projectile->friendly))) {
                     if (satHelper.checkCollision(ship->shieldRect, phaser->phaserRect) && ship->shields > 0) {
                         phaser->hasCollided = true;
+                        phaser->targetShip = ship;
                         ship->shields -= projectile->damage;
                         ship->shieldHit(phaser->phaserRect.getPosition());
                         if (ship->shields < 0) {
@@ -469,6 +474,7 @@ void Game::checkCollisions() {
                     } else if (!phaser->missed && satHelper.checkCollision(ship->shipSprite, phaser->phaserRect)) {
                         if (random0_n(100) <= phaser->hitChance) {
                             phaser->hasCollided = true;
+                            phaser->targetShip = ship;
                             if (projectileDamage > 0) {
                                 ship->totalCondition -= projectileDamage;
                                 logEvent("Ship has taken damage.");

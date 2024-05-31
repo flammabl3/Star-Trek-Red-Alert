@@ -58,6 +58,7 @@ Projectile(texturePath, x, y, directionOfTravel, speed, damage) {
     this->projectileSprite.setScale(1, 0.25);
     phaserTimer = 0;
     phaserScaleX = 0;
+    this->targetShip = nullptr;
 
     //hide sprite for testing
     //this->projectileSprite.setColor(sf::Color(255, 255, 255, 0));

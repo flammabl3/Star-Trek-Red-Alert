@@ -68,5 +68,6 @@ class Phaser: public Projectile {
         sf::RectangleShape phaserRect;
         bool hasCollided;
         float collidedDeleteTimer;
+        Ship* targetShip;
         Phaser(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage);
 };

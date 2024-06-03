@@ -54,7 +54,7 @@ Phaser::Phaser(std::string texturePath, float x, float y, sf::Vector2f direction
 Projectile(texturePath, x, y, directionOfTravel, speed, damage) {
     collidedDeleteTimer = 0;
     hasCollided = false;
-    this->hitChance = 100;
+    this->hitChance = 80;
     this->projectileSprite.setScale(1, 0.25);
     phaserTimer = 0;
     phaserScaleX = 0;

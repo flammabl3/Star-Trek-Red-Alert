@@ -378,35 +378,42 @@ void Game::moveDisruptors(Disruptor* projectile, int i) {
 void Game::movePhasers(Phaser* projectile, int i) {
     sf::Vector2f goTo;
     if (projectile->targetShip != nullptr) {
-        goTo = projectile->targetShip->shipSprite.getPosition() - projectile->spawnedAt;
-    } else { 
+        if (projectile->targetShip->shields > 0) {
+            goTo = projectile->targetShip->shipSprite.getPosition() - projectile->targetShip->shieldOffset - projectile->spawnedAt;
+            projectile->newTarget = goTo;
+        } else {
+            goTo = projectile->targetShip->shipSprite.getPosition() - projectile->spawnedAt;
+            projectile->newTarget = goTo;
+        }
+    } else {
         goTo = projectile->directionOfTravel - projectile->spawnedAt;
+        projectile->originalTarget = goTo;
     }
-
-
     float rotation = (180.0f / M_PI) * atan2(goTo.y, goTo.x);
     projectile->projectileSprite.setRotation(rotation);
-
-
     projectile->phaserTimer += deltaTime;
     if (projectile->phaserTimer > 0.01 && !projectile->hasCollided) {
         projectile->phaserScaleX += 5;
-        projectile->projectileSprite.setScale(projectile->phaserScaleX, 0.25);
         projectile->phaserTimer = 0;
-
-        //send phaserRect to the end of the phaser for collision.
-        sf::Transform transform = projectile->projectileSprite.getTransform();
-        sf::FloatRect bounds = projectile->projectileSprite.getLocalBounds();
-
-        // local point at the end of the sprite
-        sf::Vector2f localPoint(bounds.width, bounds.height / 2);
-
-        // transform this point
-        sf::Vector2f globalPoint = transform.transformPoint(localPoint);
-
-        projectile->phaserRect.setPosition(globalPoint);
-        projectile->phaserRect.setRotation(projectile->projectileSprite.getRotation());
+    } else if (projectile->hasCollided) {
+        // calculate the desired length of the projectile sprite when it touches the target
+        float desiredLength = std::sqrt(projectile->newTarget.x * projectile->newTarget.x + projectile->newTarget.y * projectile->newTarget.y);
+        
+        // calculate the scaling factor based on the desired length and the original sprite length
+        float originalLength = projectile->projectileSprite.getLocalBounds().width;
+        projectile->phaserScaleX = desiredLength / originalLength;
     }
+    //send phaserRect to the end of the phaser for collision.
+    sf::Transform transform = projectile->projectileSprite.getTransform();
+    sf::FloatRect bounds = projectile->projectileSprite.getLocalBounds();
+    // local point at the end of the sprite
+    sf::Vector2f localPoint(bounds.width, bounds.height / 2);
+    // transform this point
+    sf::Vector2f globalPoint = transform.transformPoint(localPoint);
+    projectile->phaserRect.setPosition(globalPoint);
+    projectile->phaserRect.setRotation(projectile->projectileSprite.getRotation());
+    projectile->projectileSprite.setScale(projectile->phaserScaleX, 0.25);
+
     if (projectile->phaserScaleX > 300) {
         projectilesList.erase(projectilesList.begin() + i);
         delete projectile;
@@ -415,8 +422,6 @@ void Game::movePhasers(Phaser* projectile, int i) {
 }
 
 void Game::checkCollisions() {
-
-
     bool hit = false;
     int projectileDamage = 0;
     std::vector<Projectile*> toRemove;
@@ -453,71 +458,77 @@ void Game::checkCollisions() {
                 } else if (phaser->collidedDeleteTimer > 3.0) {
                     it = projectilesList.erase(it);
                     delete projectile;
-                    continue; 
+                    continue;
                 }
-
-                if (!((ship->friendly && projectile->friendly) || (!ship->friendly && !projectile->friendly))) {
-                    if (satHelper.checkCollision(ship->shieldRect, phaser->phaserRect) && ship->shields > 0) {
-                        phaser->hasCollided = true;
-                        phaser->targetShip = ship;
-                        ship->shields -= projectile->damage;
-                        ship->shieldHit(phaser->phaserRect.getPosition());
-                        if (ship->shields < 0) {
-                            ship->shields = 0;
-                        }
-                        logEvent("Shields at " + std::to_string(ship->shields) + " percent.");
-                        if (phaser->collidedDeleteTimer > 3.0) {
-                            it = projectilesList.erase(it);
-                            delete projectile;
-                            continue; 
-                        }
-                    } else if (!phaser->missed && satHelper.checkCollision(ship->shipSprite, phaser->phaserRect)) {
-                        if (random0_n(100) <= phaser->hitChance) {
+                //don't do any more checks if the phaser has collided, just deal damage once
+                if (!phaser->hasCollided) {
+                    if (!((ship->friendly && projectile->friendly) || (!ship->friendly && !projectile->friendly))) {
+                        projectileDamage = phaser->damage;
+                        if (satHelper.checkCollision(ship->shieldRect, phaser->phaserRect) && ship->shields > 0) {
                             phaser->hasCollided = true;
+                            phaser->originalScale = phaser->phaserScaleX;
                             phaser->targetShip = ship;
-                            if (projectileDamage > 0) {
-                                ship->totalCondition -= projectileDamage;
-                                logEvent("Ship has taken damage.");
+                            ship->shields -= projectile->damage;
+                            projectileDamage -= ship->shields;
+                            ship->shieldHit(phaser->phaserRect.getPosition());
+                            if (ship->shields < 0) {
+                                ship->shields = 0;
                             }
-                            
-                            std::map<std::string, System>::iterator randomSystem = ship->shipSystems.begin();
-                            std::advance(randomSystem, random0_n(ship->shipSystems.size()));
-
-                            std::vector<Room>::iterator randomRoom = randomSystem->second.rooms.begin(); 
-                            std::advance(randomRoom, random0_n(randomSystem->second.rooms.size()));
-
-                            //projectile damage should be modulated by the shields.
-                            std::vector<std::string> damagedPersonnel = randomRoom->dealDamageToRoom(projectileDamage);
-                            for (std::string personnelLogged: damagedPersonnel) {
-                                logEvent(personnelLogged);
-                            }
-                            ship->totalCondition -= phaser->damage;
-
-                            for (auto& pair : ship->shipSystems) {
-                                pair.second.setHitbox(ship);
-                                //check for collision and log the string returned by checkCollision
-
-                                //if a string was returned there was a collision
-                                if (pair.second.checkCollision(phaser->projectileSprite.getPosition()))
-                                    logEvent(pair.second.dealDamageToSystem(projectileDamage));
-                            }
-                            
-                            // Log before erasing
+                            logEvent("Shields at " + std::to_string(ship->shields) + " percent.");
                             if (phaser->collidedDeleteTimer > 3.0) {
                                 it = projectilesList.erase(it);
                                 delete projectile;
                                 continue; 
                             }
-                        } else {
-                            phaser->missed = true;
-                            std::cout << "MISS" << std::endl;
-                            miniTextCreate("MISS", projectile->projectileSprite.getPosition());
+                        } else if (!phaser->missed && satHelper.checkCollision(ship->shipSprite, phaser->phaserRect)) {
+                            if (random0_n(100) <= phaser->hitChance) {
+                                phaser->hasCollided = true;
+                                phaser->originalScale = phaser->phaserScaleX;
+                                phaser->targetShip = ship;
+                                
+                                if (projectileDamage > 0) {
+                                    ship->totalCondition -= projectileDamage;
+                                    logEvent("Ship has taken damage.");
+                                }
+                                
+                                std::map<std::string, System>::iterator randomSystem = ship->shipSystems.begin();
+                                std::advance(randomSystem, random0_n(ship->shipSystems.size()));
+
+                                std::vector<Room>::iterator randomRoom = randomSystem->second.rooms.begin(); 
+                                std::advance(randomRoom, random0_n(randomSystem->second.rooms.size()));
+
+                                //projectile damage should be modulated by the shields.
+                                std::vector<std::string> damagedPersonnel = randomRoom->dealDamageToRoom(projectileDamage);
+                                for (std::string personnelLogged: damagedPersonnel) {
+                                    logEvent(personnelLogged);
+                                }
+
+                                for (auto& pair : ship->shipSystems) {
+                                    pair.second.setHitbox(ship);
+                                    //check for collision and log the string returned by checkCollision
+
+                                    //if a string was returned there was a collision
+                                    if (pair.second.checkCollision(phaser->projectileSprite.getPosition()))
+                                    logEvent(pair.second.dealDamageToSystem(projectileDamage));
+                                }
+                                
+                                // Log before erasing
+                                if (phaser->collidedDeleteTimer > 3.0) {
+                                    it = projectilesList.erase(it);
+                                    delete projectile;
+                                    continue; 
+                                }
+                            } else {
+                                phaser->missed = true;
+                                std::cout << "MISS" << std::endl;
+                                miniTextCreate("MISS", phaser->phaserRect.getPosition());
+                            }
                         }
                     }
                 }
             }
 
-            if (!((ship->friendly && projectile->friendly) || (!ship->friendly && !projectile->friendly))) {
+            else if (!((ship->friendly && projectile->friendly) || (!ship->friendly && !projectile->friendly))) {
                 projectileDamage = projectile->damage - ship->shields/5;
                 if (projectileBounds.intersects(shipBounds)) {
                     if (projectile->touchingTarget || satHelper.checkCollision(ship->shipSprite, projectile->projectileSprite)) {
@@ -831,7 +842,7 @@ void Game::firePhaser(Ship& firingShip) {
     if (firingShip.friendly) {
         phaser->setFriendly();
     }
-    phaser->damage = 1;
+    phaser->damage = 10;
 
     this->projectilesList.insert(projectilesList.end(), phaser);
 }

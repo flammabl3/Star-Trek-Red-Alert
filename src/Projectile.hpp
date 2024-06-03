@@ -69,5 +69,9 @@ class Phaser: public Projectile {
         bool hasCollided;
         float collidedDeleteTimer;
         Ship* targetShip;
+
+        sf::Vector2f originalTarget;
+        sf::Vector2f newTarget;
+        float originalScale;
         Phaser(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage);
 };

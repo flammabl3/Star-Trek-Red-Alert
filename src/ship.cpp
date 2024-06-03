@@ -92,7 +92,7 @@ void Ship::shieldHit(sf::Vector2f b) {
 void Ship::shieldOpacMod() {
     shieldSprite.setPosition(this->shipSprite.getPosition() - shieldOffset);
     shieldRect.setPosition(shipSprite.getPosition());
-    shieldRect.setRotation(shipSprite.getRotation());
+    shieldRect.setRotation(0);
     if (shieldOpac > 0) 
         shieldOpac--;
     shieldSprite.setColor(sf::Color(255, 255, 255, shieldOpac));

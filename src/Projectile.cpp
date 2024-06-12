@@ -18,7 +18,8 @@ Projectile::Projectile(std::string texturePath, float x, float y, sf::Vector2f d
     this->touchingTarget = false;
     this->missed = false;
     this->hasPositionInitialized = false;
-    this->hitChance = 100;
+    this->hitChance = 0;
+    this->hitChanceBase = 100;
 }
 
 void Projectile::render(sf::RenderWindow* window) {
@@ -44,7 +45,7 @@ Projectile(texturePath, x, y, directionOfTravel, speed, damage) {
 
 Disruptor::Disruptor(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage) : 
 Projectile(texturePath, x, y, directionOfTravel, speed, damage) {
-    this->hitChance = 70;
+    this->hitChance = 0;
     secondShot = false;
     secondShotDelay = 0;
     this->projectileSprite.setScale(4, 1);
@@ -54,7 +55,7 @@ Phaser::Phaser(std::string texturePath, float x, float y, sf::Vector2f direction
 Projectile(texturePath, x, y, directionOfTravel, speed, damage) {
     collidedDeleteTimer = 0;
     hasCollided = false;
-    this->hitChance = 80;
+    this->hitChance = 0;
     this->projectileSprite.setScale(1, 0.25);
     phaserTimer = 0;
     phaserScaleX = 0;

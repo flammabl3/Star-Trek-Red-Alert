@@ -220,56 +220,77 @@ build cmake_object_order_depends_target_Star-Trek-Red-Alert: phony || .
 build CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj: CXX_COMPILER__Star-Trek-Red-Alert_unscanned_Debug C$:/Users/Harry/Desktop/Star-Trek-Red-Alert/src/Game.cpp || cmake_object_order_depends_target_Star-Trek-Red-Alert
   DEP_FILE = CMakeFiles\Star-Trek-Red-Alert.dir\src\Game.cpp.obj.d
   FLAGS = -g
-  INCLUDES = -Ic:/SFML/include -I/SFML/include
+  INCLUDES = -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include
   OBJECT_DIR = CMakeFiles\Star-Trek-Red-Alert.dir
   OBJECT_FILE_DIR = CMakeFiles\Star-Trek-Red-Alert.dir\src
 
 build CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj: CXX_COMPILER__Star-Trek-Red-Alert_unscanned_Debug C$:/Users/Harry/Desktop/Star-Trek-Red-Alert/src/NCC-1701-D.cpp || cmake_object_order_depends_target_Star-Trek-Red-Alert
   DEP_FILE = CMakeFiles\Star-Trek-Red-Alert.dir\src\NCC-1701-D.cpp.obj.d
   FLAGS = -g
-  INCLUDES = -Ic:/SFML/include -I/SFML/include
+  INCLUDES = -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include
   OBJECT_DIR = CMakeFiles\Star-Trek-Red-Alert.dir
   OBJECT_FILE_DIR = CMakeFiles\Star-Trek-Red-Alert.dir\src
 
 build CMakeFiles/Star-Trek-Red-Alert.dir/src/Projectile.cpp.obj: CXX_COMPILER__Star-Trek-Red-Alert_unscanned_Debug C$:/Users/Harry/Desktop/Star-Trek-Red-Alert/src/Projectile.cpp || cmake_object_order_depends_target_Star-Trek-Red-Alert
   DEP_FILE = CMakeFiles\Star-Trek-Red-Alert.dir\src\Projectile.cpp.obj.d
   FLAGS = -g
-  INCLUDES = -Ic:/SFML/include -I/SFML/include
+  INCLUDES = -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include
+  OBJECT_DIR = CMakeFiles\Star-Trek-Red-Alert.dir
+  OBJECT_FILE_DIR = CMakeFiles\Star-Trek-Red-Alert.dir\src
+
+build CMakeFiles/Star-Trek-Red-Alert.dir/src/Room.cpp.obj: CXX_COMPILER__Star-Trek-Red-Alert_unscanned_Debug C$:/Users/Harry/Desktop/Star-Trek-Red-Alert/src/Room.cpp || cmake_object_order_depends_target_Star-Trek-Red-Alert
+  DEP_FILE = CMakeFiles\Star-Trek-Red-Alert.dir\src\Room.cpp.obj.d
+  FLAGS = -g
+  INCLUDES = -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include
   OBJECT_DIR = CMakeFiles\Star-Trek-Red-Alert.dir
   OBJECT_FILE_DIR = CMakeFiles\Star-Trek-Red-Alert.dir\src
 
 build CMakeFiles/Star-Trek-Red-Alert.dir/src/SeparateAxisTheorem.cpp.obj: CXX_COMPILER__Star-Trek-Red-Alert_unscanned_Debug C$:/Users/Harry/Desktop/Star-Trek-Red-Alert/src/SeparateAxisTheorem.cpp || cmake_object_order_depends_target_Star-Trek-Red-Alert
   DEP_FILE = CMakeFiles\Star-Trek-Red-Alert.dir\src\SeparateAxisTheorem.cpp.obj.d
   FLAGS = -g
-  INCLUDES = -Ic:/SFML/include -I/SFML/include
+  INCLUDES = -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include
+  OBJECT_DIR = CMakeFiles\Star-Trek-Red-Alert.dir
+  OBJECT_FILE_DIR = CMakeFiles\Star-Trek-Red-Alert.dir\src
+
+build CMakeFiles/Star-Trek-Red-Alert.dir/src/Ship.cpp.obj: CXX_COMPILER__Star-Trek-Red-Alert_unscanned_Debug C$:/Users/Harry/Desktop/Star-Trek-Red-Alert/src/Ship.cpp || cmake_object_order_depends_target_Star-Trek-Red-Alert
+  DEP_FILE = CMakeFiles\Star-Trek-Red-Alert.dir\src\Ship.cpp.obj.d
+  FLAGS = -g
+  INCLUDES = -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include
+  OBJECT_DIR = CMakeFiles\Star-Trek-Red-Alert.dir
+  OBJECT_FILE_DIR = CMakeFiles\Star-Trek-Red-Alert.dir\src
+
+build CMakeFiles/Star-Trek-Red-Alert.dir/src/Subsystem.cpp.obj: CXX_COMPILER__Star-Trek-Red-Alert_unscanned_Debug C$:/Users/Harry/Desktop/Star-Trek-Red-Alert/src/Subsystem.cpp || cmake_object_order_depends_target_Star-Trek-Red-Alert
+  DEP_FILE = CMakeFiles\Star-Trek-Red-Alert.dir\src\Subsystem.cpp.obj.d
+  FLAGS = -g
+  INCLUDES = -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include
+  OBJECT_DIR = CMakeFiles\Star-Trek-Red-Alert.dir
+  OBJECT_FILE_DIR = CMakeFiles\Star-Trek-Red-Alert.dir\src
+
+build CMakeFiles/Star-Trek-Red-Alert.dir/src/System.cpp.obj: CXX_COMPILER__Star-Trek-Red-Alert_unscanned_Debug C$:/Users/Harry/Desktop/Star-Trek-Red-Alert/src/System.cpp || cmake_object_order_depends_target_Star-Trek-Red-Alert
+  DEP_FILE = CMakeFiles\Star-Trek-Red-Alert.dir\src\System.cpp.obj.d
+  FLAGS = -g
+  INCLUDES = -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include
   OBJECT_DIR = CMakeFiles\Star-Trek-Red-Alert.dir
   OBJECT_FILE_DIR = CMakeFiles\Star-Trek-Red-Alert.dir\src
 
 build CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj: CXX_COMPILER__Star-Trek-Red-Alert_unscanned_Debug C$:/Users/Harry/Desktop/Star-Trek-Red-Alert/src/main.cpp || cmake_object_order_depends_target_Star-Trek-Red-Alert
   DEP_FILE = CMakeFiles\Star-Trek-Red-Alert.dir\src\main.cpp.obj.d
   FLAGS = -g
-  INCLUDES = -Ic:/SFML/include -I/SFML/include
+  INCLUDES = -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include
   OBJECT_DIR = CMakeFiles\Star-Trek-Red-Alert.dir
   OBJECT_FILE_DIR = CMakeFiles\Star-Trek-Red-Alert.dir\src
 
 build CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj: CXX_COMPILER__Star-Trek-Red-Alert_unscanned_Debug C$:/Users/Harry/Desktop/Star-Trek-Red-Alert/src/personnel.cpp || cmake_object_order_depends_target_Star-Trek-Red-Alert
   DEP_FILE = CMakeFiles\Star-Trek-Red-Alert.dir\src\personnel.cpp.obj.d
   FLAGS = -g
-  INCLUDES = -Ic:/SFML/include -I/SFML/include
+  INCLUDES = -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include
   OBJECT_DIR = CMakeFiles\Star-Trek-Red-Alert.dir
   OBJECT_FILE_DIR = CMakeFiles\Star-Trek-Red-Alert.dir\src
 
 build CMakeFiles/Star-Trek-Red-Alert.dir/src/random0_n.cpp.obj: CXX_COMPILER__Star-Trek-Red-Alert_unscanned_Debug C$:/Users/Harry/Desktop/Star-Trek-Red-Alert/src/random0_n.cpp || cmake_object_order_depends_target_Star-Trek-Red-Alert
   DEP_FILE = CMakeFiles\Star-Trek-Red-Alert.dir\src\random0_n.cpp.obj.d
   FLAGS = -g
-  INCLUDES = -Ic:/SFML/include -I/SFML/include
-  OBJECT_DIR = CMakeFiles\Star-Trek-Red-Alert.dir
-  OBJECT_FILE_DIR = CMakeFiles\Star-Trek-Red-Alert.dir\src
-
-build CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.obj: CXX_COMPILER__Star-Trek-Red-Alert_unscanned_Debug C$:/Users/Harry/Desktop/Star-Trek-Red-Alert/src/ship.cpp || cmake_object_order_depends_target_Star-Trek-Red-Alert
-  DEP_FILE = CMakeFiles\Star-Trek-Red-Alert.dir\src\ship.cpp.obj.d
-  FLAGS = -g
-  INCLUDES = -Ic:/SFML/include -I/SFML/include
+  INCLUDES = -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include
   OBJECT_DIR = CMakeFiles\Star-Trek-Red-Alert.dir
   OBJECT_FILE_DIR = CMakeFiles\Star-Trek-Red-Alert.dir\src
 
@@ -281,7 +302,7 @@ build CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.obj: CXX_COMPILER__Star-Tr
 #############################################
 # Link the executable Star-Trek-Red-Alert.exe
 
-build Star-Trek-Red-Alert.exe: CXX_EXECUTABLE_LINKER__Star-Trek-Red-Alert_Debug CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/Projectile.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/SeparateAxisTheorem.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/random0_n.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.obj | /SFML/lib/libsfml-audio-d.a /SFML/lib/libsfml-network-d.a /SFML/lib/libsfml-graphics-d.a /SFML/lib/libsfml-window-d.a /SFML/lib/libsfml-system-d.a
+build Star-Trek-Red-Alert.exe: CXX_EXECUTABLE_LINKER__Star-Trek-Red-Alert_Debug CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/Projectile.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/Room.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/SeparateAxisTheorem.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/Ship.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/Subsystem.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/System.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/random0_n.cpp.obj | /SFML/lib/libsfml-audio-d.a /SFML/lib/libsfml-network-d.a /SFML/lib/libsfml-graphics-d.a /SFML/lib/libsfml-window-d.a /SFML/lib/libsfml-system-d.a
   FLAGS = -g
   LINK_LIBRARIES = /SFML/lib/libsfml-audio-d.a  /SFML/lib/libsfml-network-d.a  /SFML/lib/libsfml-graphics-d.a  /SFML/lib/libsfml-window-d.a  /SFML/lib/libsfml-system-d.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Star-Trek-Red-Alert.dir

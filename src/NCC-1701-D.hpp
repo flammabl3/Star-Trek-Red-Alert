@@ -1,12 +1,12 @@
 #ifndef BRIDGE_H
 #define BRIDGE_H
 
-#include "ship.hpp"
+#include "Ship.hpp"
 #include "personnel.hpp"
-#include "systems.hpp"
 #include <iostream>
 #include <string>
 #include <map>
+#include <memory>
 
 class initializeEnterprise{
     private:
@@ -25,9 +25,10 @@ class initializeEnterprise{
         
         std::vector<Room> rooms;
         std::vector<Personnel*> personnel; 
-        std::map<std::string, System> systemsList;
+        std::map<std::string, std::shared_ptr<System>> systemsList;
         std::map<std::string, Subsystem> subsystemList;
 
+        std::map<int, Projectile> weaponsComplement;
         
 };
 

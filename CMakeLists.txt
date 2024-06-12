@@ -10,6 +10,8 @@ file(GLOB SRC_FILES src/*.cpp)
 file(GLOB INC_FILES src/*.hpp)
 add_executable(Star-Trek-Red-Alert ${SRC_FILES} ${INC_FILES})
 
+file(GLOB INC_FILES tests/*.cpp)
+
 cmake_policy(SET CMP0074 NEW)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
@@ -17,6 +19,7 @@ set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
 
 include_directories(c:/SFML/include)
+include_directories(c:/Catch2-devel)
 
 
 #set(SFML_ROOT c:/SFML)

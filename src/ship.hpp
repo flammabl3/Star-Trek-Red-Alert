@@ -1,20 +1,7 @@
-#include <SFML/Graphics.hpp>
+#include "System.hpp"
 
-#include <memory>
-#include <string>
-#include "personnel.hpp"
-#include "Projectile.hpp"
-#include <map>
-#include <iostream>
-#include <cmath>
-#include <random>
-#include "SeparateAxisTheorem.hpp"
-
-#pragma once
-
-class System;
-class Room;
-class Subsystem;
+#ifndef SHIP_HPP
+#define SHIP_HPP
 
 class Ship
 {
@@ -35,7 +22,8 @@ class Ship
 
 
         //Internal data
-        std::map<std::string, System> shipSystems;
+        std::map<std::string, std::shared_ptr<System>> shipSystems;
+        std::string state;
         int mass;
         int shields;
         float shieldBubbleRadius;
@@ -46,6 +34,11 @@ class Ship
         int shieldOpac;
         std::string name;
         std::string designation;
+        //the int represents what number key will pick the weapon, the first string is the weapon type, the second is which System the weapon is linked to.
+        std::map<int, std::tuple<std::string, std::string>> weaponsComplement;
+        
+        std::tuple<std::string, std::string> weaponSelectedTuple;
+        int weaponSelected;
 
         //coordinate of a ship refers to its centre
         //std::shared_ptr<sf::Vector2f> position;
@@ -57,7 +50,7 @@ class Ship
         int width;
         int height;
 
-        Ship(std::map<std::string, System> shipSystems, int mass, float impulseSpeed, float warpSpeed, float shields, std::string name, std::string designation);
+        Ship(std::map<std::string, std::shared_ptr<System>> shipSystems, int mass, float impulseSpeed, float warpSpeed, float shields, std::string name, std::string designation);
 
         Ship();
 
@@ -75,7 +68,7 @@ class Ship
 
         void calculateSystemPositions();
 
-        void shieldHit(sf::Vector2f hitPos);
+        void shieldHit(sf::Vector2f hitPos, bool recalcOffset);
 
         void shieldOpacMod();
 
@@ -88,97 +81,12 @@ class Ship
         std::vector<std::string> fireOxygenPersonnelSwap(sf::Time time);
 
         sf::RectangleShape setShield(int setShieldRadius);
+
+        sf::Vector2f evadeTargetPosition;
         
         //~Ship();
         //define destructor later
         
 };
 
-class System {
-    private:
-    
-    public:
-        std::string systemType;
-        //vector of rooms in the system.
-        std::vector<Room> rooms;
-        // how well a room is running. Determined by condition of rooms, personnel in rooms.
-        double operationalCapacity; 
-        // an array of personnel, the current crew of the system. Determined by adding all the personnel lists of each room.
-        std::vector<Personnel*> personnel; 
-        double totalCondition;
-        int power;
-
-        sf::Vector2f shipCenter;
-        sf::RectangleShape hitbox;
-        
-        
-        //these are the basic coordinates relative to a the ship. i.e., if systemX is 20, then the origin of the
-        //System's hitbox will be the ship's origin + 20.
-        float systemX;
-        float systemY;
-        float width;
-        float length;
-
-        void setHitbox(Ship* ship);
-
-        sf::RectangleShape returnHitbox();
-
-        void setCoordinates(float x, float y, float width, float length);
-
-        bool checkCollision(sf::Vector2f vector);
-
-        std::vector<std::string> calculateOperationalCapacity(sf::Time time);
-
-        std::string dealDamageToSystem(int damage);
-        
-        std::vector<std::string> fireOxygenPersonnelSwap(sf::Time time);
-
-        System(std::string systemType, std::vector<Room> rooms, std::vector<Personnel*> personnel); 
-        // We define a constructor yet never end up using it. Figure this problem out.
-        System() = default;
-        
-};
-
-class Room {
-    private: 
-
-    public:
-        std::string roomType;
-        std::vector<Personnel*> personnel;
-        double oxygen;
-        float fire;
-        int hullIntegrity;
-        double operationalCapacity; 
-        double totalCondition;
-        std::map<std::string, Subsystem> subsystems;
-    
-        Room(std::string roomType, std::vector<Personnel*> personnel, std::map<std::string, Subsystem> subsystems);
-
-        Room() {
-
-        }
-
-        std::vector<std::string> calculateOperationalCapacity(sf::Time time);
-
-        std::vector<std::string> dealDamageToRoom(int damage);
-
-        std::vector<std::string> fireOxygenPersonnelSwap(sf::Time time);
-};
-
-class Subsystem { // the individual consoles and parts inside a room.
-    private:
-        
-    public:
-        std::string name;
-        double operationalCapacity; 
-        double totalCondition;
-        Personnel* operating; // the person at the station
-        Subsystem(std::string name, Personnel* operating);
-        float fire;
-
-        Subsystem() = default;
-
-        std::vector<std::string> calculateOperationalCapacity(sf::Time time);
-
-        std::vector<std::string> fireOxygenPersonnelSwap(sf::Time time);
-};
+#endif

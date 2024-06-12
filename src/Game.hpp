@@ -3,7 +3,7 @@
 #include <SFML/Network.hpp>
 #include <vector>
 
-#include "ship.hpp"
+#include "Ship.hpp"
 #include "Projectile.hpp"
 
 class Game {
@@ -26,11 +26,11 @@ class Game {
         sf::Clock timer;
         float deltaTime;
         float torpedoTime;
-        int weaponSelected; // a variable for which weapon has been selected will eventually be necessary.
 
         std::vector<Projectile*> projectilesList;
         std::vector<Ship*> enemyShips;
         std::vector<Ship*> allShips;
+        std::vector<Ship*> friendlyShips;
 
         float playerSpeedx = 0; // these will eventually belong to the ship class.
         float playerSpeedy = 0;
@@ -43,10 +43,12 @@ class Game {
         bool debugMode;
         std::vector<sf::RectangleShape> debugHitboxes;
         std::vector<sf::RectangleShape> enemyHitboxes;
+        std::vector<sf::RectangleShape> friendlyHitboxes;
 
         //for moving the enemy for test purposes
         float mov;
 
+        void makeDecision(Ship* ship);
 
         SATHelper satHelper;
 
@@ -72,7 +74,7 @@ class Game {
         void movePlayer();
         void renderPlayer();
 
-        void createEnemyHitboxes(Ship* enemyShip);
+        void createShipHitboxes(Ship* enemyShip);
         void initEnemy();
         void renderEnemy();
         void updateEnemy();
@@ -81,11 +83,17 @@ class Game {
         void showRoomDamageEnemy();
 
         void updateAllShips();
+        void moveShip(Ship* ship, sf::Vector2f moveTo);
 
-        void fireTorpedo(Ship& firingShip);
-        void fireDisruptor(Ship& firingShip);
-        void firePhaser(Ship& firingShip);
-        void fireTorpedoSpread(Ship& firingShip);
+        void fireTorpedo(Ship& firingShip, int hitChance);
+        void fireDisruptor(Ship& firingShip, int hitChance);
+        void firePhaser(Ship& firingShip, int hitChance);
+        void fireTorpedoSpread(Ship& firingShip, int hitChance);
+
+        void fireTorpedo(Ship& firingShip, sf::Vector2f targetP, int hitChance);
+        void fireDisruptor(Ship& firingShip, sf::Vector2f targetP, int hitChance);
+        void firePhaser(Ship& firingShip, sf::Vector2f targetP, int hitChance);
+        void fireTorpedoSpread(Ship& firingShip, sf::Vector2f targetP, int hitChance);
         void renderProjectiles(); 
     
 
@@ -93,6 +101,10 @@ class Game {
         void moveDisruptors(Disruptor* projectile, int i);
         void movePhasers(Phaser* phaser, int i);
 
+        bool pickWeapon(Ship& ship);
+        bool pickWeapon(Ship* ship);
+        void useWeapon(Ship& ship);
+        void useWeapon(Ship* ship, sf::Vector2f enemyPosition);
 
         void checkCollisions();
 

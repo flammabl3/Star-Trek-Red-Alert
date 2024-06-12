@@ -24,6 +24,7 @@ class Projectile {
         bool missed;
         float damage;
         float hitChance;
+        float hitChanceBase;
         bool hasPositionInitialized;
         
         Projectile(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage);
@@ -40,7 +41,7 @@ class Torpedo: public Projectile {
         
     public:
         bool targetingSystem;
-        System* targetSystemObj;
+        std::shared_ptr<System> targetSystemObj;
         sf::Vector2f targetPos;
         std::string targetSystem;
         sf::Vector2f lastCalculatedPosition;
@@ -69,6 +70,8 @@ class Phaser: public Projectile {
         bool hasCollided;
         float collidedDeleteTimer;
         Ship* targetShip;
+        Ship* firingShip;
+        sf::Vector2f firingShipOffset;
 
         sf::Vector2f originalTarget;
         sf::Vector2f newTarget;

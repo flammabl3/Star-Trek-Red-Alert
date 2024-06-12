@@ -4,6 +4,9 @@
 #include <cmath>
 #include <iostream>
 
+#ifndef SATHELPER_HPP
+#define SATHELPER_HPP
+
 //The pair of vectors will form a line (the sf::Vector2f).
 
 //2 floats to show min and max
@@ -64,3 +67,5 @@ class SATHelper {
     private:
 
 };
+
+#endif

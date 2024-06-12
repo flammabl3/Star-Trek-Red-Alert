@@ -1249,7 +1249,7 @@ void Game::makeDecision(Ship* ship) {
 
     sf::Vector2f distToTarget = ship->evadeTargetPosition - ship->shipSprite.getPosition();
     if (std::sqrt(distToTarget.x * distToTarget.x + distToTarget.y + distToTarget.y) < 1) {
-        ship->evadeTargetPosition = sf::Vector2f(random0_n(1000), random0_n(1000));
+        ship->evadeTargetPosition = sf::Vector2f(random0_n(200), random0_n(200));
     }
 
     ship->state = "EVAG";
@@ -1292,14 +1292,14 @@ void Game::makeDecision(Ship* ship) {
         }
     } else if (ship->state == "EVAG") {
         if (ship->evadeTargetPosition == sf::Vector2f(-1, -1)) {
-            ship->evadeTargetPosition = sf::Vector2f(random0_n(1000), random0_n(1000));
+            ship->evadeTargetPosition = sf::Vector2f(random0_n(200), random0_n(200));
         }
         moveShip(ship, ship->evadeTargetPosition);
         useWeapon(ship, randomCoord);
     } else if (ship->state == "EVAD") {
         // just run to a random spot!
         if (ship->evadeTargetPosition == sf::Vector2f(-1, -1)) {
-            ship->evadeTargetPosition = sf::Vector2f(random0_n(1000), random0_n(1000));
+            ship->evadeTargetPosition = sf::Vector2f(random0_n(200), random0_n(200));
         }
         moveShip(ship, ship->evadeTargetPosition);
     }

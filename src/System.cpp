@@ -146,8 +146,10 @@ std::vector<std::string> Weapon::calculateOperationalCapacity(sf::Time time) {
     //average of totalCondition, average operationalCapacity of all rooms, power of the room.
     float bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
     this->operationalCapacity = (average + this->totalCondition + this->power + bridgeCapacity) / 4;
-    if (this->cooldownThreshold != -1) {
+    if (this->operationalCapacity > 0) {
         cooldownThreshold = (cooldownThresholdBase / (this->operationalCapacity / 100));
+    } else {
+        cooldownThreshold = -1;
     }
 
     if (operationalCapacity <= 0 && disabled == false) {

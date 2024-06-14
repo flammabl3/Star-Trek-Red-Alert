@@ -13,27 +13,18 @@
 float rot = 0;
 
 //TODO: See if we can't come up with a shorter way to reference the playerShipObj's shipSprite member
+//SYSTEMS are mostly done, but capacity of personnel should be calculated based on health, skill, mental state!
 // Improve functions to check for and apply damage, and damage rooms, subsystems, and personnel
-// Create some kind of enemy AI.
-// Add systems and system performance, and performance of systems based on crew and rooms
 // ALL MOVEMENT MUST BE DELTATIMED.
 
 /*General path to completion
-Systems and damage -> Ship AI -> UI -> sounds and animations -> rest of the game
+Systems and damage -> Ship AI -> change views and window sizes -> UI -> sounds and animations -> rest of the game
 
-Weapon fire rate should be tied to the respective weapons system.
-Speed and maneuverability should be tied to nacelles/engines.
 Response time to user input should be tied to the bridge.
-The bridge and power from engineering should be tied to everything. Reduced bridge/warp core should 
-affect all systems.
 
-Dead crewmembers should be replaced by live ones in the same room not assigned to a station.
+Dead crewmembers should not replace others twice.
 Rank checks should take place (an ensign should not take the captain's chair unless there are no other options)
 
-Fire and Oxygen should affect rooms.
-
-We use projectileDamage to dampen the effect of damage even when shields are in place, but a weapon can never penetrate
-a shield.
 */
 
 void Game::initVariables() {
@@ -242,7 +233,7 @@ void Game::updateAllShips() {
             //reference unique_ptr<System> stored in vector, Create a raw pointer reference to the raw pointer in the unique_ptr
             std::shared_ptr<System>& system = pair.second;
             Weapon* wep = dynamic_cast<Weapon*>(system.get());
-            if (wep != nullptr) {
+            if (wep != nullptr && !wep->disabled) {
                 wep->updateTimer(deltaTime);
             }
         }
@@ -257,7 +248,7 @@ void Game::updateAllShips() {
                 destroyShips.push_back(ship);
                 break;
             } else {
-                logEvent(string);
+                logEvent(string, ship->friendly);
             }
         }
     }
@@ -493,11 +484,11 @@ void Game::checkCollisions() {
                             //projectile damage should be modulated by the shields.
                             std::vector<std::string> damagedPersonnel = randomRoom->dealDamageToRoom(projectileDamage);
                             for (std::string personnelLogged: damagedPersonnel) {
-                                logEvent(personnelLogged);
+                                logEvent(personnelLogged, ship->friendly);
                             } 
                         }
                         
-                        logEvent("Shields at " + std::to_string(ship->shields) + " percent.");
+                        logEvent("Shields at " + std::to_string(ship->shields) + " percent.", ship->friendly);
                         it = projectilesList.erase(it);
                         delete projectile;
                         continue;
@@ -529,7 +520,7 @@ void Game::checkCollisions() {
                             if (ship->shields < 0) {
                                 ship->shields = 0;
                             }
-                            logEvent("Shields at " + std::to_string(ship->shields) + " percent.");
+                            logEvent("Shields at " + std::to_string(ship->shields) + " percent.", ship->friendly);
                             if (phaser->collidedDeleteTimer > 3.0) {
                                 it = projectilesList.erase(it);
                                 delete projectile;
@@ -543,7 +534,7 @@ void Game::checkCollisions() {
                                 
                                 
                                 ship->totalCondition -= projectile->damage;
-                                logEvent("Ship has taken damage.");
+                                logEvent("Ship has taken damage.", ship->friendly);
                                 
                                 std::map<std::string, std::shared_ptr<System>>::iterator randomSystem = ship->shipSystems.begin();
                                 std::advance(randomSystem, random0_n(ship->shipSystems.size()));
@@ -554,7 +545,7 @@ void Game::checkCollisions() {
                                 //projectile damage should be modulated by the shields.
                                 std::vector<std::string> damagedPersonnel = randomRoom->dealDamageToRoom(projectile->damage);
                                 for (std::string personnelLogged: damagedPersonnel) {
-                                    logEvent(personnelLogged);
+                                    logEvent(personnelLogged, ship->friendly);
                                 }
 
                                 for (auto& pair : ship->shipSystems) {
@@ -563,7 +554,7 @@ void Game::checkCollisions() {
 
                                     //if a string was returned there was a collision
                                     if (pair.second->checkCollision(phaser->projectileSprite.getPosition()))
-                                    logEvent(pair.second->dealDamageToSystem(projectile->damage));
+                                    logEvent(pair.second->dealDamageToSystem(projectile->damage), ship->friendly);
                                 }
                                 
                                 // Log before erasing
@@ -599,9 +590,9 @@ void Game::checkCollisions() {
                                                 std::cout << "SYSTEM HIT" << std::endl;
                                                 
                                                 ship->totalCondition -= projectile->damage;
-                                                logEvent("Ship has taken damage.");
+                                                logEvent("Ship has taken damage.", ship->friendly);
                                             
-                                                logEvent(system->dealDamageToSystem(projectile->damage));
+                                                logEvent(system->dealDamageToSystem(projectile->damage), ship->friendly);
                                                 it = projectilesList.erase(it);
                                                 delete projectile;
                                                 hit = true;
@@ -619,7 +610,7 @@ void Game::checkCollisions() {
                                 if (random0_nInclusive(100) <= torpedo->hitChance) {
                                     
                                     ship->totalCondition -= projectile->damage;
-                                    logEvent("Ship has taken damage.");
+                                    logEvent("Ship has taken damage.", ship->friendly);
                                     
                                     
                                     std::map<std::string, std::shared_ptr<System>>::iterator randomSystem = ship->shipSystems.begin();
@@ -631,7 +622,7 @@ void Game::checkCollisions() {
                                     //projectile damage should be modulated by the shields.
                                     std::vector<std::string> damagedPersonnel = randomRoom->dealDamageToRoom(projectile->damage);
                                     for (std::string personnelLogged: damagedPersonnel) {
-                                        logEvent(personnelLogged);
+                                        logEvent(personnelLogged, ship->friendly);
                                     }
                                     for (auto& pair : ship->shipSystems) {
                                         pair.second->setHitbox(ship);
@@ -639,7 +630,7 @@ void Game::checkCollisions() {
 
                                         //if a string was returned there was a collision
                                         if (pair.second->checkCollision(torpedo->projectileSprite.getPosition()))
-                                            logEvent(pair.second->dealDamageToSystem(projectile->damage));
+                                            logEvent(pair.second->dealDamageToSystem(projectile->damage), ship->friendly);
                                     }
                                     
                                     // Log before erasing
@@ -661,7 +652,7 @@ void Game::checkCollisions() {
                                 if (random0_nInclusive(100) <= disruptor->hitChance) {
                                     if (projectile->damage > 0) {
                                         ship->totalCondition -= projectile->damage;
-                                        logEvent("Ship has taken damage.");
+                                        logEvent("Ship has taken damage.", ship->friendly);
                                     }
                                     
                                     std::map<std::string, std::shared_ptr<System>>::iterator randomSystem = ship->shipSystems.begin();
@@ -673,7 +664,7 @@ void Game::checkCollisions() {
                                     //projectile damage should be modulated by the shields.
                                     std::vector<std::string> damagedPersonnel = randomRoom->dealDamageToRoom(projectile->damage);
                                     for (std::string personnelLogged: damagedPersonnel) {
-                                        logEvent(personnelLogged);
+                                        logEvent(personnelLogged, ship->friendly);
                                     }
                                     ship->totalCondition -= projectile->damage;
 
@@ -683,7 +674,7 @@ void Game::checkCollisions() {
 
                                         //if a string was returned there was a collision
                                         if (pair.second->checkCollision(disruptor->projectileSprite.getPosition()))
-                                            logEvent(pair.second->dealDamageToSystem(projectile->damage));
+                                            logEvent(pair.second->dealDamageToSystem(projectile->damage), ship->friendly);
                                     }
                                     
                                     // Log before erasing
@@ -776,7 +767,7 @@ void Game::fireTorpedo(Ship& firingShip, sf::Vector2f targetP, int hitChance) {
     }   
 
     torpedo->hitChance = hitChance * torpedo->hitChanceBase / 100;
-    this->projectilesList.insert(projectilesList.end(), torpedo);
+    this->projectilesList.insert(projectilesList.begin(), torpedo);
 
 }
 
@@ -834,7 +825,7 @@ void Game::fireTorpedoSpread(Ship& firingShip, sf::Vector2f targetP, int hitChan
         torpedo->hitChance = hitChance * torpedo->hitChanceBase / 100;
         if (firingShip.friendly)
             torpedo->setFriendly(); 
-        this->projectilesList.insert(projectilesList.end(), torpedo);
+        this->projectilesList.insert(projectilesList.begin(), torpedo);
     }
 }
 
@@ -862,8 +853,8 @@ void Game::fireDisruptor(Ship& firingShip, sf::Vector2f targetP, int hitChance) 
     disruptor->hitChance = hitChance * disruptor->hitChanceBase / 100;
     disruptor2->hitChance = hitChance * disruptor2->hitChanceBase / 100;
 
-    this->projectilesList.insert(projectilesList.end(), disruptor);
-    this->projectilesList.insert(projectilesList.end(), disruptor2);
+    this->projectilesList.insert(projectilesList.begin(), disruptor);
+    this->projectilesList.insert(projectilesList.begin(), disruptor2);
 }
 
 void Game::moveShip(Ship* ship, sf::Vector2f moveTo) {
@@ -876,11 +867,40 @@ void Game::moveShip(Ship* ship, sf::Vector2f moveTo) {
     if (length != 0.0f) {
         sf::Vector2f normalizedVector = movementDistance / length;
 
-        float speed = 100.0f;
-        //ship's impulse speed stat multiplied to give effective speed
-        float pSpeed = ship->impulseSpeed * speed;
-        ship->shipSprite.move(normalizedVector * pSpeed * deltaTime);
+        float speedTotal = 0;
+        int speedCount = 0;
+        float operationalCapacity = 0;
+        for (auto& pair: ship->shipSystems) {
+            std::shared_ptr<System>& system = pair.second;
+            Propulsion* prop = dynamic_cast<Propulsion*>(system.get());
+            if (prop != nullptr) {
+                prop->calculateOperationalCapacity();
+                speedTotal += prop->speed;
+                operationalCapacity += prop->operationalCapacity;
+                speedCount++;
+                //std::cout << prop->speed << std::endl;
+            }
+        }
+        float speed;
+        if (speedCount > 0 && speedTotal > 1) {
+            speed = speedTotal / speedCount;
+            operationalCapacity /= speedCount;
+        } else {
+            speed = 0;
+            operationalCapacity = 0;
+        }
 
+        if (speed < 0) {
+            speed = 0;
+        }
+        
+        if (speed > 100) {
+            std::cout << speed << std::endl;
+        }
+
+        float rotationSpeed = 70 * operationalCapacity / 100;
+        //ship's propulsion system speed stat multiplied to give effective speed
+        ship->shipSprite.move(normalizedVector * speed * deltaTime);
 
         /*Find the angle of the distance vector using atan2, and convert to degrees. Then normalize it to be from 0 to 360 degrees. */
         float distanceAngle = (180.0f / M_PI * atan2(normalizedVector.y, normalizedVector.x));
@@ -899,9 +919,9 @@ void Game::moveShip(Ship* ship, sf::Vector2f moveTo) {
             }
 
             if (ccwDistance > cwDistance) {
-                ship->shipSprite.rotate(70 * deltaTime);
+                ship->shipSprite.rotate(rotationSpeed * deltaTime);
             } else if (ccwDistance < cwDistance) {
-                ship->shipSprite.rotate(-70 * deltaTime);
+                ship->shipSprite.rotate(-rotationSpeed * deltaTime);
             }
         }
         
@@ -938,7 +958,7 @@ void Game::firePhaser(Ship& firingShip, sf::Vector2f targetP, int hitChance) {
 
     phaser->hitChance = phaser->hitChanceBase / 100;
     
-    this->projectilesList.insert(projectilesList.end(), phaser);
+    this->projectilesList.push_back(phaser);
 }
 
 Game::Game() {
@@ -997,10 +1017,10 @@ void Game::updateEvents() {
                     // 1 key was pressed, weapon in slot 1 is now active. For now it will be a photon torpedo.
                     if (debugMode) {
                         debugMode = false; 
-                        logEvent("Debug mode off.");
+                        logEvent("Debug mode off.", true);
                     } else {
                         debugMode = true;
-                        logEvent("Debug mode on.");
+                        logEvent("Debug mode on.", true);
                     }
                         
                 }
@@ -1042,21 +1062,27 @@ void Game::render() {
     enemyHitboxes.clear();
 }
 
-void Game::logEvent(std::string event) {
+void Game::logEvent(std::string event, bool friendly) {
+    std::tuple<std::string, bool> newEvent = std::tuple<std::string, bool>(event, friendly);
     if (eventLog.size() >= 10) {
         eventLog.pop_back();
     }
-    eventLog.insert(eventLog.begin(), event);
+    eventLog.insert(eventLog.begin(), newEvent);
 }
 
 //create the text at the bottom of the log, and move up by reducing the offset down the screen.
 void Game::displayEvents() {
     int positionOffset = 10;
-    for (std::string event: eventLog) {
-        sf::Text text(event, font);
+    for (auto& tuple: eventLog) {
+        sf::Text text(std::get<0>(tuple), font);
         text.setScale(0.5, 0.5);
         //text will become more transparent as it moves up the log.
-        text.setFillColor(sf::Color(255, 255, 255, 25 * positionOffset));
+        //red or green text based on which faction is hit
+        if (std::get<1>(tuple))
+            text.setFillColor(sf::Color(255, 100, 100, 25 * positionOffset));
+        else {
+            text.setFillColor(sf::Color(100, 255, 100, 25 * positionOffset));
+        }
         text.setPosition(0, 12 * positionOffset);
         positionOffset--;
         window->draw(text);
@@ -1125,7 +1151,11 @@ bool Game::pickWeapon(Ship& ship) {
                     return true;
                 } else {
                     if (ship.friendly)
-                        std::cout << weaponSelectedString << " on cooldown! Time left: " << wep->cooldownThreshold - wep->cooldownTimer << "s" << std::endl;
+                        if (wep->disabled)
+                            std::cout << weaponSelectedString << " is disabled!" << std::endl;
+                        else {
+                            std::cout << weaponSelectedString << " on cooldown! Time left: " << wep->cooldownThreshold - wep->cooldownTimer << "s" << std::endl;
+                        }
                     ship.weaponSelectedTuple = std::tuple("", "");
                     return false;
                 }
@@ -1231,16 +1261,14 @@ void Game::makeDecision(Ship* ship) {
     }
     
     if (noWeaponsReady) {
-        if (ship->totalCondition <= 25 || ship->shields <= 50) {
+        if (ship->totalCondition <= 25 || ship->shields <= 25) {
             ship->state = "EVAD";
-        } else {
-            ship->state = "AGGR";
         }
     }
     
     
     if (!noWeaponsReady) {
-        if (ship->totalCondition <= 25 || ship->shields <= 50) {
+        if (ship->totalCondition <= 25 || ship->shields <= 25) {
             ship->state = "EVAG";
         } else {
             ship->state = "AGGR";
@@ -1279,27 +1307,42 @@ void Game::makeDecision(Ship* ship) {
             }
 
             for (int wep = 1; wep <= ship->weaponsComplement.size(); wep++) {
-            ship->weaponSelected = wep;
-            if (pickWeapon(ship)) {
-                if (std::get<0>(ship->weaponSelectedTuple) == "TORPEDO" && random0_nInclusive(1) == 1) {
-                    wep++;
-                    continue;
+                ship->weaponSelected = wep;
+                
+                if (pickWeapon(ship)) {
+                    if (std::get<0>(ship->weaponSelectedTuple) == "TORPEDO" && random0_nInclusive(1) == 1) {
+                        wep++;
+                        ship->weaponSelected = wep;
+                        pickWeapon(ship);
+                        std::cout << "AHHHH" << std::endl;
+                    }
                 }
+                useWeapon(ship, randomCoord);
             }
-            useWeapon(ship, randomCoord);
-        }
             
         }
     } else if (ship->state == "EVAG") {
         if (ship->evadeTargetPosition == sf::Vector2f(-1, -1)) {
-            ship->evadeTargetPosition = sf::Vector2f(random0_n(200), random0_n(200));
+            ship->evadeTargetPosition = sf::Vector2f(random0_n(1000), random0_n(200));
+        }
+        for (int wep = 1; wep <= ship->weaponsComplement.size(); wep++) {
+            ship->weaponSelected = wep;
+            
+            if (pickWeapon(ship)) {
+                if (std::get<0>(ship->weaponSelectedTuple) == "TORPEDO" && random0_nInclusive(1) == 1) {
+                    wep++;
+                    ship->weaponSelected = wep;
+                    pickWeapon(ship);
+                    std::cout << "AHHHH" << std::endl;
+                }
+            }
+            useWeapon(ship, randomCoord);
         }
         moveShip(ship, ship->evadeTargetPosition);
-        useWeapon(ship, randomCoord);
     } else if (ship->state == "EVAD") {
         // just run to a random spot!
         if (ship->evadeTargetPosition == sf::Vector2f(-1, -1)) {
-            ship->evadeTargetPosition = sf::Vector2f(random0_n(200), random0_n(200));
+            ship->evadeTargetPosition = sf::Vector2f(random0_n(1000), random0_n(200));
         }
         moveShip(ship, ship->evadeTargetPosition);
     }

@@ -95,15 +95,21 @@ std::vector<std::string> Room::fireOxygenPersonnelSwap(sf::Time time) {
     std::vector<std::string> events;
     if (time.asSeconds() > 0.99999) {
         for (Personnel* crewman: personnel) {
-                if (fire > 0 && crewman->health > 0) {
-                    if (random0_n(1000-fire*10) == 1) {
-                        events.push_back(crewman->rank + " " + crewman->getLogName() + " is being burned!");
-                        crewman->health -= 1;
-                    }
+            if (fire > 0 && crewman->health > 0) {
+                if (random0_n(1000-fire*10) == 1) {
+                    events.push_back(crewman->rank + " " + crewman->getLogName() + " is being burned!");
+                    crewman->health -= 1;
                 }
+            }
+            
+            if (oxygen <= 0) {
+                for (Personnel* crewmate: personnel) {
+                    if (crewmate->health > 0)
+                        crewmate->health -= 10;
+                }
+            }
         }
-    }
-
+    } 
     
     for (auto& pair: this->subsystems) {
         Subsystem& subsystem = pair.second;
@@ -134,7 +140,7 @@ std::vector<std::string> Room::fireOxygenPersonnelSwap(sf::Time time) {
                     events.push_back(subsystem.operating->rank + " " + subsystem.operating->getLogName() + " has been replaced by " + subsystem.operating->rank + " " + crewmate->getLogName() + ".");
                     subsystem.operating = crewmate;
                     break;
-                }
+                } 
             }
         }
 

@@ -17,6 +17,7 @@ Personnel::Personnel(std::string firstName, std::string middleName, std::string 
     this->skill = skill;
     this->capacity = 1.0;
     usingSubsystem = false;
+    this->currentState = NORMAL;
 }
 
 Personnel::Personnel(std::string rank, 
@@ -31,6 +32,7 @@ Personnel::Personnel(std::string rank,
     this->skill = skill;
     this->randomName();
     usingSubsystem = false;
+    this->currentState = NORMAL;
 }
 
 //capacity will be based on health, skill, mental state. Can exceed 1.
@@ -98,6 +100,6 @@ void Personnel::randomName() {
 }
 
 void Personnel::calculateCapacity() {
-    this->capacity = skill * health / 10; 
+    this->capacity = mentalStateModifiers[currentState] * health / 10; 
     //mental state should be added.
 }

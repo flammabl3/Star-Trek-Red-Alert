@@ -142,8 +142,25 @@ std::vector<std::string> Ship::checkDamage() {
     } else {
         for (auto& pair: this->shipSystems) {
             std::shared_ptr<System> system = pair.second;
-            std::vector<std::string> opEvents = system->calculateOperationalCapacity(time);
-            std::vector<std::string> oxyEvents = system->fireOxygenPersonnelSwap(time);
+            //I wonder if we should have fireOxygenPersonnelSwap() be called as part of each system's calculateOperationalCapacity()...?
+            
+            std::vector<std::string> opEvents; 
+            std::vector<std::string> oxyEvents; 
+
+            Weapon* wep = dynamic_cast<Weapon*>(system.get());
+            if (wep != nullptr) {
+                opEvents = wep->calculateOperationalCapacity(time);
+                oxyEvents = wep->fireOxygenPersonnelSwap(time);
+            } else {
+                Propulsion* prop = dynamic_cast<Propulsion*>(system.get());
+                if (prop != nullptr) {
+                    opEvents = prop->calculateOperationalCapacity(time);
+                    oxyEvents = prop->fireOxygenPersonnelSwap(time);
+                } else {
+                    opEvents = system->calculateOperationalCapacity(time);
+                    oxyEvents = system->fireOxygenPersonnelSwap(time);
+                }
+            }
 
             outputEvents.insert(outputEvents.end(), opEvents.begin(), opEvents.end());
             outputEvents.insert(outputEvents.end(), oxyEvents.begin(), oxyEvents.end());

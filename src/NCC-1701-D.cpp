@@ -230,14 +230,18 @@ initializeEnterprise::initializeEnterprise() {
     systemsList["Forward Torpedo Bay"] = std::shared_ptr<Weapon>(ForwardTorpedoes);
 
     initRightNacelle();
-    Nacelle* RightNacelle = new Nacelle("Right Nacelle", rooms, personnel);
+    Propulsion* RightNacelle = new Propulsion("Right Nacelle", rooms, personnel);
     RightNacelle->setCoordinates(-19, -12, 22, 10);
-    systemsList["Right Nacelle"] = std::shared_ptr<Nacelle>(RightNacelle);
+    RightNacelle->speed = 100.0f;
+    RightNacelle->baseSpeed = 100.0f;
+    systemsList["Right Nacelle"] = std::shared_ptr<Propulsion>(RightNacelle);
 
     initLeftNacelle();
-    Nacelle* LeftNacelle = new Nacelle("Left Nacelle", rooms, personnel);
+    Propulsion* LeftNacelle = new Propulsion("Left Nacelle", rooms, personnel);
+    RightNacelle->speed = 100.0f;
+    RightNacelle->baseSpeed = 100.0f;
     LeftNacelle->setCoordinates(-19, 12, 22, 10);
-    systemsList["Left Nacelle"] = std::shared_ptr<Nacelle>(LeftNacelle);
+    systemsList["Left Nacelle"] = std::shared_ptr<Propulsion>(LeftNacelle);
 
     initEngineering();
     System* Engineering = new System("Engineering", rooms, personnel);

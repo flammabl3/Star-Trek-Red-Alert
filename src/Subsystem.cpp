@@ -2,7 +2,7 @@
 
 Subsystem::Subsystem(std::string name, Personnel* operating)  {
     this->name = name;
-    this->operationalCapacity = 1;
+    this->operationalCapacity = 100;
     this->operating = operating;
     this->totalCondition = 100;
     this->fire = 0;
@@ -34,7 +34,6 @@ std::vector<std::string> Subsystem::fireOxygenPersonnelSwap(sf::Time time) {
 std::vector<std::string> Subsystem::calculateOperationalCapacity(sf::Time time) {
     std::vector<std::string> events;
     // The system's effectiveness should be determined by the capacity and skill of the operator, and the damage it has (or hasn't taken)
-    this->operationalCapacity = this->operating->capacity * this->operating->skill * totalCondition / 100;
-    // totalCondition is out of 100, and the total should be out of 1, so divide by 100 to get another number scaled around 1.
+    this->operationalCapacity = this->operating->capacity * this->operating->skill * totalCondition;
     return events;
 }

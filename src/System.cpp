@@ -5,7 +5,7 @@ System::System(std::string systemType, std::vector<Room> rooms, std::vector<Pers
     this->systemType = systemType;
     this->rooms = rooms;
     this->personnel = personnel;
-    this->operationalCapacity = 1;
+    this->operationalCapacity = 100;
     this->totalCondition = 100;
     this->power = 100;
     this->disabled = false;
@@ -91,21 +91,28 @@ std::string System::dealDamageToSystem(int damage) {
 }
 
 std::vector<std::string> System::calculateOperationalCapacity(sf::Time time) {
+    
     std::vector<std::string> events;
-
-    double average = 0;
-    for (Room& room: this->rooms) {
-        std::vector<std::string> events2 = room.calculateOperationalCapacity(time);
-        events.insert(events.end(), events2.begin(), events2.end());
-        average += room.operationalCapacity;
+    if (operationalCapacity > 0) {
+        double average = 0;
+        for (Room& room: this->rooms) {
+            if (power <= 100 && time.asSeconds() > 0.99999 && room.oxygen > power) {
+                room.oxygen -= power / 10;
+            }
+            std::vector<std::string> events2 = room.calculateOperationalCapacity(time);
+            events.insert(events.end(), events2.begin(), events2.end());
+            average += room.operationalCapacity;
+        }
+        average /= this->rooms.size();
+        //average of totalCondition, average operationalCapacity of all rooms, power of the room.
+        float bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
+        this->power = this->parentShip->shipSystems.at("Engineering")->operationalCapacity;
+        this->operationalCapacity = (average + this->totalCondition + this->power + bridgeCapacity) / 4;
     }
-    average /= this->rooms.size();
-    //average of totalCondition, average operationalCapacity of all rooms, power of the room.
-    float bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
-    this->operationalCapacity = (average + this->totalCondition + this->power + bridgeCapacity) / 4;
 
     if (operationalCapacity <= 0 && disabled == false) {
         disabled = true;
+        operationalCapacity = 0;
         events.push_back(systemType + " is non-functional.");
     }
 
@@ -135,9 +142,51 @@ Weapon::Weapon(std::string systemType, std::vector<Room> rooms, std::vector<Pers
 
 std::vector<std::string> Weapon::calculateOperationalCapacity(sf::Time time) {
     std::vector<std::string> events;
+    if (operationalCapacity > 0) {
+        double average = 0;
+        for (Room& room: this->rooms) {
+            if (power <= 100 && time.asSeconds() > 0.99999 && room.oxygen > power) {
+                room.oxygen -= power / 10;
+            }
+            std::vector<std::string> events2 = room.calculateOperationalCapacity(time);
+            events.insert(events.end(), events2.begin(), events2.end());
+            average += room.operationalCapacity;
+        }
+        average /= this->rooms.size();
+        //average of totalCondition, average operationalCapacity of all rooms, power of the room.
+        float bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
+        this->power = this->parentShip->shipSystems.at("Engineering")->operationalCapacity;
+        this->operationalCapacity = (average + this->totalCondition + this->power + bridgeCapacity) / 4;
+        if (this->operationalCapacity > 0) {
+            cooldownThreshold = (cooldownThresholdBase / (this->operationalCapacity / 100));
+        } else {
+            cooldownThreshold = -1;
+        }
+    }
+
+    if (operationalCapacity <= 0 && disabled == false) {
+        disabled = true;
+        operationalCapacity = 0;
+        events.push_back(systemType + " is non-functional.");
+    }
+
+    return events;
+}
+
+System::~System() {};
+
+Propulsion::Propulsion(std::string systemType, std::vector<Room> rooms, std::vector<Personnel*> personnel) : System(systemType, rooms, personnel) {
+
+};
+
+std::vector<std::string> Propulsion::calculateOperationalCapacity(sf::Time time) {
+    std::vector<std::string> events;
 
     double average = 0;
     for (Room& room: this->rooms) {
+        if (room.oxygen > power && time.asSeconds() > 0.99999) {
+            room.oxygen -= power / 10;
+        }
         std::vector<std::string> events2 = room.calculateOperationalCapacity(time);
         events.insert(events.end(), events2.begin(), events2.end());
         average += room.operationalCapacity;
@@ -145,11 +194,12 @@ std::vector<std::string> Weapon::calculateOperationalCapacity(sf::Time time) {
     average /= this->rooms.size();
     //average of totalCondition, average operationalCapacity of all rooms, power of the room.
     float bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
+    this->power = this->parentShip->shipSystems.at("Engineering")->operationalCapacity;
     this->operationalCapacity = (average + this->totalCondition + this->power + bridgeCapacity) / 4;
     if (this->operationalCapacity > 0) {
-        cooldownThreshold = (cooldownThresholdBase / (this->operationalCapacity / 100));
+        speed = baseSpeed * operationalCapacity;
     } else {
-        cooldownThreshold = -1;
+        speed = 0;
     }
 
     if (operationalCapacity <= 0 && disabled == false) {
@@ -160,8 +210,27 @@ std::vector<std::string> Weapon::calculateOperationalCapacity(sf::Time time) {
     return events;
 }
 
-System::~System() {};
+void Propulsion::calculateOperationalCapacity() {
+    if (operationalCapacity > 0) {
+        double average = 0;
+        for (Room& room: this->rooms) {
+            average += room.operationalCapacity;
+        }
+        average /= this->rooms.size();
+        //average of totalCondition, average operationalCapacity of all rooms, power of the room.
+        float bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
+        this->power = this->parentShip->shipSystems.at("Engineering")->operationalCapacity;
+        this->operationalCapacity = (average + this->totalCondition + this->power + bridgeCapacity) / 4;
+    }
 
-Nacelle::Nacelle(std::string systemType, std::vector<Room> rooms, std::vector<Personnel*> personnel) : System(systemType, rooms, personnel) {
+    if (this->operationalCapacity > 0) {
+        speed = baseSpeed * operationalCapacity / 100.0f;
+    } else {
+        speed = 0;
+    }
 
-};
+    if (operationalCapacity <= 0 && disabled == false) {
+        disabled = true;
+        operationalCapacity = 0;
+    }
+}

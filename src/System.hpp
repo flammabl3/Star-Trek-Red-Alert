@@ -74,12 +74,15 @@ class Weapon : public System {
 };
 
 
-class Nacelle : public System {
+class Propulsion : public System {
     public:
-        Nacelle(std::string systemType, std::vector<Room> rooms, std::vector<Personnel*> personnel);
+        Propulsion(std::string systemType, std::vector<Room> rooms, std::vector<Personnel*> personnel);
 
         float speed;
-        float speedBase;
+        float baseSpeed;
+
+        std::vector<std::string> calculateOperationalCapacity(sf::Time time);
+        void calculateOperationalCapacity();
 };
 
 #endif

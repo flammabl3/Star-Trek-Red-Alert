@@ -55,7 +55,7 @@ class Game {
         sf::Font font;
 
         //log for recording ship, crew, systems damage and other events.
-        std::vector<std::string> eventLog;
+        std::vector<std::tuple<std::string, bool>> eventLog;
         std::vector<std::tuple<sf::Text, int>> miniTextVect;
     public:
         //Constructors and Destructors
@@ -112,7 +112,7 @@ class Game {
 
         void render();
 
-        void logEvent(std::string event);
+        void logEvent(std::string event, bool friendly);
 
         void displayEvents();
 

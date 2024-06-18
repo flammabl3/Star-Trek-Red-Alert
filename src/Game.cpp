@@ -99,37 +99,36 @@ void Game::renderPlayer() {
     }
 }
 
-void Game::showRoomDamageEnemy() {
+void Game::showRoomDamage() {
     int positionOffset = 10;
-    for (Ship* ship: enemyShips) {
-        for (auto& pair: ship->shipSystems) {
-            std::shared_ptr<System>& system = pair.second;
-            for (Room& room: system->rooms) {
-                std::string fireSize;
-                if (room.fire == 0)
-                    fireSize = "no fire";
-                else if (25 > room.fire > 0) 
-                    fireSize = "small fire";
-                else if (room.fire > 25) 
-                    fireSize = "medium fire";
-                else if (room.fire > 50)
-                    fireSize = "large fire";
-                else if (room.fire > 75)
-                    fireSize = "huge fire";   
-                else if (room.fire > 100) 
-                    fireSize = "massive fire";
-                    
-                std::string roomStats = room.roomType + ": " + fireSize + " " + std::to_string((int)room.oxygen) + "% oxygen " + std::to_string((int)system->power) + "% power";
-                sf::Text text(roomStats, font);
-                text.setScale(0.5, 0.5);
-                //text will become more transparent as it moves up the log.
-                text.setFillColor(sf::Color(255, 255 - room.fire, 255 - room.fire, 255));
-                text.setPosition(0, 400 + 12 * positionOffset);
-                positionOffset--;
-                window->draw(text);
-            }
+    for (auto& pair: playerShipPointer->shipSystems) {
+        std::shared_ptr<System>& system = pair.second;
+        for (Room& room: system->rooms) {
+            std::string fireSize;
+            if (room.fire == 0)
+                fireSize = "no fire";
+            else if (25 > room.fire > 0) 
+                fireSize = "small fire";
+            else if (room.fire > 25) 
+                fireSize = "medium fire";
+            else if (room.fire > 50)
+                fireSize = "large fire";
+            else if (room.fire > 75)
+                fireSize = "huge fire";   
+            else if (room.fire > 100) 
+                fireSize = "massive fire";
+                
+            std::string roomStats = room.roomType + ": " + fireSize + " " + std::to_string((int)room.oxygen) + "% oxygen " + std::to_string((int)system->power) + "% power";
+            sf::Text text(roomStats, font);
+            text.setScale(0.5, 0.5);
+            //text will become more transparent as it moves up the log.
+            text.setFillColor(sf::Color(255, 255 - room.fire, 255 - room.fire, 255));
+
+            sf::Vector2i viewPosition = sf::Vector2i(0, 400 + 12 * positionOffset);
+            text.setPosition(window->mapPixelToCoords(viewPosition));
+            positionOffset--;
+            window->draw(text);
         }
-        
     }
 }
 
@@ -516,6 +515,7 @@ void Game::checkCollisions() {
                             phaser->originalScale = phaser->phaserScaleX;
                             phaser->targetShip = ship;
                             ship->shields -= projectile->damage;
+                            projectileDamage -= ship->shields/8;
                             ship->shieldHit(phaser->phaserRect.getPosition(), true);
                             if (ship->shields < 0) {
                                 ship->shields = 0;
@@ -526,6 +526,20 @@ void Game::checkCollisions() {
                                 delete projectile;
                                 continue; 
                             }
+
+                            if (projectileDamage > 0) {
+                                std::map<std::string, std::shared_ptr<System>>::iterator randomSystem = ship->shipSystems.begin();
+                                std::advance(randomSystem, random0_n(ship->shipSystems.size()));
+        
+                                std::vector<Room>::iterator randomRoom = randomSystem->second->rooms.begin(); 
+                                std::advance(randomRoom, random0_n(randomSystem->second->rooms.size()));
+
+                                //projectile damage should be modulated by the shields.
+                                std::vector<std::string> damagedPersonnel = randomRoom->dealDamageToRoom(projectileDamage);
+                                for (std::string personnelLogged: damagedPersonnel) {
+                                    logEvent(personnelLogged, ship->friendly);
+                                } 
+                            }   
                         } else if (!phaser->missed && satHelper.checkCollision(ship->shipSprite, phaser->phaserRect)) {
                             if (random0_nInclusive(100) <= phaser->hitChance) {
                                 phaser->hasCollided = true;
@@ -878,10 +892,9 @@ void Game::moveShip(Ship* ship, sf::Vector2f moveTo) {
                 speedTotal += prop->speed;
                 operationalCapacity += prop->operationalCapacity;
                 speedCount++;
-                //std::cout << prop->speed << std::endl;
             }
         }
-        float speed;
+        float speed = 0;
         if (speedCount > 0 && speedTotal > 1) {
             speed = speedTotal / speedCount;
             operationalCapacity /= speedCount;
@@ -890,12 +903,8 @@ void Game::moveShip(Ship* ship, sf::Vector2f moveTo) {
             operationalCapacity = 0;
         }
 
-        if (speed < 0) {
+        if (speed < 0 || speedCount <= 0) {
             speed = 0;
-        }
-        
-        if (speed > 100) {
-            std::cout << speed << std::endl;
         }
 
         float rotationSpeed = 70 * operationalCapacity / 100;
@@ -1050,11 +1059,16 @@ void Game::render() {
     renderEnemy();
     displayEvents();
     displayMiniText();
-    showRoomDamageEnemy();
+    showRoomDamage();
     renderEnemyHitboxes();
 
     if (debugMode)
         renderDebugObjects();
+    
+    sf::View view(sf::FloatRect(0, 0, window->getSize().x + 100, window->getSize().y + 100));
+    view.setCenter(playerShipObj.shipSprite.getPosition());
+    // Set the view to the window
+    this->window->setView(view);
     this->window->display();
     //this->window->setView(view);
     friendlyHitboxes.clear();
@@ -1083,7 +1097,9 @@ void Game::displayEvents() {
         else {
             text.setFillColor(sf::Color(100, 255, 100, 25 * positionOffset));
         }
-        text.setPosition(0, 12 * positionOffset);
+        //display relative to view.
+        sf::Vector2i viewPosition = sf::Vector2i(0, 12 * positionOffset);
+        text.setPosition(window->mapPixelToCoords(viewPosition));
         positionOffset--;
         window->draw(text);
     }
@@ -1314,7 +1330,6 @@ void Game::makeDecision(Ship* ship) {
                         wep++;
                         ship->weaponSelected = wep;
                         pickWeapon(ship);
-                        std::cout << "AHHHH" << std::endl;
                     }
                 }
                 useWeapon(ship, randomCoord);
@@ -1333,7 +1348,6 @@ void Game::makeDecision(Ship* ship) {
                     wep++;
                     ship->weaponSelected = wep;
                     pickWeapon(ship);
-                    std::cout << "AHHHH" << std::endl;
                 }
             }
             useWeapon(ship, randomCoord);

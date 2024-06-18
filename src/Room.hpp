@@ -18,9 +18,7 @@ class Room {
     
         Room(std::string roomType, std::vector<Personnel*> personnel, std::map<std::string, Subsystem> subsystems);
 
-        Room() {
-
-        }
+        Room();
 
         std::vector<std::string> calculateOperationalCapacity(sf::Time time);
 

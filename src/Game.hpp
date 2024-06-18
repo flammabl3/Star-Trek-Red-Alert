@@ -80,7 +80,7 @@ class Game {
         void updateEnemy();
         void renderEnemyHitboxes();
 
-        void showRoomDamageEnemy();
+        void showRoomDamage();
 
         void updateAllShips();
         void moveShip(Ship* ship, sf::Vector2f moveTo);

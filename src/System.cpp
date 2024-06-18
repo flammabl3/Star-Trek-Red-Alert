@@ -91,7 +91,6 @@ std::string System::dealDamageToSystem(int damage) {
 }
 
 std::vector<std::string> System::calculateOperationalCapacity(sf::Time time) {
-    
     std::vector<std::string> events;
     if (operationalCapacity > 0) {
         double average = 0;
@@ -104,10 +103,20 @@ std::vector<std::string> System::calculateOperationalCapacity(sf::Time time) {
             average += room.operationalCapacity;
         }
         average /= this->rooms.size();
+        this->totalCondition = average;
         //average of totalCondition, average operationalCapacity of all rooms, power of the room.
-        float bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
-        this->power = this->parentShip->shipSystems.at("Engineering")->operationalCapacity;
-        this->operationalCapacity = (average + this->totalCondition + this->power + bridgeCapacity) / 4;
+        //Should not apply to bridge or engineering because they will rely on their own values, causing issues.
+        if (systemType == "Bridge") {
+            this->power = this->parentShip->shipSystems.at("Engineering")->operationalCapacity;
+            this->operationalCapacity = (this->totalCondition + this->power) / 2;
+        } else if (systemType == "Engineering") {   
+            float bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
+            this->operationalCapacity = (this->totalCondition + bridgeCapacity) / 2;
+        } else {    
+            float bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
+            this->power = this->parentShip->shipSystems.at("Engineering")->operationalCapacity;
+            this->operationalCapacity = (this->totalCondition + this->power + bridgeCapacity) / 3;
+        }
     }
 
     if (operationalCapacity <= 0 && disabled == false) {
@@ -153,10 +162,11 @@ std::vector<std::string> Weapon::calculateOperationalCapacity(sf::Time time) {
             average += room.operationalCapacity;
         }
         average /= this->rooms.size();
+        this->totalCondition = average;
         //average of totalCondition, average operationalCapacity of all rooms, power of the room.
         float bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
-        this->power = this->parentShip->shipSystems.at("Engineering")->operationalCapacity;
-        this->operationalCapacity = (average + this->totalCondition + this->power + bridgeCapacity) / 4;
+            this->power = this->parentShip->shipSystems.at("Engineering")->operationalCapacity;
+            this->operationalCapacity = (this->totalCondition + this->power + bridgeCapacity) / 3;
         if (this->operationalCapacity > 0) {
             cooldownThreshold = (cooldownThresholdBase / (this->operationalCapacity / 100));
         } else {
@@ -184,14 +194,27 @@ std::vector<std::string> Propulsion::calculateOperationalCapacity(sf::Time time)
 
     double average = 0;
     for (Room& room: this->rooms) {
-        if (room.oxygen > power && time.asSeconds() > 0.99999) {
+        if (room.oxygen > 0 && room.oxygen > power && time.asSeconds() > 0.99999) {
             room.oxygen -= power / 10;
         }
         std::vector<std::string> events2 = room.calculateOperationalCapacity(time);
         events.insert(events.end(), events2.begin(), events2.end());
         average += room.operationalCapacity;
     }
-    average /= this->rooms.size();
+    if (this->rooms.size() > 0)
+        average /= this->rooms.size();
+
+    if (average > 1000) {
+        average = 0;
+        for (Room& room: this->rooms) {
+            if (room.oxygen > 0 && room.oxygen > power && time.asSeconds() > 0.99999) {
+                room.oxygen -= power / 10;
+            }
+            std::vector<std::string> events2 = room.calculateOperationalCapacity(time);
+            events.insert(events.end(), events2.begin(), events2.end());
+            average += room.operationalCapacity;
+        }
+    }
     //average of totalCondition, average operationalCapacity of all rooms, power of the room.
     float bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
     this->power = this->parentShip->shipSystems.at("Engineering")->operationalCapacity;
@@ -217,10 +240,11 @@ void Propulsion::calculateOperationalCapacity() {
             average += room.operationalCapacity;
         }
         average /= this->rooms.size();
+        this->totalCondition = average;
         //average of totalCondition, average operationalCapacity of all rooms, power of the room.
         float bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
         this->power = this->parentShip->shipSystems.at("Engineering")->operationalCapacity;
-        this->operationalCapacity = (average + this->totalCondition + this->power + bridgeCapacity) / 4;
+        this->operationalCapacity = (this->totalCondition + this->power + bridgeCapacity) / 3;
     }
 
     if (this->operationalCapacity > 0) {

@@ -42,7 +42,7 @@ void Game::initVariables() {
 void Game::initWindow() {
     this->videoMode.width = 1366;
     this->videoMode.height = 768;
-    this->window = new sf::RenderWindow(sf::VideoMode(1366, 600), "Star Trek: Red Alert");
+    this->window = new sf::RenderWindow(sf::VideoMode(1366, 768), "Star Trek: Red Alert");
     this->window->setKeyRepeatEnabled(false);
 
     sf::Vector2u size = this->window->getSize();
@@ -546,8 +546,7 @@ void Game::checkCollisions() {
                                 phaser->originalScale = phaser->phaserScaleX;
                                 phaser->targetShip = ship;
                                 
-                                
-                                ship->totalCondition -= projectile->damage;
+                                ship->changeTotalCondition(projectileDamage);
                                 logEvent("Ship has taken damage.", ship->friendly);
                                 
                                 std::map<std::string, std::shared_ptr<System>>::iterator randomSystem = ship->shipSystems.begin();
@@ -603,7 +602,8 @@ void Game::checkCollisions() {
                                             if (random0_nInclusive(100) <= torpedo->hitChance) {
                                                 std::cout << "SYSTEM HIT" << std::endl;
                                                 
-                                                ship->totalCondition -= projectile->damage;
+                                                
+                                                ship->changeTotalCondition(projectileDamage);
                                                 logEvent("Ship has taken damage.", ship->friendly);
                                             
                                                 logEvent(system->dealDamageToSystem(projectile->damage), ship->friendly);
@@ -623,7 +623,7 @@ void Game::checkCollisions() {
                             if (!torpedo->targetingSystem && !torpedo->missed) {
                                 if (random0_nInclusive(100) <= torpedo->hitChance) {
                                     
-                                    ship->totalCondition -= projectile->damage;
+                                    ship->changeTotalCondition(projectileDamage);
                                     logEvent("Ship has taken damage.", ship->friendly);
                                     
                                     
@@ -665,7 +665,8 @@ void Game::checkCollisions() {
                             if (!disruptor->missed) {
                                 if (random0_nInclusive(100) <= disruptor->hitChance) {
                                     if (projectile->damage > 0) {
-                                        ship->totalCondition -= projectile->damage;
+                                        
+                                        ship->changeTotalCondition(projectileDamage);
                                         logEvent("Ship has taken damage.", ship->friendly);
                                     }
                                     
@@ -680,7 +681,7 @@ void Game::checkCollisions() {
                                     for (std::string personnelLogged: damagedPersonnel) {
                                         logEvent(personnelLogged, ship->friendly);
                                     }
-                                    ship->totalCondition -= projectile->damage;
+                                    ship->changeTotalCondition(projectileDamage);
 
                                     for (auto& pair : ship->shipSystems) {
                                         pair.second->setHitbox(ship);
@@ -993,7 +994,17 @@ void Game::updateEvents() {
         if (this->event.type == sf::Event::Closed) {
             this->window->close();
             exit(0);
+        } else if (event.type == sf::Event::Resized) {
+            // get the new size of the window
+            sf::Vector2u newSize = window->getSize();
+            std::cout << "New width: " << newSize.x << " New height: " << newSize.y << std::endl;
+
+            // adjust the viewport
+            sf::FloatRect visibleArea(0, 0, newSize.x, newSize.y);
+            view = sf::View(visibleArea);
+            window->setView(view);
         }
+        
         
         if (playerShipObj.totalCondition > 0) {  
             if (event.type == sf::Event::KeyPressed)
@@ -1065,7 +1076,7 @@ void Game::render() {
     if (debugMode)
         renderDebugObjects();
     
-    sf::View view(sf::FloatRect(0, 0, window->getSize().x + 100, window->getSize().y + 100));
+    view = sf::View(sf::FloatRect(0, 0, window->getSize().x + 100, window->getSize().y + 100));
     view.setCenter(playerShipObj.shipSprite.getPosition());
     // Set the view to the window
     this->window->setView(view);

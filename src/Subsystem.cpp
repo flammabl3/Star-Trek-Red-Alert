@@ -12,7 +12,7 @@ std::vector<std::string> Subsystem::fireOxygenPersonnelSwap(sf::Time time) {
     std::vector<std::string> events;
 
     if (time.asSeconds() > 0.99999) {
-        if (fire > 0) {
+        if (fire > 0 && totalCondition > 0) {
             fire += randomfloat0_n(1);
             if (randomfloat0_n(1) == 1) {
                 int random = random0_n(2);
@@ -23,6 +23,8 @@ std::vector<std::string> Subsystem::fireOxygenPersonnelSwap(sf::Time time) {
                     }
                 }
                 totalCondition -= randomfloat0_n(1);
+                if (totalCondition < 0)
+                    totalCondition = 0;
             }
         }
     }

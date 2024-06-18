@@ -191,3 +191,24 @@ sf::FloatRect Ship::getBoundingBox() {
     return(boundingBox);
 }
 
+void Ship::changeTotalCondition(int damage) {
+    if (totalCondition > 0)
+        totalCondition -= damage;
+    else {
+        totalCondition = 0;
+    }
+
+    if (totalCondition < 0) 
+        totalCondition = 0;
+}
+
+void Ship::changeTotalCondition(float damage) {
+    if (totalCondition > 0)
+        totalCondition -= damage;
+    else {
+        totalCondition = 0;
+    }
+
+    if (totalCondition < 0) 
+        totalCondition = 0;
+}

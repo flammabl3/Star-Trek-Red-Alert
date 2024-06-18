@@ -83,6 +83,10 @@ class Ship
         sf::RectangleShape setShield(int setShieldRadius);
 
         sf::Vector2f evadeTargetPosition;
+
+        void changeTotalCondition(int damage);
+
+        void changeTotalCondition(float damage);
         
         //~Ship();
         //define destructor later

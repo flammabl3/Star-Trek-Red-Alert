@@ -204,17 +204,6 @@ std::vector<std::string> Propulsion::calculateOperationalCapacity(sf::Time time)
     if (this->rooms.size() > 0)
         average /= this->rooms.size();
 
-    if (average > 1000) {
-        average = 0;
-        for (Room& room: this->rooms) {
-            if (room.oxygen > 0 && room.oxygen > power && time.asSeconds() > 0.99999) {
-                room.oxygen -= power / 10;
-            }
-            std::vector<std::string> events2 = room.calculateOperationalCapacity(time);
-            events.insert(events.end(), events2.begin(), events2.end());
-            average += room.operationalCapacity;
-        }
-    }
     //average of totalCondition, average operationalCapacity of all rooms, power of the room.
     float bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
     this->power = this->parentShip->shipSystems.at("Engineering")->operationalCapacity;

@@ -36,6 +36,13 @@ void Game::initVariables() {
     //pick a font later.
     font.loadFromFile("../resource/arial.ttf");
 
+    if (!newStarTexture.loadFromFile("../resource/star1.png")) {
+        std::cout << "Failed to load star texture." << std::endl;
+    }
+    if (!newStarTexture2.loadFromFile("../resource/star2.png")) {
+        std::cout << "Failed to load star texture." << std::endl;
+    }
+
     debugMode = false;
 }
 
@@ -720,7 +727,7 @@ void Game::checkCollisions() {
 
 // will be run each frame. will eventually need code to check the type of weapon.
 void Game::fireTorpedo(Ship& firingShip, int hitChance) {
-    fireTorpedo(firingShip, (sf::Vector2f)sf::Mouse::getPosition(*window), hitChance);
+    fireTorpedo(firingShip, window->mapPixelToCoords(sf::Mouse::getPosition(*window)), hitChance);
 }
 
 void Game::fireTorpedo(Ship& firingShip, sf::Vector2f targetP, int hitChance) {
@@ -787,7 +794,7 @@ void Game::fireTorpedo(Ship& firingShip, sf::Vector2f targetP, int hitChance) {
 }
 
 void Game::fireTorpedoSpread(Ship& firingShip, int hitChance) {
-    fireTorpedoSpread(firingShip, (sf::Vector2f)sf::Mouse::getPosition(*window), hitChance);
+    fireTorpedoSpread(firingShip, window->mapPixelToCoords(sf::Mouse::getPosition(*window)), hitChance);
 }
 
 void Game::fireTorpedoSpread(Ship& firingShip, sf::Vector2f targetP, int hitChance) {
@@ -845,7 +852,7 @@ void Game::fireTorpedoSpread(Ship& firingShip, sf::Vector2f targetP, int hitChan
 }
 
 void Game::fireDisruptor(Ship& firingShip, int hitChance) {
-    fireDisruptor(firingShip, (sf::Vector2f)sf::Mouse::getPosition(*window), hitChance);
+    fireDisruptor(firingShip, window->mapPixelToCoords(sf::Mouse::getPosition(*window)), hitChance);
 }
 
 void Game::fireDisruptor(Ship& firingShip, sf::Vector2f targetP, int hitChance) {
@@ -944,12 +951,12 @@ void Game::movePlayer() {
         return;
     }
     
-    moveShip(playerShipPointer, (sf::Vector2f)sf::Mouse::getPosition(*window));
+    moveShip(playerShipPointer, window->mapPixelToCoords(sf::Mouse::getPosition(*window)));
 
 }
 
 void Game::firePhaser(Ship& firingShip, int hitChance) {
-    firePhaser(firingShip, (sf::Vector2f)sf::Mouse::getPosition(*window), hitChance);
+    firePhaser(firingShip, window->mapPixelToCoords(sf::Mouse::getPosition(*window)), hitChance);
 }
 
 void Game::firePhaser(Ship& firingShip, sf::Vector2f targetP, int hitChance) {
@@ -976,6 +983,7 @@ Game::Game() {
     this->initWindow();
     this->initPlayer();
     this->initEnemy();
+    generateStarsStart();
 }
 
 Game::~Game() {
@@ -1040,6 +1048,7 @@ void Game::updateEvents() {
                         logEvent("Debug mode off.", true);
                     } else {
                         debugMode = true;
+                        playerShipObj.shields = 1000;
                         logEvent("Debug mode on.", true);
                     }
                         
@@ -1062,9 +1071,12 @@ void Game::update() {
     this->updateEnemy();
     this->updateAllShips();
     this->checkCollisions();
+    this->generateStars();
 }
 
 void Game::render() {
+    setGameView(playerShipObj.shipSprite.getPosition());
+    renderStars();
     renderProjectiles();
     renderPlayer();
     renderEnemy();
@@ -1073,13 +1085,13 @@ void Game::render() {
     showRoomDamage();
     renderEnemyHitboxes();
 
-    if (debugMode)
+    if (debugMode) {
+        renderCoordinates();
         renderDebugObjects();
+    }
+        
     
-    view = sf::View(sf::FloatRect(0, 0, window->getSize().x + 100, window->getSize().y + 100));
-    view.setCenter(playerShipObj.shipSprite.getPosition());
-    // Set the view to the window
-    this->window->setView(view);
+    
     this->window->display();
     //this->window->setView(view);
     friendlyHitboxes.clear();
@@ -1371,4 +1383,120 @@ void Game::makeDecision(Ship* ship) {
         }
         moveShip(ship, ship->evadeTargetPosition);
     }
+}
+
+void Game::generateStarsStart() {
+    sf::Vector2f size = (view.getSize());
+    sf::Vector2f center = view.getCenter();
+    generatedChunks.insert(std::pair(std::tuple<int, int>(1, 1), true));
+
+    float left = center.x - size.x / 2;
+    float right = center.x + size.x / 2;
+    float top = center.y - size.y / 2;
+    float bottom = center.y + size.y / 2;
+
+    alreadySeenLeft, alreadySeenTop, alreadySeenRight, alreadySeenBottom = 0;
+
+    for (int i = 20 + random0_nInclusive(20); i > 0; i--) {
+        sf::Sprite newStar;
+        sf::Texture* textr = (random0_nInclusive(1) == 0) ? &newStarTexture : &newStarTexture2;
+        newStar.setTexture(*textr);
+        newStar.setColor(sf::Color(random_m_to_n_inclusive(200, 255), 200, random_m_to_n_inclusive(200, 255), random0_nInclusive(255)));
+        newStar.setOrigin(newStar.getLocalBounds().width / 2, newStar.getLocalBounds().height / 2);
+        newStar.setScale(1 + randomNegPos() * randomfloat0_n(1), 1 + randomNegPos() * randomfloat0_n(1));
+        //sf::Vector2f position = window->mapPixelToCoords(sf::Vector2i(random_m_to_n_inclusive(left, right), random_m_to_n_inclusive(bottom, top)));
+        newStar.setPosition(sf::Vector2f(random_m_to_n_inclusive(left, right), random_m_to_n_inclusive(top, bottom)));
+        starSprites.push_back(newStar);
+    }
+}
+
+void Game::generateStars() {
+    sf::Vector2f size = view.getSize();
+    sf::Vector2f center = view.getCenter();
+
+    //divide the world into 1000x1000 chunks. When the player approaches a new chunk they have not seen, generate new stars.   
+    //(0 to 1000) is chunk 1. Conversely (0 to -1000) is chunk -1.
+    int chunkX = center.x / 1000;
+    int chunkY = center.y / 1000;
+        
+    (chunkX > 0) ? chunkX++ : chunkX--;
+    (chunkY > 0) ? chunkY++ : chunkY--;
+    //a number between 0 and 1000 divided by 1000 gives us 0, but we want this to be chunk 1.
+    if (abs(center.x) < 1000)
+        chunkX = (center.x > 0) ? 1 : -1;
+    if (abs(center.y) < 1000)
+        chunkY = (center.y > 0) ? 1 : -1;
+        
+    sf::Vector2i chunk = sf::Vector2i(chunkX, chunkY);
+
+    std::vector<sf::Vector2i> chunksToDraw;
+
+    //generate all adjacent chunks in a 3x3, then mark all as generated.
+    int adjacentLeft = (chunk.x == 1) ? chunk.x - 2: chunk.x - 1;
+    int adjacentRight = (chunk.x == -1) ? chunk.x + 2: chunk.x + 1;
+    int adjacentTop = (chunk.y == 1) ? chunk.y - 2: chunk.y - 1;
+    int adjacentBottom = (chunk.y == -1) ? chunk.y + 2: chunk.y + 1;
+
+    for (int x = adjacentLeft; x <= adjacentRight; x++) {
+        for (int y = adjacentTop; y <= adjacentBottom; y++) {
+            if (!(x == 0 && y == 0) && !(x == chunk.x && y == chunk.y)) {
+                try {
+                    generatedChunks.at(std::tuple<int, int>(x, y));
+                } catch (std::exception e) {
+                    chunksToDraw.push_back(sf::Vector2i(x, y));
+                }
+                
+            }
+        }
+    }
+    
+    for (sf::Vector2i chunkToDraw: chunksToDraw) {
+        generatedChunks.insert_or_assign(std::tuple<int, int>(chunkToDraw.x, chunkToDraw.y), true);
+        //the edges of our chunks. If it is negative, the left side will be chunk * 1000 - 1000, and the far will be chunk * 1000.
+        //The reverse is true for positive chunks
+        int xLeft = (chunkToDraw.x > 0) ? chunkToDraw.x * 1000 - 1000 : chunkToDraw.x * 1000;
+        int xRight = (chunkToDraw.x > 0) ? chunkToDraw.x * 1000: chunkToDraw.x * 1000 + 1000;
+        int xBottom = (chunkToDraw.y > 0) ? chunkToDraw.y * 1000 - 1000 : chunkToDraw.y * 1000;
+        int xTop = (chunkToDraw.y > 0) ? chunkToDraw.y * 1000: chunkToDraw.y * 1000 + 1000;
+        for (int i = 20 + random0_nInclusive(20); i > 0; i--) {
+            sf::Sprite newStar;
+            sf::Texture* textr = (random0_nInclusive(1) == 0) ? &newStarTexture : &newStarTexture2;
+            newStar.setTexture(*textr);
+            newStar.setColor(sf::Color(random_m_to_n_inclusive(200, 255), 200, random_m_to_n_inclusive(200, 255), random0_nInclusive(255)));
+            newStar.setOrigin(newStar.getLocalBounds().width / 2, newStar.getLocalBounds().height / 2);
+            newStar.setScale(1 + randomNegPos() * randomfloat0_n(1), 1 + randomNegPos() * randomfloat0_n(1));
+            newStar.setPosition(sf::Vector2f(random_m_to_n_inclusive(xLeft, xRight), random_m_to_n_inclusive(xBottom, xTop)));
+            starSprites.push_back(newStar);
+        }
+    }
+}
+
+void Game::renderStars() {
+    sf::View currentView = window->getView();
+    sf::FloatRect viewBounds = sf::FloatRect(currentView.getCenter() - currentView.getSize() / 2.f, currentView.getSize());
+
+    for (sf::Sprite& starSprite: starSprites) {
+        if (starSprite.getGlobalBounds().intersects(viewBounds)) {
+            window->draw(starSprite);
+        }
+    }
+}
+
+
+void Game::renderCoordinates() {
+    sf::Vector2f mousePosition = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
+    sf::Text coordinateTextX = sf::Text("X: " + std::to_string(static_cast<int>(mousePosition.x)), font, 15);
+    sf::Text coordinateTextY = sf::Text("Y: " + std::to_string(static_cast<int>(mousePosition.y)), font, 15);
+
+    coordinateTextX.setPosition(mousePosition);
+    coordinateTextY.setPosition(mousePosition + sf::Vector2f(0, 10));
+    
+    window->draw(coordinateTextX);
+    window->draw(coordinateTextY);
+}
+
+void Game::setGameView(sf::Vector2f viewCoordinates) {
+    view = sf::View(sf::FloatRect(0, 0, window->getSize().x, window->getSize().y));
+    view.setCenter(viewCoordinates);
+    this->window->setView(view);
 }

@@ -17,7 +17,17 @@ class Game {
         //Private functions
         void initVariables();
         void initWindow();
-        
+
+        //bounds of the screen the player has already visited
+        int alreadySeenLeft;
+        int alreadySeenRight;
+        int alreadySeenTop;
+        int alreadySeenBottom;
+        std::map<std::tuple<int, int>, bool> generatedChunks;
+
+        std::vector<sf::Sprite> starSprites;
+        sf::Texture newStarTexture;
+        sf::Texture newStarTexture2;
 
         //Game Objects
         
@@ -123,4 +133,12 @@ class Game {
         void createDebugBoxes(Ship* enemyShipObj);
 
         bool checkCollisionRectangleShape(sf::RectangleShape rect, sf::Vector2f vect);
+
+        void generateStarsStart();
+        void generateStars();
+        void renderStars();
+
+        void renderCoordinates();
+
+        void setGameView(sf::Vector2f viewCoordinates);
 };

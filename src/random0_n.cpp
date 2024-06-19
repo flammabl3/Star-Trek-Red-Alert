@@ -31,3 +31,10 @@ int randomNegPos() {
         return 1;
     }
 }
+
+int random_m_to_n_inclusive(int m, int n) {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(m, n);
+    return dis(gen);
+}

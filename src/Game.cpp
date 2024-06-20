@@ -896,7 +896,6 @@ void Game::moveShip(Ship* ship, sf::Vector2f moveTo) {
             std::shared_ptr<System>& system = pair.second;
             Propulsion* prop = dynamic_cast<Propulsion*>(system.get());
             if (prop != nullptr) {
-                prop->calculateOperationalCapacity();
                 speedTotal += prop->speed;
                 operationalCapacity += prop->operationalCapacity;
                 speedCount++;
@@ -914,7 +913,7 @@ void Game::moveShip(Ship* ship, sf::Vector2f moveTo) {
         if (speed < 0 || speedCount <= 0) {
             speed = 0;
         }
-
+            
         float rotationSpeed = 70 * operationalCapacity / 100;
         //ship's propulsion system speed stat multiplied to give effective speed
         ship->shipSprite.move(normalizedVector * speed * deltaTime);
@@ -973,7 +972,7 @@ void Game::firePhaser(Ship& firingShip, sf::Vector2f targetP, int hitChance) {
 
     phaser->firingShip = &firingShip;
 
-    phaser->hitChance = phaser->hitChanceBase / 100;
+    phaser->hitChance = hitChance * phaser->hitChanceBase / 100;
     
     this->projectilesList.push_back(phaser);
 }
@@ -1115,10 +1114,12 @@ void Game::displayEvents() {
         text.setScale(0.5, 0.5);
         //text will become more transparent as it moves up the log.
         //red or green text based on which faction is hit
+        int alpha = 25 * positionOffset;
+        alpha = (alpha < 0) ? 0 : alpha;
         if (std::get<1>(tuple))
-            text.setFillColor(sf::Color(255, 100, 100, 25 * positionOffset));
+            text.setFillColor(sf::Color(255, 100, 100, alpha));
         else {
-            text.setFillColor(sf::Color(100, 255, 100, 25 * positionOffset));
+            text.setFillColor(sf::Color(100, 255, 100, alpha));
         }
         //display relative to view.
         sf::Vector2i viewPosition = sf::Vector2i(0, 12 * positionOffset);

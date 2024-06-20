@@ -149,7 +149,8 @@ std::vector<std::string> Room::fireOxygenPersonnelSwap(sf::Time time) {
                 fire += randomfloat0_n(1);
                 
                 //random chance to be damaged by fire. Higher with more fire.
-                totalCondition -= randomfloat0_n(fire/100);
+                double fireDmg = (fire/100 > 1) ? randomfloat0_n(fire/100) : 0;
+                totalCondition -= fireDmg;
             }
         }
         //replace dead crewmates with living ones.

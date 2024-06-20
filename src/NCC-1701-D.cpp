@@ -172,7 +172,6 @@ void initializeEnterprise::initEngineering() {
     subsystemList.clear();
 
     //another set of data structures, since we only have one for the other systems.
-    std::vector<Personnel*> personnel2; 
     std::map<std::string, Subsystem> subsystemList2;
 
     personnel.push_back(new Personnel(std::string("Geordi"), std::string(""), std::string("La Forge"), std::string("Lieutenant Commander"), 
@@ -201,9 +200,10 @@ void initializeEnterprise::initEngineering() {
         personnel2.push_back(placeholder);
     }
     
-    subsystemList2["Warp Core"] = Subsystem("Engineering Station I", personnel.at(0));
+    subsystemList2["Warp Core"] = Subsystem("Engineering Station I", personnel2.at(0));
 
     rooms.push_back(Room("Warp Core Room", personnel2, subsystemList2));
+    personnel2.clear();
 }
             
 
@@ -238,8 +238,8 @@ initializeEnterprise::initializeEnterprise() {
 
     initLeftNacelle();
     Propulsion* LeftNacelle = new Propulsion("Left Nacelle", rooms, personnel);
-    RightNacelle->speed = 100.0f;
-    RightNacelle->baseSpeed = 100.0f;
+    LeftNacelle->speed = 100.0f;
+    LeftNacelle->baseSpeed = 100.0f;
     LeftNacelle->setCoordinates(-19, 12, 22, 10);
     systemsList["Left Nacelle"] = std::shared_ptr<Propulsion>(LeftNacelle);
 

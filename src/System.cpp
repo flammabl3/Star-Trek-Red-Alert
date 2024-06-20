@@ -186,7 +186,7 @@ std::vector<std::string> Weapon::calculateOperationalCapacity(sf::Time time) {
 System::~System() {};
 
 Propulsion::Propulsion(std::string systemType, std::vector<Room> rooms, std::vector<Personnel*> personnel) : System(systemType, rooms, personnel) {
-
+    speed = 0;
 };
 
 std::vector<std::string> Propulsion::calculateOperationalCapacity(sf::Time time) {
@@ -201,22 +201,36 @@ std::vector<std::string> Propulsion::calculateOperationalCapacity(sf::Time time)
         events.insert(events.end(), events2.begin(), events2.end());
         average += room.operationalCapacity;
     }
-    if (this->rooms.size() > 0)
+    float bridgeCapacity = 0;
+    if (operationalCapacity > 0) {
+        double average = 0;
+        for (Room& room: this->rooms) {
+            average += room.operationalCapacity;
+        }
         average /= this->rooms.size();
+        this->totalCondition = average;
+        //average of totalCondition, average operationalCapacity of all rooms, power of the room.
+        bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
+        this->power = this->parentShip->shipSystems.at("Engineering")->operationalCapacity;
+        this->operationalCapacity = (this->totalCondition + this->power + bridgeCapacity) / 3;
+        
+    }
 
-    //average of totalCondition, average operationalCapacity of all rooms, power of the room.
-    float bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
-    this->power = this->parentShip->shipSystems.at("Engineering")->operationalCapacity;
-    this->operationalCapacity = (average + this->totalCondition + this->power + bridgeCapacity) / 4;
     if (this->operationalCapacity > 0) {
-        speed = baseSpeed * operationalCapacity;
+        speed = baseSpeed * operationalCapacity / 100.0f;
     } else {
         speed = 0;
     }
 
     if (operationalCapacity <= 0 && disabled == false) {
         disabled = true;
+        operationalCapacity = 0;
         events.push_back(systemType + " is non-functional.");
+    }
+            
+    if (operationalCapacity > 200) {
+        std::cout << "avg: " << average << std::endl;
+        std::cout << "prop cap: " << operationalCapacity << std::endl;
     }
 
     return events;
@@ -234,6 +248,7 @@ void Propulsion::calculateOperationalCapacity() {
         float bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
         this->power = this->parentShip->shipSystems.at("Engineering")->operationalCapacity;
         this->operationalCapacity = (this->totalCondition + this->power + bridgeCapacity) / 3;
+        
     }
 
     if (this->operationalCapacity > 0) {

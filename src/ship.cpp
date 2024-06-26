@@ -21,7 +21,7 @@ Ship::Ship(std::map<std::string, std::shared_ptr<System>> shipSystems, int mass,
     this->shieldOpac = 0;
     this->shieldOffset = sf::Vector2f(0, 0);
     this->evadeTargetPosition = sf::Vector2f(-1, -1);
-
+    this->decisionTimer = 0;
     weaponSelectedTuple = std::tuple("", "");
     weaponSelected = 0;
 }
@@ -211,4 +211,8 @@ void Ship::changeTotalCondition(float damage) {
 
     if (totalCondition < 0) 
         totalCondition = 0;
+}
+
+sf::Vector2f Ship::getPosition() {
+    return shipSprite.getPosition();
 }

@@ -31,6 +31,7 @@ class Ship
         double impulseSpeed;
         double warpSpeed;
         float totalCondition;
+        double decisionTimer;
         int shieldOpac;
         std::string name;
         std::string designation;
@@ -87,6 +88,8 @@ class Ship
         void changeTotalCondition(int damage);
 
         void changeTotalCondition(float damage);
+
+        sf::Vector2f getPosition();
         
         //~Ship();
         //define destructor later

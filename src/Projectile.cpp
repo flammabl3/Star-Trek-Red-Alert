@@ -34,6 +34,10 @@ void Projectile::setFriendly() {
     friendly = true;
 }
 
+sf::Vector2f Projectile::getPosition() {
+    return projectileSprite.getPosition();
+}
+
 Projectile::~Projectile() {
     
 }

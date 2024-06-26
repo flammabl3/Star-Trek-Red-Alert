@@ -301,7 +301,7 @@ void Game::renderProjectiles() {
 
 void Game::moveTorpedoes(Torpedo* projectile, int i) {
     torpedoTime += deltaTime;
-    sf::Vector2f elapsedDistance = projectile->projectileSprite.getPosition() - projectile->spawnedAt;
+    sf::Vector2f elapsedDistance = projectile->getPosition() - projectile->spawnedAt;
     //if the projectile has travelled more than 400 units, delete it.
     float distanceLength = std::sqrt(elapsedDistance.x * elapsedDistance.x + elapsedDistance.y * elapsedDistance.y);
     if (distanceLength > 900) {
@@ -364,7 +364,7 @@ void Game::moveTorpedoes(Torpedo* projectile, int i) {
 
 void Game::moveDisruptors(Disruptor* projectile, int i) {
     if (!projectile->secondShot) {
-        sf::Vector2f elapsedDistance = projectile->projectileSprite.getPosition() - projectile->spawnedAt;
+        sf::Vector2f elapsedDistance = projectile->getPosition() - projectile->spawnedAt;
         //if the projectile has travelled more than 400 units, delete it.
         float distanceLength = std::sqrt(elapsedDistance.x * elapsedDistance.x + elapsedDistance.y * elapsedDistance.y);
         if (distanceLength > 900) {
@@ -395,7 +395,7 @@ void Game::moveDisruptors(Disruptor* projectile, int i) {
             projectile->secondShot = false;
 
             //this should eventually be changed to be the tip of the disruptor which shot it.
-            sf::Vector2f firingShipPos = projectile->firingShip->shipSprite.getPosition();
+            sf::Vector2f firingShipPos = projectile->firingShip->getPosition();
             projectile->spawnedAt = firingShipPos;
             projectile->projectileSprite.setPosition(firingShipPos);
         }
@@ -415,10 +415,10 @@ void Game::movePhasers(Phaser* projectile, int i) {
 
     if (projectile->targetShip != nullptr) {
         if (projectile->targetShip->shields > 0) {
-            goTo = projectile->targetShip->shipSprite.getPosition() - projectile->targetShip->shieldOffset - projectile->firingShipOffset;;
+            goTo = projectile->targetShip->getPosition() - projectile->targetShip->shieldOffset - projectile->firingShipOffset;;
             projectile->newTarget = goTo;
         } else {
-            goTo = projectile->targetShip->shipSprite.getPosition() - projectile->firingShipOffset;;
+            goTo = projectile->targetShip->getPosition() - projectile->firingShipOffset;;
             projectile->newTarget = goTo;
         }
     } else {
@@ -474,12 +474,12 @@ void Game::checkCollisions() {
             sf::FloatRect shipBounds = ship->getBoundingBox();
             int projectileDamage = projectile->damage;
             //check for shield collision
-            if (checkCollisionRectangleShape(ship->shieldRect, projectile->projectileSprite.getPosition())) {
+            if (checkCollisionRectangleShape(ship->shieldRect, projectile->getPosition())) {
                 if (!((ship->friendly && projectile->friendly) || (!ship->friendly && !projectile->friendly))) {
                     if (ship->shields > 0) {
                         ship->shields -= projectile->damage;
                         projectileDamage -= ship->shields/8;
-                        ship->shieldHit(projectile->projectileSprite.getPosition(), true);
+                        ship->shieldHit(projectile->getPosition(), true);
                         if (ship->shields < 0) {
                             ship->shields = 0;
                         }
@@ -576,7 +576,7 @@ void Game::checkCollisions() {
                                     //check for collision and log the string returned by checkCollision
 
                                     //if a string was returned there was a collision
-                                    if (pair.second->checkCollision(phaser->projectileSprite.getPosition()))
+                                    if (pair.second->checkCollision(phaser->getPosition()))
                                     logEvent(pair.second->dealDamageToSystem(projectile->damage), ship->friendly);
                                 }
                                 
@@ -608,7 +608,7 @@ void Game::checkCollisions() {
                                         break;
                                     std::shared_ptr<System>& system = pair.second; 
                                     if (system->systemType == torpedo->targetSystem) {
-                                        if (system->checkCollision(projectile->projectileSprite.getPosition())) {
+                                        if (system->checkCollision(projectile->getPosition())) {
                                             if (random0_nInclusive(100) <= torpedo->hitChance) {
                                                 std::cout << "SYSTEM HIT" << std::endl;
                                                 
@@ -623,7 +623,7 @@ void Game::checkCollisions() {
                                             } else {
                                                 std::cout << "MISS" << std::endl;
                                                 projectile->missed = true;
-                                                miniTextCreate("MISS", projectile->projectileSprite.getPosition());
+                                                miniTextCreate("MISS", projectile->getPosition());
                                             }
                                         }
                                     }
@@ -653,7 +653,7 @@ void Game::checkCollisions() {
                                         //check for collision and log the string returned by checkCollision
 
                                         //if a string was returned there was a collision
-                                        if (pair.second->checkCollision(torpedo->projectileSprite.getPosition()))
+                                        if (pair.second->checkCollision(torpedo->getPosition()))
                                             logEvent(pair.second->dealDamageToSystem(projectile->damage), ship->friendly);
                                     }
                                     
@@ -668,7 +668,7 @@ void Game::checkCollisions() {
                                 } else {
                                     std::cout << "MISS" << std::endl;
                                     torpedo->missed = true;
-                                    miniTextCreate("MISS", projectile->projectileSprite.getPosition());
+                                    miniTextCreate("MISS", projectile->getPosition());
                                 }
                             }
                         } else if (Disruptor* disruptor = dynamic_cast<Disruptor*>(projectile); disruptor != nullptr) {
@@ -698,7 +698,7 @@ void Game::checkCollisions() {
                                         //check for collision and log the string returned by checkCollision
 
                                         //if a string was returned there was a collision
-                                        if (pair.second->checkCollision(disruptor->projectileSprite.getPosition()))
+                                        if (pair.second->checkCollision(disruptor->getPosition()))
                                             logEvent(pair.second->dealDamageToSystem(projectile->damage), ship->friendly);
                                     }
                                     
@@ -712,7 +712,7 @@ void Game::checkCollisions() {
                                 } else {
                                     disruptor->missed = true;
                                     std::cout << "MISS" << std::endl;
-                                    miniTextCreate("MISS", projectile->projectileSprite.getPosition());
+                                    miniTextCreate("MISS", projectile->getPosition());
                                 }
                             }
                         } 
@@ -886,7 +886,7 @@ void Game::moveShip(Ship* ship, sf::Vector2f moveTo) {
     /* Get the position of the player's ship and the position of the mouse as vectors. 
     Find the vector which is the difference between the 2 vectors and normalize it by dividing by length. The vector is normalized so it can be multiplied by a constant speed.
     Move by the difference vector times speed times deltatime. */
-    sf::Vector2f movementDistance = (sf::Vector2f) moveTo - ship->shipSprite.getPosition();
+    sf::Vector2f movementDistance = (sf::Vector2f) moveTo - ship->getPosition();
     float length = std::sqrt(movementDistance.x * movementDistance.x + movementDistance.y * movementDistance.y);
     
     if (length != 0.0f) {
@@ -1079,7 +1079,7 @@ void Game::update() {
 }
 
 void Game::render() {
-    setGameView(playerShipObj.shipSprite.getPosition());
+    setGameView(playerShipObj.getPosition());
     renderStars();
     renderProjectiles();
     renderPlayer();
@@ -1287,16 +1287,22 @@ void Game::useWeapon(Ship* ship, sf::Vector2f enemyPosition) {
 }
 
 void Game::makeDecision(Ship* ship) {
+    //if the ship's state has changed, then we can set a timer to delay decisions.
+    if (ship->decisionTimer > 0) {
+        ship->decisionTimer-=deltaTime;
+        return;
+    }
     if (playerShipPointer == nullptr)
         return;
     bool noWeaponsReady = true;
+    bool newPositionGenerated = false;
     //There should be an evade state, an evasion shooting state, and an aggressive shooting state.
     //Evasion is just about evading enemy fire and perhaps warping away
     //Evasion shooting should have the ship balance between moving and firing at the enemy
     //Aggressive shooting should be the enemy using their weapons as often as possible, pointing towards the enemy.
     float randomX = random0_nInclusive(playerShipPointer->shipSprite.getLocalBounds().width) / 2;
     float randomY = random0_nInclusive(playerShipPointer->shipSprite.getLocalBounds().height) / 2;
-    sf::Vector2f randomCoord = sf::Vector2f(playerShipPointer->shipSprite.getPosition().x + randomX, playerShipPointer->shipSprite.getPosition().y + randomY);
+    sf::Vector2f randomCoord = sf::Vector2f(playerShipPointer->getPosition().x + randomX, playerShipPointer->getPosition().y + randomY);
     
     for (int wep = 1; wep <= ship->weaponsComplement.size(); wep++) {
         ship->weaponSelected = wep;
@@ -1310,11 +1316,13 @@ void Game::makeDecision(Ship* ship) {
     if (noWeaponsReady) {
         if (ship->totalCondition <= 25 || ship->shields <= 25) {
             ship->state = "EVAD";
+            ship->decisionTimer = 0.5;
         }
     }
     
     
     if (!noWeaponsReady) {
+        ship->decisionTimer = 0.5;
         if (ship->totalCondition <= 25 || ship->shields <= 25) {
             ship->state = "EVAG";
         } else {
@@ -1322,17 +1330,42 @@ void Game::makeDecision(Ship* ship) {
         }
     }
 
-    sf::Vector2f distToTarget = ship->evadeTargetPosition - ship->shipSprite.getPosition();
-    if (std::sqrt(distToTarget.x * distToTarget.x + distToTarget.y + distToTarget.y) < 1) {
-        ship->evadeTargetPosition = sf::Vector2f(random0_n(200), random0_n(200));
-    }
 
-    ship->state = "EVAG";
+    //only move around if the new generated position is actually farther from the player than the current one. 
+    //if the ship is aggressive then try to get close.
+    if (ship->state == "AGGR") {
+        sf::Vector2f toPlayerVect = ship->getPosition() - playerShipPointer->getPosition();
+        float toPlayerLength = std::sqrt(toPlayerVect.x * toPlayerVect.x + toPlayerVect.y * toPlayerVect.y);
+        toPlayerVect = toPlayerVect / toPlayerLength;
+        
+        sf::Vector2f closestPoint = sf::Vector2f(toPlayerVect.x * 25.0, toPlayerVect.y * 25.0) + ship->getPosition();
+        ship->evadeTargetPosition = window->mapPixelToCoords(sf::Vector2i(closestPoint), view);
+
+        float closestPointLength = std::sqrt(closestPoint.x * closestPoint.x + closestPoint.y * closestPoint.y);
+
+        if (closestPointLength < toPlayerLength) {
+            newPositionGenerated = true;
+        }
+    } else {
+        sf::Vector2 playerPos = playerShipPointer->getPosition();
+        ship->evadeTargetPosition = sf::Vector2f(playerPos.x + randomNegPos() * (200 + random0_n(400)), playerPos.y + randomNegPos() * (200 + random0_n(400)));
+
+        sf::Vector2f toTargetVect = ship->evadeTargetPosition - playerPos;
+        sf::Vector2f toPlayerVect = ship->getPosition() - playerPos;
+
+        float distanceToTarget = abs(std::sqrt(toTargetVect.x * toTargetVect.x + toTargetVect.y * toTargetVect.y));
+        float distanceToPlayer = abs(std::sqrt(toPlayerVect.x * toPlayerVect.x + toPlayerVect.y * toPlayerVect.y));
+        
+        if (distanceToTarget > distanceToPlayer) {
+            newPositionGenerated = true;
+        }
+    }
+    
+
 
     if (ship->state == "AGGR") {
-        ship->evadeTargetPosition = sf::Vector2f(-1, -1);
         if (playerShipObj.totalCondition > 0) {
-            sf::Vector2f tPos = playerShipPointer->shipSprite.getPosition() - ship->shipSprite.getPosition();
+            sf::Vector2f tPos = playerShipPointer->getPosition() - ship->getPosition();
             float rot = atan2(tPos.y, tPos.x) * 180 / M_PI;
 
             float cwDistance = 0;
@@ -1365,12 +1398,12 @@ void Game::makeDecision(Ship* ship) {
                 }
                 useWeapon(ship, randomCoord);
             }
-            
+
+            if (newPositionGenerated) {
+                moveShip(ship, ship->evadeTargetPosition);
+            }
         }
     } else if (ship->state == "EVAG") {
-        if (ship->evadeTargetPosition == sf::Vector2f(-1, -1)) {
-            ship->evadeTargetPosition = sf::Vector2f(random0_n(1000), random0_n(200));
-        }
         for (int wep = 1; wep <= ship->weaponsComplement.size(); wep++) {
             ship->weaponSelected = wep;
             
@@ -1383,13 +1416,12 @@ void Game::makeDecision(Ship* ship) {
             }
             useWeapon(ship, randomCoord);
         }
-        moveShip(ship, ship->evadeTargetPosition);
+        if (newPositionGenerated)
+            moveShip(ship, ship->evadeTargetPosition);
     } else if (ship->state == "EVAD") {
         // just run to a random spot!
-        if (ship->evadeTargetPosition == sf::Vector2f(-1, -1)) {
-            ship->evadeTargetPosition = sf::Vector2f(random0_n(1000), random0_n(200));
-        }
-        moveShip(ship, ship->evadeTargetPosition);
+        if (newPositionGenerated)
+            moveShip(ship, ship->evadeTargetPosition);
     }
 }
 

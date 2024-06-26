@@ -32,6 +32,8 @@ class Projectile {
         sf::Sprite getSprite();
 
         void setFriendly();
+
+        sf::Vector2f getPosition();
         
         virtual ~Projectile();
 };

@@ -279,7 +279,7 @@ GITCOMMAND:FILEPATH=C:/Program Files/Git/cmd/git.exe
 MAKECOMMAND:STRING="C:\Program Files\CMake\bin\cmake.exe" --build . --config "${CTEST_CONFIGURATION_TYPE}"
 
 //Path to the memory checking command, used for memory error detection.
-MEMORYCHECK_COMMAND:FILEPATH=MEMORYCHECK_COMMAND-NOTFOUND
+MEMORYCHECK_COMMAND:FILEPATH=C:/Program Files (x86)/Dr. Memory/bin/drmemory.exe
 
 //File that contains suppressions for the memory checker
 MEMORYCHECK_SUPPRESSIONS_FILE:FILEPATH=

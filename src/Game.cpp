@@ -107,33 +107,36 @@ void Game::renderPlayer() {
 }
 
 void Game::showRoomDamage() {
-    int positionOffset = 10;
+    if (playerShipPointer == nullptr)
+        return;
+    int positionOffset = 5;
+    sf::Text text("", font);
     for (auto& pair: playerShipPointer->shipSystems) {
         std::shared_ptr<System>& system = pair.second;
         for (Room& room: system->rooms) {
             std::string fireSize;
             if (room.fire == 0)
                 fireSize = "no fire";
-            else if (25 > room.fire > 0) 
+            else if (0 < room.fire < 25) 
                 fireSize = "small fire";
-            else if (room.fire > 25) 
+            else if (room.fire < 50) 
                 fireSize = "medium fire";
-            else if (room.fire > 50)
+            else if (room.fire < 75)
                 fireSize = "large fire";
-            else if (room.fire > 75)
+            else if (room.fire <100)
                 fireSize = "huge fire";   
-            else if (room.fire > 100) 
+            else
                 fireSize = "massive fire";
                 
             std::string roomStats = room.roomType + ": " + fireSize + " " + std::to_string((int)room.oxygen) + "% oxygen " + std::to_string((int)system->power) + "% power";
-            sf::Text text(roomStats, font);
+            text.setString(roomStats);
             text.setScale(0.5, 0.5);
             //text will become more transparent as it moves up the log.
             text.setFillColor(sf::Color(255, 255 - room.fire, 255 - room.fire, 255));
-
-            sf::Vector2i viewPosition = sf::Vector2i(0, 400 + 12 * positionOffset);
+            sf::Vector2i viewPosition = sf::Vector2i(0, view.getSize().y - 12 * positionOffset);
             text.setPosition(window->mapPixelToCoords(viewPosition));
-            positionOffset--;
+            if (positionOffset > 0)
+                positionOffset++;
             window->draw(text);
         }
     }
@@ -408,6 +411,7 @@ void Game::movePhasers(Phaser* projectile, int i) {
     projectile->firingShip->shipSprite.getLocalBounds().width - 4, projectile->firingShip->shipSprite.getLocalBounds().height / 2);
 
     projectile->projectileSprite.setPosition(projectile->firingShipOffset);
+    projectile->phaserTimer += deltaTime;
 
     if (projectile->targetShip != nullptr) {
         if (projectile->targetShip->shields > 0) {
@@ -423,7 +427,6 @@ void Game::movePhasers(Phaser* projectile, int i) {
     }
     float rotation = (180.0f / M_PI) * atan2(goTo.y, goTo.x);
     projectile->projectileSprite.setRotation(rotation);
-    projectile->phaserTimer += deltaTime;
     if (projectile->phaserTimer > 0.01 && !projectile->hasCollided) {
         projectile->phaserScaleX += 5;
         projectile->phaserTimer = 0;
@@ -448,7 +451,7 @@ void Game::movePhasers(Phaser* projectile, int i) {
     //subtract from scale so that the sprite actually touches the shield instead of slightly going through it
     projectile->projectileSprite.setScale(projectile->phaserScaleX - 1, 0.25);
 
-    if (projectile->phaserScaleX > 300) {
+    if (projectile->phaserScaleX > 300 || projectile->phaserTimer > 5.0) {
         projectilesList.erase(projectilesList.begin() + i);
         delete projectile;
         projectile = nullptr;
@@ -946,6 +949,8 @@ void Game::moveShip(Ship* ship, sf::Vector2f moveTo) {
 }
 
 void Game::movePlayer() {
+    if (playerShipPointer == nullptr)
+        return;
     if (playerShipObj.totalCondition <= 0) {
         return;
     }
@@ -1047,7 +1052,7 @@ void Game::updateEvents() {
                         logEvent("Debug mode off.", true);
                     } else {
                         debugMode = true;
-                        playerShipObj.shields = 1000;
+                        playerShipObj.shields = 0;
                         logEvent("Debug mode on.", true);
                     }
                         
@@ -1282,6 +1287,8 @@ void Game::useWeapon(Ship* ship, sf::Vector2f enemyPosition) {
 }
 
 void Game::makeDecision(Ship* ship) {
+    if (playerShipPointer == nullptr)
+        return;
     bool noWeaponsReady = true;
     //There should be an evade state, an evasion shooting state, and an aggressive shooting state.
     //Evasion is just about evading enemy fire and perhaps warping away

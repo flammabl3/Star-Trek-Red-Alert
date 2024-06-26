@@ -31,12 +31,6 @@
 },
 {
   "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
-  "command": "C:\\mingw64\\bin\\g++.exe -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Ship.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Ship.cpp",
-  "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Ship.cpp",
-  "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Ship.cpp.obj"
-},
-{
-  "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
   "command": "C:\\mingw64\\bin\\g++.exe -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Subsystem.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Subsystem.cpp",
   "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Subsystem.cpp",
   "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Subsystem.cpp.obj"
@@ -64,5 +58,11 @@
   "command": "C:\\mingw64\\bin\\g++.exe -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\random0_n.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\random0_n.cpp",
   "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\random0_n.cpp",
   "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\random0_n.cpp.obj"
+},
+{
+  "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
+  "command": "C:\\mingw64\\bin\\g++.exe -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\ship.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\ship.cpp",
+  "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\ship.cpp",
+  "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\ship.cpp.obj"
 }
 ]

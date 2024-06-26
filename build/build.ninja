@@ -252,13 +252,6 @@ build CMakeFiles/Star-Trek-Red-Alert.dir/src/SeparateAxisTheorem.cpp.obj: CXX_CO
   OBJECT_DIR = CMakeFiles\Star-Trek-Red-Alert.dir
   OBJECT_FILE_DIR = CMakeFiles\Star-Trek-Red-Alert.dir\src
 
-build CMakeFiles/Star-Trek-Red-Alert.dir/src/Ship.cpp.obj: CXX_COMPILER__Star-Trek-Red-Alert_unscanned_Debug C$:/Users/Harry/Desktop/Star-Trek-Red-Alert/src/Ship.cpp || cmake_object_order_depends_target_Star-Trek-Red-Alert
-  DEP_FILE = CMakeFiles\Star-Trek-Red-Alert.dir\src\Ship.cpp.obj.d
-  FLAGS = -g
-  INCLUDES = -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include
-  OBJECT_DIR = CMakeFiles\Star-Trek-Red-Alert.dir
-  OBJECT_FILE_DIR = CMakeFiles\Star-Trek-Red-Alert.dir\src
-
 build CMakeFiles/Star-Trek-Red-Alert.dir/src/Subsystem.cpp.obj: CXX_COMPILER__Star-Trek-Red-Alert_unscanned_Debug C$:/Users/Harry/Desktop/Star-Trek-Red-Alert/src/Subsystem.cpp || cmake_object_order_depends_target_Star-Trek-Red-Alert
   DEP_FILE = CMakeFiles\Star-Trek-Red-Alert.dir\src\Subsystem.cpp.obj.d
   FLAGS = -g
@@ -294,6 +287,13 @@ build CMakeFiles/Star-Trek-Red-Alert.dir/src/random0_n.cpp.obj: CXX_COMPILER__St
   OBJECT_DIR = CMakeFiles\Star-Trek-Red-Alert.dir
   OBJECT_FILE_DIR = CMakeFiles\Star-Trek-Red-Alert.dir\src
 
+build CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.obj: CXX_COMPILER__Star-Trek-Red-Alert_unscanned_Debug C$:/Users/Harry/Desktop/Star-Trek-Red-Alert/src/ship.cpp || cmake_object_order_depends_target_Star-Trek-Red-Alert
+  DEP_FILE = CMakeFiles\Star-Trek-Red-Alert.dir\src\ship.cpp.obj.d
+  FLAGS = -g
+  INCLUDES = -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include
+  OBJECT_DIR = CMakeFiles\Star-Trek-Red-Alert.dir
+  OBJECT_FILE_DIR = CMakeFiles\Star-Trek-Red-Alert.dir\src
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target Star-Trek-Red-Alert
@@ -302,7 +302,7 @@ build CMakeFiles/Star-Trek-Red-Alert.dir/src/random0_n.cpp.obj: CXX_COMPILER__St
 #############################################
 # Link the executable Star-Trek-Red-Alert.exe
 
-build Star-Trek-Red-Alert.exe: CXX_EXECUTABLE_LINKER__Star-Trek-Red-Alert_Debug CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/Projectile.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/Room.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/SeparateAxisTheorem.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/Ship.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/Subsystem.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/System.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/random0_n.cpp.obj | /SFML/lib/libsfml-audio-d.a /SFML/lib/libsfml-network-d.a /SFML/lib/libsfml-graphics-d.a /SFML/lib/libsfml-window-d.a /SFML/lib/libsfml-system-d.a
+build Star-Trek-Red-Alert.exe: CXX_EXECUTABLE_LINKER__Star-Trek-Red-Alert_Debug CMakeFiles/Star-Trek-Red-Alert.dir/src/Game.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/NCC-1701-D.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/Projectile.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/Room.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/SeparateAxisTheorem.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/Subsystem.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/System.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/main.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/personnel.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/random0_n.cpp.obj CMakeFiles/Star-Trek-Red-Alert.dir/src/ship.cpp.obj | /SFML/lib/libsfml-audio-d.a /SFML/lib/libsfml-network-d.a /SFML/lib/libsfml-graphics-d.a /SFML/lib/libsfml-window-d.a /SFML/lib/libsfml-system-d.a
   FLAGS = -g
   LINK_LIBRARIES = /SFML/lib/libsfml-audio-d.a  /SFML/lib/libsfml-network-d.a  /SFML/lib/libsfml-graphics-d.a  /SFML/lib/libsfml-window-d.a  /SFML/lib/libsfml-system-d.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\Star-Trek-Red-Alert.dir

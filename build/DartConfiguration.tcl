@@ -76,7 +76,7 @@ CudaSanitizerCommand:
 CudaSanitizerCommandOptions: 
 MemoryCheckType: 
 MemoryCheckSanitizerOptions: 
-MemoryCheckCommand: MEMORYCHECK_COMMAND-NOTFOUND
+MemoryCheckCommand: C:/Program Files (x86)/Dr. Memory/bin/drmemory.exe
 MemoryCheckCommandOptions: 
 MemoryCheckSuppressionFile: 
 

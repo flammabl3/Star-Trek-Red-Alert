@@ -27,6 +27,7 @@ class Ship
         int mass;
         int shields;
         float shieldBubbleRadius;
+        float difficulty;
         int power;
         double impulseSpeed;
         double warpSpeed;

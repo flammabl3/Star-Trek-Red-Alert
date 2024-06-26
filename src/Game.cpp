@@ -34,13 +34,15 @@ void Game::initVariables() {
     mov = 1;
 
     //pick a font later.
-    font.loadFromFile("../resource/arial.ttf");
+    if (!font.loadFromFile("../resource/arial.ttf")) {
+        std::cout << "Failed to arial font." << std::endl;
+    }
 
     if (!newStarTexture.loadFromFile("../resource/star1.png")) {
-        std::cout << "Failed to load star texture." << std::endl;
+        std::cout << "Failed to load star1 texture." << std::endl;
     }
     if (!newStarTexture2.loadFromFile("../resource/star2.png")) {
-        std::cout << "Failed to load star texture." << std::endl;
+        std::cout << "Failed to load star2 texture." << std::endl;
     }
 
     debugMode = false;
@@ -107,33 +109,34 @@ void Game::renderPlayer() {
 }
 
 void Game::showRoomDamage() {
-    int positionOffset = 10;
+    int positionOffset = 5;
+    sf::Text text("", font);
     for (auto& pair: playerShipPointer->shipSystems) {
         std::shared_ptr<System>& system = pair.second;
         for (Room& room: system->rooms) {
             std::string fireSize;
             if (room.fire == 0)
                 fireSize = "no fire";
-            else if (25 > room.fire > 0) 
+            else if (0 < room.fire < 25) 
                 fireSize = "small fire";
-            else if (room.fire > 25) 
+            else if (room.fire < 50) 
                 fireSize = "medium fire";
-            else if (room.fire > 50)
+            else if (room.fire < 75)
                 fireSize = "large fire";
-            else if (room.fire > 75)
+            else if (room.fire <100)
                 fireSize = "huge fire";   
-            else if (room.fire > 100) 
+            else
                 fireSize = "massive fire";
                 
             std::string roomStats = room.roomType + ": " + fireSize + " " + std::to_string((int)room.oxygen) + "% oxygen " + std::to_string((int)system->power) + "% power";
-            sf::Text text(roomStats, font);
+            text.setString(roomStats);
             text.setScale(0.5, 0.5);
             //text will become more transparent as it moves up the log.
             text.setFillColor(sf::Color(255, 255 - room.fire, 255 - room.fire, 255));
-
-            sf::Vector2i viewPosition = sf::Vector2i(0, 400 + 12 * positionOffset);
+            sf::Vector2i viewPosition = sf::Vector2i(0, view.getSize().y - 12 * positionOffset);
             text.setPosition(window->mapPixelToCoords(viewPosition));
-            positionOffset--;
+            if (positionOffset > 0)
+                positionOffset++;
             window->draw(text);
         }
     }
@@ -163,6 +166,8 @@ void Game::initEnemy() {
     enemyShipObj->shipSprite.setRotation(110);
     enemyShipObj->friendly = false;
     enemyShipObj->setShield(300);
+    enemyShipObj->difficulty = 0.5;
+
     for (auto& pair: enemyShipObj->shipSystems) {
         std::shared_ptr<System>& system = pair.second;
         system->parentShip = enemyShipObj;
@@ -309,6 +314,7 @@ void Game::moveTorpedoes(Torpedo* projectile, int i) {
         projectilesList.erase(projectilesList.begin() + i);
         delete projectile;
         projectile = nullptr;
+        return;
     } else if (projectile != nullptr) {
         sf::Vector2f goTo;
         //A vector with magnitude one pointing in the direction of the projectile. 
@@ -372,6 +378,7 @@ void Game::moveDisruptors(Disruptor* projectile, int i) {
             projectilesList.erase(projectilesList.begin() + i);
             delete projectile;
             projectile = nullptr;
+            return;
         } else if (projectile != nullptr) {
             sf::Vector2f goTo;
 
@@ -452,6 +459,7 @@ void Game::movePhasers(Phaser* projectile, int i) {
         projectilesList.erase(projectilesList.begin() + i);
         delete projectile;
         projectile = nullptr;
+        return;
     }
 }
 
@@ -460,12 +468,13 @@ void Game::checkCollisions() {
 
     std::vector<Projectile*> toRemove;
 
-    for (Ship* ship : allShips) {
+    for (auto it = projectilesList.begin(); it != projectilesList.end(); ) {
         if (hit)
             break;
-        for (auto it = projectilesList.begin(); it != projectilesList.end(); ) {
+        for (Ship* ship : allShips) {
             if (hit)
                 break;
+
             Projectile* projectile = *it;
             sf::FloatRect projectileBounds = projectile->getSprite().getGlobalBounds();
             sf::FloatRect shipBounds = ship->getBoundingBox();
@@ -495,8 +504,8 @@ void Game::checkCollisions() {
                         }
                         
                         logEvent("Shields at " + std::to_string(ship->shields) + " percent.", ship->friendly);
-                        it = projectilesList.erase(it);
-                        delete projectile;
+                        it = projectilesList.erase(it);;
+                        toRemove.push_back(projectile);
                         continue;
                     }
                 }
@@ -510,8 +519,8 @@ void Game::checkCollisions() {
                     }
                     phaser->collidedDeleteTimer += deltaTime;
                 } if (phaser->collidedDeleteTimer > 2.0) {
-                    it = projectilesList.erase(it);
-                    delete projectile;
+                    it = projectilesList.erase(it);;
+                    toRemove.push_back(projectile);
                     continue;
                 }
                 //don't do any more checks if the phaser has collided, just deal damage once
@@ -529,8 +538,8 @@ void Game::checkCollisions() {
                             }
                             logEvent("Shields at " + std::to_string(ship->shields) + " percent.", ship->friendly);
                             if (phaser->collidedDeleteTimer > 3.0) {
-                                it = projectilesList.erase(it);
-                                delete projectile;
+                                it = projectilesList.erase(it);;
+                                toRemove.push_back(projectile);
                                 continue; 
                             }
 
@@ -579,8 +588,8 @@ void Game::checkCollisions() {
                                 
                                 // Log before erasing
                                 if (phaser->collidedDeleteTimer > 3.0) {
-                                    it = projectilesList.erase(it);
-                                    delete projectile;
+                                    it = projectilesList.erase(it);;
+                                    toRemove.push_back(projectile);
                                     continue; 
                                 }
                             } else {
@@ -614,9 +623,10 @@ void Game::checkCollisions() {
                                                 logEvent("Ship has taken damage.", ship->friendly);
                                             
                                                 logEvent(system->dealDamageToSystem(projectile->damage), ship->friendly);
-                                                it = projectilesList.erase(it);
-                                                delete projectile;
+                                                it = projectilesList.erase(it);;
+                                                toRemove.push_back(projectile);
                                                 hit = true;
+                                                continue;
                                             } else {
                                                 std::cout << "MISS" << std::endl;
                                                 projectile->missed = true;
@@ -657,9 +667,8 @@ void Game::checkCollisions() {
                                     // Log before erasing
                                     
                                     
-                                    it = projectilesList.erase(it);
-                                    delete torpedo;
-
+                                    it = projectilesList.erase(it);;
+                                    toRemove.push_back(torpedo);
                                     
                                     continue; // Move to the next iteration
                                 } else {
@@ -702,8 +711,8 @@ void Game::checkCollisions() {
                                     // Log before erasing
                                     
                                     
-                                    it = projectilesList.erase(it);
-                                    delete disruptor;
+                                    it = projectilesList.erase(it);;
+                                    toRemove.push_back(disruptor);
 
                                     continue; // Move to the next iteration
                                 } else {
@@ -722,6 +731,10 @@ void Game::checkCollisions() {
         }
     }
 
+    for (Projectile* remove: toRemove){
+        delete remove;
+        remove = nullptr;
+    }
 }
                         
 
@@ -782,13 +795,13 @@ void Game::fireTorpedo(Ship& firingShip, sf::Vector2f targetP, int hitChance) {
                     
                 }
             } else {
-                torpedo->hitChance = hitChance * torpedo->hitChanceBase / 100;
+                torpedo->hitChance = hitChance * firingShip.difficulty * torpedo->hitChanceBase / 100;
                 torpedo->targetPos = target;
             }   
         }
     }   
 
-    torpedo->hitChance = hitChance * torpedo->hitChanceBase / 100;
+    torpedo->hitChance = hitChance * firingShip.difficulty * torpedo->hitChanceBase / 100;
     this->projectilesList.insert(projectilesList.begin(), torpedo);
 
 }
@@ -844,7 +857,7 @@ void Game::fireTorpedoSpread(Ship& firingShip, sf::Vector2f targetP, int hitChan
         }
 
         torpedo->damage = 2;
-        torpedo->hitChance = hitChance * torpedo->hitChanceBase / 100;
+        torpedo->hitChance = hitChance * firingShip.difficulty * torpedo->hitChanceBase / 100;
         if (firingShip.friendly)
             torpedo->setFriendly(); 
         this->projectilesList.insert(projectilesList.begin(), torpedo);
@@ -872,8 +885,8 @@ void Game::fireDisruptor(Ship& firingShip, sf::Vector2f targetP, int hitChance) 
         disruptor2->setFriendly();
     }
 
-    disruptor->hitChance = hitChance * disruptor->hitChanceBase / 100;
-    disruptor2->hitChance = hitChance * disruptor2->hitChanceBase / 100;
+    disruptor->hitChance = hitChance * firingShip.difficulty * disruptor->hitChanceBase / 100;
+    disruptor2->hitChance = hitChance * firingShip.difficulty * disruptor2->hitChanceBase / 100;
 
     this->projectilesList.insert(projectilesList.begin(), disruptor);
     this->projectilesList.insert(projectilesList.begin(), disruptor2);
@@ -972,7 +985,7 @@ void Game::firePhaser(Ship& firingShip, sf::Vector2f targetP, int hitChance) {
 
     phaser->firingShip = &firingShip;
 
-    phaser->hitChance = hitChance * phaser->hitChanceBase / 100;
+    phaser->hitChance = hitChance * firingShip.difficulty *  phaser->hitChanceBase / 100;
     
     this->projectilesList.push_back(phaser);
 }
@@ -1047,7 +1060,7 @@ void Game::updateEvents() {
                         logEvent("Debug mode off.", true);
                     } else {
                         debugMode = true;
-                        playerShipObj.shields = 1000;
+                        playerShipObj.shields = 0;
                         logEvent("Debug mode on.", true);
                     }
                         
@@ -1099,7 +1112,7 @@ void Game::render() {
 }
 
 void Game::logEvent(std::string event, bool friendly) {
-    std::tuple<std::string, bool> newEvent = std::tuple<std::string, bool>(event, friendly);
+    std::tuple<std::string, bool> newEvent = std::make_tuple(event, friendly);
     if (eventLog.size() >= 10) {
         eventLog.pop_back();
     }
@@ -1109,8 +1122,9 @@ void Game::logEvent(std::string event, bool friendly) {
 //create the text at the bottom of the log, and move up by reducing the offset down the screen.
 void Game::displayEvents() {
     int positionOffset = 10;
+    sf::Text text("", font);
     for (auto& tuple: eventLog) {
-        sf::Text text(std::get<0>(tuple), font);
+        text.setString(std::get<0>(tuple));
         text.setScale(0.5, 0.5);
         //text will become more transparent as it moves up the log.
         //red or green text based on which faction is hit
@@ -1135,7 +1149,7 @@ void Game::miniTextCreate(std::string text, sf::Vector2f pos) {
     //text will become more transparent as it moves up the log.
     miniText.setFillColor(sf::Color(255, 255, 255, 255));
     miniText.setPosition(pos);
-    miniTextVect.push_back(std::tuple(miniText, 255));
+    miniTextVect.push_back(std::make_tuple(miniText, 255));
 }
 
 void Game::displayMiniText() {
@@ -1187,7 +1201,7 @@ bool Game::pickWeapon(Ship& ship) {
                 if (wep->ready) {
                     if (ship.friendly)
                         std::cout << weaponSelectedString << " selected" << std::endl;
-                    ship.weaponSelectedTuple = std::tuple(weaponSelectedString, weaponSystem);
+                    ship.weaponSelectedTuple = std::tuple<std::string, std::string>(weaponSelectedString, weaponSystem);
                     return true;
                 } else {
                     if (ship.friendly)
@@ -1196,13 +1210,13 @@ bool Game::pickWeapon(Ship& ship) {
                         else {
                             std::cout << weaponSelectedString << " on cooldown! Time left: " << wep->cooldownThreshold - wep->cooldownTimer << "s" << std::endl;
                         }
-                    ship.weaponSelectedTuple = std::tuple("", "");
+                    ship.weaponSelectedTuple = std::tuple<std::string, std::string>("", "");
                     return false;
                 }
             }
         }
     }
-    ship.weaponSelectedTuple = std::tuple("", "");
+    ship.weaponSelectedTuple = std::tuple<std::string, std::string>("", "");
     return false;
 }
 
@@ -1242,7 +1256,7 @@ void Game::useWeapon(Ship& ship) {
             std::shared_ptr<System>& system = ship.shipSystems.at(weaponSystem);
             Weapon* wep = dynamic_cast<Weapon*>(system.get());
             wep->resetTimer();
-            ship.weaponSelectedTuple = std::tuple("", "");
+            ship.weaponSelectedTuple = std::tuple<std::string, std::string>("", "");
         }
     }
 }
@@ -1276,7 +1290,7 @@ void Game::useWeapon(Ship* ship, sf::Vector2f enemyPosition) {
             std::shared_ptr<System>& system = ship->shipSystems.at(weaponSystem);
             Weapon* wep = dynamic_cast<Weapon*>(system.get());
             wep->resetTimer();
-            ship->weaponSelectedTuple = std::tuple("", "");
+            ship->weaponSelectedTuple = std::tuple<std::string, std::string>("", "");
         }
     }
 }

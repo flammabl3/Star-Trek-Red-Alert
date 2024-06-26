@@ -21,6 +21,11 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
 include_directories(c:/SFML/include)
 include_directories(c:/Catch2-devel)
 
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    # Add AddressSanitizer flags
+    add_compile_options(-fsanitize=address -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=address)
+endif()
 
 #set(SFML_ROOT c:/SFML)
 #set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")

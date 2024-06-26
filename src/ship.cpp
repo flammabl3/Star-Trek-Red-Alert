@@ -5,6 +5,7 @@
 
 
 Ship::Ship(std::map<std::string, std::shared_ptr<System>> shipSystems, int mass, float impulseSpeed, float warpSpeed, float shields, std::string name, std::string designation) {
+    this->difficulty = 1.0;
     this->shipSystems = shipSystems;
     this->impulseSpeed = impulseSpeed;
     this->warpSpeed = warpSpeed;

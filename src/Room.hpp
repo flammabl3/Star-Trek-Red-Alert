@@ -25,6 +25,8 @@ class Room {
         std::vector<std::string> dealDamageToRoom(int damage);
 
         std::vector<std::string> fireOxygenPersonnelSwap(sf::Time time);
+
+        std::string messageHurtOrKilled(Personnel* personnel);
 };
 
 #endif

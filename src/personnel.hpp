@@ -16,6 +16,9 @@ class Personnel {
         double health;
         double capacity; // changes with mental state, health
         bool usingSubsystem;
+
+        bool hurtThisFrame;
+        bool killedThisFrame;
         enum mentalState {
             NORMAL = 0,
             STRESSED = 1,

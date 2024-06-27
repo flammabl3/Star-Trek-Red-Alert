@@ -18,6 +18,8 @@ Personnel::Personnel(std::string firstName, std::string middleName, std::string 
     this->capacity = 1.0;
     usingSubsystem = false;
     this->currentState = NORMAL;
+    hurtThisFrame = false;
+    killedThisFrame = false;
 }
 
 Personnel::Personnel(std::string rank, 
@@ -33,6 +35,8 @@ Personnel::Personnel(std::string rank,
     this->randomName();
     usingSubsystem = false;
     this->currentState = NORMAL;
+    hurtThisFrame = false;
+    killedThisFrame = false;
 }
 
 //capacity will be based on health, skill, mental state. Can exceed 1.

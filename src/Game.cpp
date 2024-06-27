@@ -12,8 +12,8 @@
 
 float rot = 0;
 
-//TODO: See if we can't come up with a shorter way to reference the playerShipObj's shipSprite member
-//SYSTEMS are mostly done, but capacity of personnel should be calculated based on health, skill, mental state!
+//TODO: 
+// Personnel have no mental state system. Not sure how exactly to implement this.
 // Improve functions to check for and apply damage, and damage rooms, subsystems, and personnel
 // ALL MOVEMENT MUST BE DELTATIMED.
 
@@ -143,19 +143,21 @@ void Game::showRoomDamage() {
 }
 
 void Game::renderDebugObjects() {
-    for (sf::RectangleShape rectangle: debugHitboxes) {
+    for (sf::RectangleShape& rectangle: debugHitboxes) {
         this->window->draw(rectangle);
     }
 }
 
 void Game::renderEnemyHitboxes() {
-    for (sf::RectangleShape rectangle: enemyHitboxes) {
-        sf::Vector2f mousePosition = (sf::Vector2f)sf::Mouse::getPosition(*window);
-        if (checkCollisionRectangleShape(rectangle, mousePosition)) {
+    for (sf::RectangleShape& rectangle : enemyHitboxes) {
+        sf::Vector2i pixelPos = sf::Mouse::getPosition(*window);
+        sf::Vector2f worldPos = window->mapPixelToCoords(pixelPos, view);
+        if (checkCollisionRectangleShape(rectangle, worldPos)) {
             this->window->draw(rectangle);
         }
     }
 }
+
 
 //placeholder code will generate another USS enterprise for shooting at.
 void Game::initEnemy() {
@@ -1490,7 +1492,7 @@ void Game::generateStars() {
         }
     }
     
-    for (sf::Vector2i chunkToDraw: chunksToDraw) {
+    for (sf::Vector2i& chunkToDraw: chunksToDraw) {
         generatedChunks.insert_or_assign(std::tuple<int, int>(chunkToDraw.x, chunkToDraw.y), true);
         //the edges of our chunks. If it is negative, the left side will be chunk * 1000 - 1000, and the far will be chunk * 1000.
         //The reverse is true for positive chunks

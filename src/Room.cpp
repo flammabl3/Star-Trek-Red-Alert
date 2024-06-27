@@ -80,12 +80,10 @@ std::vector<std::string> Room::dealDamageToRoom(int damage) {
 
         if (finalDamage > 0 && subsystem.operating->health + finalDamage > 0) {
             if (subsystem.operating->health > 0) {
-                outputString = subsystem.operating->rank + " " + subsystem.operating->getLogName() + " has become hurt!";
+                subsystem.operating->hurtThisFrame = true;
             } else {
-                outputString = subsystem.operating->rank + " " + subsystem.operating->getLogName() + " has been killed!";
-                subsystem.operating->usingSubsystem = false;
+                subsystem.operating->killedThisFrame = true;
             }
-            outputPersonnel.push_back(outputString);
         } 
         
     }
@@ -120,6 +118,8 @@ std::vector<std::string> Room::fireOxygenPersonnelSwap(sf::Time time) {
                 if (random0_n(1000-fire*10) == 1) {
                     events.push_back(crewman->rank + " " + crewman->getLogName() + " is being burned!");
                     crewman->health -= 1;
+                    if (crewman->health < 0)
+                        crewman->killedThisFrame = true;
                 }
             }
             
@@ -127,6 +127,8 @@ std::vector<std::string> Room::fireOxygenPersonnelSwap(sf::Time time) {
                 for (Personnel* crewmate: personnel) {
                     if (crewmate->health > 0)
                         crewmate->health -= 10;
+                        if (crewmate->health < 0)
+                            crewmate->killedThisFrame = true;
                 }
             }
         }
@@ -158,6 +160,9 @@ std::vector<std::string> Room::fireOxygenPersonnelSwap(sf::Time time) {
         if (subsystem.operating->health <= 0) {
             subsystem.operating->usingSubsystem = false;
             for (Personnel* crewmate: personnel) {
+                std::string hurtOrKilled = messageHurtOrKilled(crewmate);
+                if (hurtOrKilled.length() > 0)
+                    events.push_back(hurtOrKilled);
                 if (crewmate->health > 0 && crewmate->usingSubsystem == false) {
                     events.push_back(subsystem.operating->rank + " " + subsystem.operating->getLogName() + " has been replaced by " + subsystem.operating->rank + " " + crewmate->getLogName() + ".");
                     subsystem.operating = crewmate;
@@ -172,6 +177,18 @@ std::vector<std::string> Room::fireOxygenPersonnelSwap(sf::Time time) {
 
 
     return events;
+}
+
+std::string Room::messageHurtOrKilled(Personnel* personnel) {
+    std::string outputString = "";
+    if (personnel->killedThisFrame) {
+        outputString = personnel->rank + " " + personnel->getLogName() + " has been killed!";
+        personnel->killedThisFrame = false;
+    } else if (personnel->hurtThisFrame) {
+        outputString = personnel->rank + " " + personnel->getLogName() + " has become hurt!";
+        personnel->hurtThisFrame = false;
+    }
+    return outputString;
 }
 
 

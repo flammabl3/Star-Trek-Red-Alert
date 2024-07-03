@@ -30,6 +30,10 @@ sf::Sprite Projectile::getSprite() {
     return this->projectileSprite;
 }
 
+void Projectile::setFaction(std::string factionName) {
+    faction = factionName;
+}
+
 void Projectile::setFriendly() {
     friendly = true;
 }

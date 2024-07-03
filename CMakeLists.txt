@@ -18,6 +18,7 @@ set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
 
+include_directories(${CMAKE_SOURCE_DIR}/libs)
 include_directories(c:/SFML/include)
 include_directories(c:/Catch2-devel)
 

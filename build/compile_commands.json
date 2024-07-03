@@ -1,68 +1,74 @@
 [
 {
   "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
-  "command": "C:\\mingw64\\bin\\g++.exe -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Game.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Game.cpp",
+  "command": "C:\\mingw64\\bin\\g++.exe -IC:/Users/Harry/Desktop/Star-Trek-Red-Alert/libs -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Game.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Game.cpp",
   "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Game.cpp",
   "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Game.cpp.obj"
 },
 {
   "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
-  "command": "C:\\mingw64\\bin\\g++.exe -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\NCC-1701-D.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\NCC-1701-D.cpp",
+  "command": "C:\\mingw64\\bin\\g++.exe -IC:/Users/Harry/Desktop/Star-Trek-Red-Alert/libs -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\InitializeShip.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\InitializeShip.cpp",
+  "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\InitializeShip.cpp",
+  "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\InitializeShip.cpp.obj"
+},
+{
+  "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
+  "command": "C:\\mingw64\\bin\\g++.exe -IC:/Users/Harry/Desktop/Star-Trek-Red-Alert/libs -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\NCC-1701-D.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\NCC-1701-D.cpp",
   "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\NCC-1701-D.cpp",
   "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\NCC-1701-D.cpp.obj"
 },
 {
   "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
-  "command": "C:\\mingw64\\bin\\g++.exe -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Projectile.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Projectile.cpp",
+  "command": "C:\\mingw64\\bin\\g++.exe -IC:/Users/Harry/Desktop/Star-Trek-Red-Alert/libs -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Personnel.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Personnel.cpp",
+  "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Personnel.cpp",
+  "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Personnel.cpp.obj"
+},
+{
+  "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
+  "command": "C:\\mingw64\\bin\\g++.exe -IC:/Users/Harry/Desktop/Star-Trek-Red-Alert/libs -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Projectile.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Projectile.cpp",
   "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Projectile.cpp",
   "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Projectile.cpp.obj"
 },
 {
   "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
-  "command": "C:\\mingw64\\bin\\g++.exe -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Room.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Room.cpp",
+  "command": "C:\\mingw64\\bin\\g++.exe -IC:/Users/Harry/Desktop/Star-Trek-Red-Alert/libs -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Room.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Room.cpp",
   "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Room.cpp",
   "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Room.cpp.obj"
 },
 {
   "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
-  "command": "C:\\mingw64\\bin\\g++.exe -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\SeparateAxisTheorem.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\SeparateAxisTheorem.cpp",
+  "command": "C:\\mingw64\\bin\\g++.exe -IC:/Users/Harry/Desktop/Star-Trek-Red-Alert/libs -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\SeparateAxisTheorem.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\SeparateAxisTheorem.cpp",
   "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\SeparateAxisTheorem.cpp",
   "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\SeparateAxisTheorem.cpp.obj"
 },
 {
   "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
-  "command": "C:\\mingw64\\bin\\g++.exe -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Subsystem.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Subsystem.cpp",
+  "command": "C:\\mingw64\\bin\\g++.exe -IC:/Users/Harry/Desktop/Star-Trek-Red-Alert/libs -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Ship.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Ship.cpp",
+  "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Ship.cpp",
+  "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Ship.cpp.obj"
+},
+{
+  "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
+  "command": "C:\\mingw64\\bin\\g++.exe -IC:/Users/Harry/Desktop/Star-Trek-Red-Alert/libs -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Subsystem.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Subsystem.cpp",
   "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Subsystem.cpp",
   "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Subsystem.cpp.obj"
 },
 {
   "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
-  "command": "C:\\mingw64\\bin\\g++.exe -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\System.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\System.cpp",
+  "command": "C:\\mingw64\\bin\\g++.exe -IC:/Users/Harry/Desktop/Star-Trek-Red-Alert/libs -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\System.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\System.cpp",
   "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\System.cpp",
   "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\System.cpp.obj"
 },
 {
   "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
-  "command": "C:\\mingw64\\bin\\g++.exe -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\main.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\main.cpp",
+  "command": "C:\\mingw64\\bin\\g++.exe -IC:/Users/Harry/Desktop/Star-Trek-Red-Alert/libs -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\main.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\main.cpp",
   "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\main.cpp",
   "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\main.cpp.obj"
 },
 {
   "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
-  "command": "C:\\mingw64\\bin\\g++.exe -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\personnel.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\personnel.cpp",
-  "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\personnel.cpp",
-  "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\personnel.cpp.obj"
-},
-{
-  "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
-  "command": "C:\\mingw64\\bin\\g++.exe -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\random0_n.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\random0_n.cpp",
+  "command": "C:\\mingw64\\bin\\g++.exe -IC:/Users/Harry/Desktop/Star-Trek-Red-Alert/libs -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\random0_n.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\random0_n.cpp",
   "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\random0_n.cpp",
   "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\random0_n.cpp.obj"
-},
-{
-  "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
-  "command": "C:\\mingw64\\bin\\g++.exe -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\ship.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\ship.cpp",
-  "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\ship.cpp",
-  "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\ship.cpp.obj"
 }
 ]

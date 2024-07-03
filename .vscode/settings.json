@@ -74,6 +74,19 @@
         "stop_token": "cpp",
         "thread": "cpp",
         "variant": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "any": "cpp",
+        "bitset": "cpp",
+        "codecvt": "cpp",
+        "condition_variable": "cpp",
+        "csignal": "cpp",
+        "forward_list": "cpp",
+        "list": "cpp",
+        "set": "cpp",
+        "unordered_set": "cpp",
+        "regex": "cpp",
+        "mutex": "cpp",
+        "ranges": "cpp",
+        "valarray": "cpp"
     }
 }

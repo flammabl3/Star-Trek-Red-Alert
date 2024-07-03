@@ -19,6 +19,7 @@ class Projectile {
         sf::Vector2f directionOfTravel;
         float speed;
         std::string texturePath;
+        std::string faction;
         bool friendly;
         bool touchingTarget;
         bool missed;
@@ -30,6 +31,8 @@ class Projectile {
         Projectile(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage);
         void render(sf::RenderWindow* window);
         sf::Sprite getSprite();
+
+        void setFaction(std::string factionName);
 
         void setFriendly();
 

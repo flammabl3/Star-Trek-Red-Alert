@@ -37,7 +37,7 @@ class Personnel {
 
         //overload for generic or randomized personnel.
         Personnel(std::string rank, 
-        std::string species, std::string role, double skill);
+        std::string species, double skill);
 
         Personnel() = default;
 

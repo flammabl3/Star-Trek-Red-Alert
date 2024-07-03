@@ -7,8 +7,10 @@
 
 #include "Ship.hpp"
 #include "NCC-1701-D.hpp"
+#include "InitializeShip.hpp"
 #include "Projectile.hpp"
 #include "random0_n.hpp"
+
 
 float rot = 0;
 
@@ -18,7 +20,8 @@ float rot = 0;
 // ALL MOVEMENT MUST BE DELTATIMED.
 
 /*General path to completion
-Systems and damage -> Ship AI -> change views and window sizes -> UI -> sounds and animations -> rest of the game
+Systems and damage -> Ship AI -> change views and window sizes (these are partially done)
+new ships -> UI -> sounds and animations -> rest of the game (scenarios, menus)
 
 Response time to user input should be tied to the bridge.
 
@@ -62,13 +65,14 @@ void Game::initWindow() {
 }
 
 void Game::initPlayer() {
-    playerShipObj = *getEnterprisePointer(); // The Ship object associated with the player's ship will be made the USS enterprise using a function from NCC-1701-D.hpp.
-    playerShipObj.setSFMLObjects("../resource/Ent-D.png"); // Call function to set texture and sprite.
+    playerShipObj = InitializeShip::makeShip("../resource/ships-json/NCC-1701-D.json"); // The Ship object associated with the player's ship will be made the USS enterprise using a function from NCC-1701-D.hpp.
     playerShipObj.shipSprite.setPosition(700, 500);
     playerShipObj.shipSprite.setRotation(270);
     playerShipObj.setFriendly();
+    playerShipObj.setSFMLObjects();
     //create a pointer to reference our player ship object, and add it to the vector. This seems... non-optimal.
     playerShipPointer = &playerShipObj;
+    
     allShips.push_back(playerShipPointer);
     //use a member variable not a parameter for shield size.
     playerShipObj.setShield(300);
@@ -162,11 +166,11 @@ void Game::renderEnemyHitboxes() {
 //placeholder code will generate another USS enterprise for shooting at.
 void Game::initEnemy() {
     SATHelper sat; //using the same SATHelper multiple times throughout the code causes errors.
-    Ship* enemyShipObj = getEnterprisePointer();
-    enemyShipObj->setSFMLObjects("../resource/Ent-D.png");
+    Ship* enemyShipObj = InitializeShip::makeShipPointer("../resource/ships-json/NCC-1701-D.json");
     enemyShipObj->shipSprite.setPosition(300, 100);
     enemyShipObj->shipSprite.setRotation(110);
     enemyShipObj->friendly = false;
+    enemyShipObj->setSFMLObjects();
     enemyShipObj->setShield(300);
     for (auto& pair: enemyShipObj->shipSystems) {
         std::shared_ptr<System>& system = pair.second;
@@ -281,7 +285,6 @@ void Game::updateAllShips() {
 
 void Game::renderProjectiles() {
     for (int i = 0; i < projectilesList.size(); i++) {
-        
         //don't render if the disruptor shot has the secondShot condition, which will hide the projectile until it is time to fire.
         if (dynamic_cast<Disruptor*>(projectilesList.at(i)) == nullptr || !dynamic_cast<Disruptor*>(projectilesList.at(i))->secondShot)
             projectilesList.at(i)->render(this->window);
@@ -1029,17 +1032,17 @@ void Game::updateEvents() {
                     playerShipObj.weaponSelected = 1;
                 }
 
-                if (event.key.scancode == sf::Keyboard::Scan::Num2)
+                else if (event.key.scancode == sf::Keyboard::Scan::Num2)
                 {
                     playerShipObj.weaponSelected = 2;
                 }
 
-                if (event.key.scancode == sf::Keyboard::Scan::Num3)
+                else if (event.key.scancode == sf::Keyboard::Scan::Num3)
                 {
                     playerShipObj.weaponSelected = 3;
                 }
 
-                if (event.key.scancode == sf::Keyboard::Scan::Num4)
+                else if (event.key.scancode == sf::Keyboard::Scan::Num4)
                 {
                     playerShipObj.weaponSelected = 4;   
                 }
@@ -1048,7 +1051,6 @@ void Game::updateEvents() {
 
                 if (event.key.scancode == sf::Keyboard::Scan::Num0)
                 {
-                    // 1 key was pressed, weapon in slot 1 is now active. For now it will be a photon torpedo.
                     if (debugMode) {
                         debugMode = false; 
                         logEvent("Debug mode off.", true);

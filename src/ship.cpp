@@ -4,15 +4,16 @@
 #include "random0_n.hpp"
 
 
-Ship::Ship(std::map<std::string, std::shared_ptr<System>> shipSystems, int mass, float impulseSpeed, float warpSpeed, float shields, std::string name, std::string designation) {
+Ship::Ship(std::map<std::string, std::shared_ptr<System>> shipSystems, std::string shipTextureName, float impulseSpeed, float warpSpeed, float shields, std::string name, std::string designation) {
     this->shipSystems = shipSystems;
     this->impulseSpeed = impulseSpeed;
     this->warpSpeed = warpSpeed;
     this->shields = shields;
     this->mass = mass;
     this->name = name;
-    this->designation = designation;
+    this->registry = registry;
     this->state = "AGGR";
+    this->shipSpritePath = shipTextureName;
     //this should vary with different ship strengths actually. the enterprise and a bird of prey should not be equal in combat.
     this->totalCondition = 50;
     this->shields = 100;
@@ -31,8 +32,8 @@ Ship::Ship() {
 }
 //needs to be here for when a Ship is initialized and then just made to be a certain type of ship through a class definition.
 
-void Ship::setSFMLObjects(std::string resourcePath) {
-    if (!this->shipTexture.loadFromFile(resourcePath)) {
+void Ship::setSFMLObjects() {
+    if (!this->shipTexture.loadFromFile(shipSpritePath)) {
         std::cout << "Failed to load." << std::endl;
     }
     shipSprite.setTexture(this->shipTexture);
@@ -56,6 +57,10 @@ void Ship::setSize(int l, int w, int h) {
 
 void Ship::setDirection(float direction) {
     this->direction = direction;
+}
+
+void Ship::setFaction(std::string factionName) {
+    faction = factionName;
 }
 
 void Ship::setFriendly() {

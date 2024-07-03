@@ -4,6 +4,7 @@
 #include <sstream>
 #include <vector>
 #include <random>
+#include "random0_n.hpp"
 
 Personnel::Personnel(std::string firstName, std::string middleName, std::string lastName, std::string rank, 
                         std::string species, std::string role, double skill) 
@@ -16,6 +17,7 @@ Personnel::Personnel(std::string firstName, std::string middleName, std::string 
     this->health = 10.0;
     this->skill = skill;
     this->capacity = 1.0;
+    this->role = role;
     usingSubsystem = false;
     this->currentState = NORMAL;
     hurtThisFrame = false;
@@ -23,13 +25,15 @@ Personnel::Personnel(std::string firstName, std::string middleName, std::string 
 }
 
 Personnel::Personnel(std::string rank, 
-                        std::string species, std::string role, double skill) 
+                        std::string species, double skill) 
 {
+    std::string roles[3] = {"Command", "Operations", "Science"};
     this->firstName = "Placeholder";
     this->middleName = "Placeholder";
     this->lastName = "Placeholder";
     this->rank = rank;
     this->species = species;
+    this->role = roles[random0_nInclusive(2)];
     this->health = 10.0;
     this->skill = skill;
     this->randomName();

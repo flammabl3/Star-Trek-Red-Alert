@@ -19,6 +19,7 @@ class Ship
         sf::Sprite shieldSprite;
         sf::Texture shieldTexture;
         sf::Vector2f shieldOffset;
+        std::string shipSpritePath;
 
 
         //Internal data
@@ -33,8 +34,10 @@ class Ship
         float totalCondition;
         double decisionTimer;
         int shieldOpac;
+        bool friendly;
         std::string name;
-        std::string designation;
+        std::string registry;
+        std::string faction;
         //the int represents what number key will pick the weapon, the first string is the weapon type, the second is which System the weapon is linked to.
         std::map<int, std::tuple<std::string, std::string>> weaponsComplement;
         
@@ -45,17 +48,17 @@ class Ship
         //std::shared_ptr<sf::Vector2f> position;
         float direction;
         
-        bool friendly;
+        
         //ships will occupy a rectangular space around their base coordinate.
         int length;
         int width;
         int height;
 
-        Ship(std::map<std::string, std::shared_ptr<System>> shipSystems, int mass, float impulseSpeed, float warpSpeed, float shields, std::string name, std::string designation);
+        Ship(std::map<std::string, std::shared_ptr<System>> shipSystems, std::string shipTextureName, float impulseSpeed, float warpSpeed, float shields, std::string name, std::string designation);
 
         Ship();
 
-        void setSFMLObjects(std::string resourcePath);
+        void setSFMLObjects();
 
         sf::FloatRect getBoundingBox();
 
@@ -64,6 +67,8 @@ class Ship
         void setDirection(float direction);
 
         void render(sf::RenderWindow* window);
+
+        void setFaction(std::string factionName);
 
         void setFriendly();
 

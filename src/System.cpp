@@ -144,6 +144,13 @@ std::vector<std::string> System::fireOxygenPersonnelSwap(sf::Time time) {
     return events;
 }
 
+void System::modifyScale(float scale) {
+    this->systemX = this->systemX * scale;
+    this->systemY = this->systemY * scale;
+    this->width = this->width * scale;
+    this->length = this->length * scale;
+}
+
 Weapon::Weapon(std::string systemType, std::vector<Room> rooms, std::vector<Personnel*> personnel) : System(systemType, rooms, personnel) {
     this->cooldownTimer = -1;
     this->ready = false;
@@ -165,10 +172,11 @@ std::vector<std::string> Weapon::calculateOperationalCapacity(sf::Time time) {
         this->totalCondition = average;
         //average of totalCondition, average operationalCapacity of all rooms, power of the room.
         float bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
-            this->power = this->parentShip->shipSystems.at("Engineering")->operationalCapacity;
-            this->operationalCapacity = (this->totalCondition + this->power + bridgeCapacity) / 3;
+        this->power = this->parentShip->shipSystems.at("Engineering")->operationalCapacity;
+        this->operationalCapacity = (this->totalCondition + this->power + bridgeCapacity) / 3;
         if (this->operationalCapacity > 0) {
             cooldownThreshold = (cooldownThresholdBase / (this->operationalCapacity / 100));
+            this->damage = this->damageBase * this->operationalCapacity / 100;
         } else {
             cooldownThreshold = -1;
         }

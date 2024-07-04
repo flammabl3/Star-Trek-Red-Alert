@@ -26,7 +26,8 @@ class Ship
         std::map<std::string, std::shared_ptr<System>> shipSystems;
         std::string state;
         int mass;
-        int shields;
+        float shields;
+        float shieldsBase;
         float shieldBubbleRadius;
         int power;
         double impulseSpeed;

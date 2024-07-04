@@ -55,6 +55,8 @@ class System {
         System() = default;
         
         virtual ~System();
+
+        void modifyScale(float scale);
 };
 
 class Weapon : public System {
@@ -68,6 +70,9 @@ class Weapon : public System {
         void updateTimer(float deltaTime);
         void resetTimer();
         bool ready;
+
+        int damage;
+        int damageBase;
 
         std::vector<std::string> calculateOperationalCapacity(sf::Time time);
 

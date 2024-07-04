@@ -17,6 +17,7 @@ Ship::Ship(std::map<std::string, std::shared_ptr<System>> shipSystems, std::stri
     //this should vary with different ship strengths actually. the enterprise and a bird of prey should not be equal in combat.
     this->totalCondition = 50;
     this->shields = 100;
+    this->shieldsBase = shields;
     this->power = 100;
     this->time = clock.getElapsedTime();
     this->shieldOpac = 0;

@@ -32,6 +32,8 @@ Ship InitializeShip::makeShip(const std::string& jsonFilePath) {
             systemPtr = new Weapon(system["name"], roomsVect, personnelVect);
             dynamic_cast<Weapon*>(systemPtr)->cooldownThreshold = system["cooldownThreshold"];
             dynamic_cast<Weapon*>(systemPtr)->cooldownThresholdBase = system["cooldownThresholdBase"];
+            dynamic_cast<Weapon*>(systemPtr)->damage = system["damage"];
+            dynamic_cast<Weapon*>(systemPtr)->damageBase = system["damageBase"];
         }
         if (system["class"] == "Propulsion") {
             systemPtr = new Propulsion(system["name"], roomsVect, personnelVect);
@@ -40,6 +42,7 @@ Ship InitializeShip::makeShip(const std::string& jsonFilePath) {
             //std::cout << dynamic_cast<Propulsion*>(systemPtr)->baseSpeed << std::endl;
         }
         systemPtr->setCoordinates(system["coordinates"]["x"], system["coordinates"]["y"], system["coordinates"]["width"], system["coordinates"]["length"]);
+        systemPtr->modifyScale(shipData["scale"]);
         for (const auto& room : system["rooms"]) {
             for (const auto& subsystem : room["subsystems"]) {
                 //make a random ensign and assign them to the newly created subsystem
@@ -88,7 +91,10 @@ Ship InitializeShip::makeShip(const std::string& jsonFilePath) {
     }
 
     Ship ship = Ship(systemsMap, shipData["shipSpritePath"], shipData["impulseSpeed"], shipData["warpSpeed"], shipData["shields"], std::string(shipData["name"]), std::string(shipData["registry"]));
-    
+    ship.shipSprite.setScale(shipData["scale"], shipData["scale"]);
+    ship.shields = shipData["shields"];
+    ship.shieldsBase = shipData["shields"];
+
     std::map<int, std::tuple<std::string, std::string>> weaponsComplementArray;
     for (int i = 0; i < shipData["weaponsComplement"].size(); i++) {
         weaponsComplementArray[i + 1] =  (std::make_tuple(shipData["weaponsComplement"][i]["type"], shipData["weaponsComplement"][i]["system"]));

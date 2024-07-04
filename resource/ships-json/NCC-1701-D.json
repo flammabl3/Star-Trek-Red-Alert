@@ -1,6 +1,6 @@
 {
-    "shipSpritePath": "../resource/Ent-D.png",
-    "shields": 100,
+    "shipSpritePath": "../resource/federationncc1701d.png",
+    "shields": 100.0,
     "shieldBubbleRadius": 200,
     "totalCondition": 100,
     "friendly": true,
@@ -10,12 +10,13 @@
     "impulseSpeed": 0.25,
     "warpSpeed": 9.4,
     "mass": 5000000,
+    "scale": 1.0,
     "systems": [
         {
             "name": "Bridge",
             "class": "System",
             "desiredRandomPersonnel": 5,
-            "coordinates": {"x": 10, "y": 0, "width": 20, "length": 60},
+            "coordinates": {"x": 20, "y": 0, "width": 40, "length": 120},
             "rooms": [
                 {
                     "name": "Main Bridge",
@@ -46,9 +47,11 @@
         {
             "name": "Forward Phasers",
             "class": "Weapon",
-            "coordinates": {"x": 25, "y": 0, "width": 15, "length": 50},
+            "coordinates": {"x": 50, "y": 0, "width": 30, "length": 100},
             "cooldownThreshold": 4.0,
             "cooldownThresholdBase": 4.0,
+            "damage": 10.0,
+            "damageBase": 10.0,
             "desiredRandomPersonnel": 5,
             "rooms": [
                 {
@@ -63,10 +66,12 @@
         {
             "name": "Forward Torpedoes",
             "class": "Weapon",
-            "coordinates": {"x": 0, "y": 0, "width": 10, "length": 10},
+            "coordinates": {"x": 0, "y": 0, "width": 20, "length": 20},
             "cooldownThreshold": 4.0,
             "cooldownThresholdBase": 4.0,
             "desiredRandomPersonnel": 4,
+            "damage": 10.0,
+            "damageBase": 10.0,
             "rooms": [
                 {
                     "name": "Forward Torpedoes",
@@ -81,7 +86,7 @@
             "name": "Left Nacelle",
             "class": "Propulsion",
             "desiredRandomPersonnel": 3,
-            "coordinates": {"x": -19, "y": -12, "width": 22, "length": 10},
+            "coordinates": {"x": -38, "y": -24, "width": 48, "length": 10},
             "speed": 100.0,
             "baseSpeed": 100.0,
             "rooms": [
@@ -97,7 +102,7 @@
             "name": "Right Nacelle",
             "class": "Propulsion",
             "desiredRandomPersonnel": 3,
-            "coordinates": {"x": -19, "y": 12, "width": 22, "length": 10},
+            "coordinates": {"x": -38, "y": 24, "width": 48, "length": 10},
             "speed": 100.0,
             "baseSpeed": 100.0,
             "rooms": [
@@ -113,7 +118,7 @@
             "name": "Engineering",
             "class": "System",
             "desiredRandomPersonnel": 7,
-            "coordinates": {"x": -20, "y": 0, "width": 20, "length": 20},
+            "coordinates": {"x": -40, "y": 0, "width": 40, "length": 40},
             "rooms": [
                 {
                     "name": "Engineering Room",

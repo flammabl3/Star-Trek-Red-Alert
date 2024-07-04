@@ -3,10 +3,11 @@
 #include <iostream>
 #include <cmath>
 #include <windows.h>
+#include <iomanip>
+#include <sstream>
 
 
 #include "Ship.hpp"
-#include "NCC-1701-D.hpp"
 #include "InitializeShip.hpp"
 #include "Projectile.hpp"
 #include "random0_n.hpp"
@@ -60,7 +61,7 @@ void Game::initWindow() {
     unsigned int height = size.y;
 
     view = sf::View(sf::FloatRect(0.f, 0.f, 1366.f, 768.f));
-    //view.zoom(1.0f);
+    view.zoom(1.0f);
 
 }
 
@@ -166,7 +167,7 @@ void Game::renderEnemyHitboxes() {
 //placeholder code will generate another USS enterprise for shooting at.
 void Game::initEnemy() {
     SATHelper sat; //using the same SATHelper multiple times throughout the code causes errors.
-    Ship* enemyShipObj = InitializeShip::makeShipPointer("../resource/ships-json/NCC-1701-D.json");
+    Ship* enemyShipObj = InitializeShip::makeShipPointer("../resource/ships-json/klingonbirdofprey.json");
     enemyShipObj->shipSprite.setPosition(300, 100);
     enemyShipObj->shipSprite.setRotation(110);
     enemyShipObj->friendly = false;
@@ -501,8 +502,12 @@ void Game::checkCollisions() {
                                 logEvent(personnelLogged, ship->friendly);
                             } 
                         }
-                        
-                        logEvent("Shields at " + std::to_string(ship->shields) + " percent.", ship->friendly);
+
+                        //convert to a decimal of 2 places without c++ 20
+                        //cross multiply to get a percent
+                        std::stringstream stream;
+                        stream << std::fixed << std::setprecision(2) << ship->shields * 100 / ship->shieldsBase;
+                        logEvent("Shields at " + stream.str() + " percent.", ship->friendly);
                         it = projectilesList.erase(it);
                         delete projectile;
                         continue;
@@ -535,7 +540,9 @@ void Game::checkCollisions() {
                             if (ship->shields < 0) {
                                 ship->shields = 0;
                             }
-                            logEvent("Shields at " + std::to_string(ship->shields) + " percent.", ship->friendly);
+                            std::stringstream stream;
+                            stream << std::fixed << std::setprecision(2) << ship->shields * 100 / ship->shieldsBase;
+                            logEvent("Shields at " + stream.str() + " percent.", ship->friendly);
                             if (phaser->collidedDeleteTimer > 3.0) {
                                 it = projectilesList.erase(it);
                                 delete projectile;
@@ -734,14 +741,12 @@ void Game::checkCollisions() {
                         
 
 // will be run each frame. will eventually need code to check the type of weapon.
-void Game::fireTorpedo(Ship& firingShip, int hitChance) {
-    fireTorpedo(firingShip, window->mapPixelToCoords(sf::Mouse::getPosition(*window)), hitChance);
+void Game::fireTorpedo(Ship& firingShip, int hitChance, float damage, sf::Vector2f parentTip) {
+    fireTorpedo(firingShip, window->mapPixelToCoords(sf::Mouse::getPosition(*window)), hitChance, damage, parentTip);
 }
 
-void Game::fireTorpedo(Ship& firingShip, sf::Vector2f targetP, int hitChance) {
+void Game::fireTorpedo(Ship& firingShip, sf::Vector2f targetP, int hitChance, float damage, sf::Vector2f parentTip) {
     //need to constantly update the sprite object in the Ship object. 
-    
-    sf::Vector2f parentTip = firingShip.shipSprite.getTransform().transformPoint({firingShip.shipSprite.getLocalBounds().height, firingShip.shipSprite.getLocalBounds().width / 2});
     sf::Vector2f target = targetP;
     float cosValue = cos(firingShip.shipSprite.getRotation() * M_PI / 180);
     float sinValue = sin(firingShip.shipSprite.getRotation() * M_PI / 180);
@@ -796,20 +801,19 @@ void Game::fireTorpedo(Ship& firingShip, sf::Vector2f targetP, int hitChance) {
         }
     }   
 
+    torpedo->damage = damage;
     torpedo->hitChance = hitChance * torpedo->hitChanceBase / 100;
     this->projectilesList.insert(projectilesList.begin(), torpedo);
 
 }
 
-void Game::fireTorpedoSpread(Ship& firingShip, int hitChance) {
-    fireTorpedoSpread(firingShip, window->mapPixelToCoords(sf::Mouse::getPosition(*window)), hitChance);
+void Game::fireTorpedoSpread(Ship& firingShip, int hitChance, float damage, sf::Vector2f parentTip) {
+    fireTorpedoSpread(firingShip, window->mapPixelToCoords(sf::Mouse::getPosition(*window)), hitChance, damage, parentTip);
 }
 
-void Game::fireTorpedoSpread(Ship& firingShip, sf::Vector2f targetP, int hitChance) {
+void Game::fireTorpedoSpread(Ship& firingShip, sf::Vector2f targetP, int hitChance, float damage, sf::Vector2f parentTip) {
     
     //need to constantly update the sprite object in the Ship object. 
-    
-    sf::Vector2f parentTip = firingShip.shipSprite.getTransform().transformPoint({firingShip.shipSprite.getLocalBounds().height, firingShip.shipSprite.getLocalBounds().width / 2});
     
     float cosValue = cos(firingShip.shipSprite.getRotation() * M_PI / 180);
     float sinValue = sin(firingShip.shipSprite.getRotation() * M_PI / 180);
@@ -851,7 +855,7 @@ void Game::fireTorpedoSpread(Ship& firingShip, sf::Vector2f targetP, int hitChan
             }   
         }
 
-        torpedo->damage = 2;
+        torpedo->damage = damage / 5;
         torpedo->hitChance = hitChance * torpedo->hitChanceBase / 100;
         if (firingShip.friendly)
             torpedo->setFriendly(); 
@@ -859,12 +863,11 @@ void Game::fireTorpedoSpread(Ship& firingShip, sf::Vector2f targetP, int hitChan
     }
 }
 
-void Game::fireDisruptor(Ship& firingShip, int hitChance) {
-    fireDisruptor(firingShip, window->mapPixelToCoords(sf::Mouse::getPosition(*window)), hitChance);
+void Game::fireDisruptor(Ship& firingShip, int hitChance, float damage, sf::Vector2f parentTip) {
+    fireDisruptor(firingShip, window->mapPixelToCoords(sf::Mouse::getPosition(*window)), hitChance, damage, parentTip);
 }
 
-void Game::fireDisruptor(Ship& firingShip, sf::Vector2f targetP, int hitChance) {
-    sf::Vector2f parentTip = firingShip.shipSprite.getTransform().transformPoint({firingShip.shipSprite.getLocalBounds().height, firingShip.shipSprite.getLocalBounds().width / 2});
+void Game::fireDisruptor(Ship& firingShip, sf::Vector2f targetP, int hitChance, float damage, sf::Vector2f parentTip) {
     sf::Vector2f target = targetP;
     
     Disruptor* disruptor = new Disruptor("../resource/disruptor.png", parentTip.x, parentTip.y,
@@ -879,6 +882,9 @@ void Game::fireDisruptor(Ship& firingShip, sf::Vector2f targetP, int hitChance) 
         disruptor->setFriendly();
         disruptor2->setFriendly();
     }
+
+    disruptor->damage = damage;
+    disruptor2->damage = damage;
 
     disruptor->hitChance = hitChance * disruptor->hitChanceBase / 100;
     disruptor2->hitChance = hitChance * disruptor2->hitChanceBase / 100;
@@ -964,12 +970,11 @@ void Game::movePlayer() {
 
 }
 
-void Game::firePhaser(Ship& firingShip, int hitChance) {
-    firePhaser(firingShip, window->mapPixelToCoords(sf::Mouse::getPosition(*window)), hitChance);
+void Game::firePhaser(Ship& firingShip, int hitChance, float damage, sf::Vector2f parentTip) {
+    firePhaser(firingShip, window->mapPixelToCoords(sf::Mouse::getPosition(*window)), hitChance, damage, parentTip);
 }
 
-void Game::firePhaser(Ship& firingShip, sf::Vector2f targetP, int hitChance) {
-    sf::Vector2f parentTip = firingShip.shipSprite.getTransform().transformPoint({firingShip.shipSprite.getLocalBounds().height, firingShip.shipSprite.getLocalBounds().width / 2});
+void Game::firePhaser(Ship& firingShip, sf::Vector2f targetP, int hitChance, float damage, sf::Vector2f parentTip) {
     sf::Vector2f target = targetP;
     
     Phaser* phaser = new Phaser("../resource/phaser.png", parentTip.x, parentTip.y,
@@ -978,7 +983,7 @@ void Game::firePhaser(Ship& firingShip, sf::Vector2f targetP, int hitChance) {
     if (firingShip.friendly) {
         phaser->setFriendly();
     }
-    phaser->damage = 10;
+    phaser->damage = damage;
 
     phaser->firingShip = &firingShip;
 
@@ -1228,21 +1233,28 @@ void Game::useWeapon(Ship& ship) {
         std::string weaponSystem = std::get<1>(ship.weaponSelectedTuple);
         bool fired = false;
         int hitChance = ship.shipSystems.at(weaponSystem)->operationalCapacity;
+
+        std::shared_ptr<System> wep = ship.shipSystems.at(weaponSystem);
+        float damage = std::dynamic_pointer_cast<Weapon>(wep)->damage;
+
+        //projectiles will spawn at the transform of the tip of the system that fired them.
+        sf::RectangleShape systemHitbox = ship.shipSystems.at(weaponSystem)->returnHitbox();
+        sf::Vector2f parentTip = systemHitbox.getTransform().transformPoint({systemHitbox.getSize().x, systemHitbox.getSize().y / 2});
         
         if (weaponSelectedString == "TORPEDO") {
-            fireTorpedo(ship, hitChance);
+            fireTorpedo(ship, hitChance, damage, parentTip);
             fired = true;
         }
         if (weaponSelectedString == "DISRUPTOR") {
-            fireDisruptor(ship, hitChance); 
+            fireDisruptor(ship, hitChance, damage, parentTip); 
             fired = true;
         }
         if (weaponSelectedString == "PHASER") {
-            firePhaser(ship, hitChance);
+            firePhaser(ship, hitChance, damage, parentTip);
             fired = true;
         }
         if (weaponSelectedString == "TORPEDOSPREAD") {
-            fireTorpedoSpread(ship, hitChance); 
+            fireTorpedoSpread(ship, hitChance, damage, parentTip); 
             fired = true;
         }
 
@@ -1261,22 +1273,27 @@ void Game::useWeapon(Ship* ship, sf::Vector2f enemyPosition) {
         std::string weaponSelectedString = std::get<0>(ship->weaponSelectedTuple);
         std::string weaponSystem = std::get<1>(ship->weaponSelectedTuple);
         int hitChance = ship->shipSystems.at(weaponSystem)->operationalCapacity;
+        std::shared_ptr<System> wep = ship->shipSystems.at(weaponSystem);
+        float damage = std::dynamic_pointer_cast<Weapon>(wep)->damage;
 
+        sf::RectangleShape systemHitbox = ship->shipSystems.at(weaponSystem)->returnHitbox();
+        sf::Vector2f parentTip = systemHitbox.getTransform().transformPoint({systemHitbox.getSize().x, systemHitbox.getSize().y / 2});
+        
         bool fired = false;
         if (weaponSelectedString == "TORPEDO") {
-            fireTorpedo(*ship, enemyPosition, hitChance);
+            fireTorpedo(*ship, enemyPosition, hitChance, damage, parentTip);
             fired = true;
         }
         if (weaponSelectedString == "DISRUPTOR") {
-            fireDisruptor(*ship, enemyPosition, hitChance); 
+            fireDisruptor(*ship, enemyPosition, hitChance, damage, parentTip); 
             fired = true;
         }
         if (weaponSelectedString == "PHASER") {
-            firePhaser(*ship, enemyPosition, hitChance);
+            firePhaser(*ship, enemyPosition, hitChance, damage, parentTip);
             fired = true;
         }
         if (weaponSelectedString == "TORPEDOSPREAD") {
-            fireTorpedoSpread(*ship, enemyPosition, hitChance); 
+            fireTorpedoSpread(*ship, enemyPosition, hitChance, damage, parentTip); 
             fired = true;
         }
 
@@ -1307,7 +1324,7 @@ void Game::makeDecision(Ship* ship) {
     float randomX = random0_nInclusive(playerShipPointer->shipSprite.getLocalBounds().width) / 2;
     float randomY = random0_nInclusive(playerShipPointer->shipSprite.getLocalBounds().height) / 2;
     sf::Vector2f randomCoord = sf::Vector2f(playerShipPointer->getPosition().x + randomX, playerShipPointer->getPosition().y + randomY);
-    
+
     for (int wep = 1; wep <= ship->weaponsComplement.size(); wep++) {
         ship->weaponSelected = wep;
         //if we have torpedoes, occasionally pick torpedo spread
@@ -1319,18 +1336,26 @@ void Game::makeDecision(Ship* ship) {
     
     if (noWeaponsReady) {
         if (ship->totalCondition <= 25 || ship->shields <= 25) {
-            ship->state = "EVAD";
-            ship->decisionTimer = 0.5;
+            if (ship->state != "EVAD") {
+                ship->state = "EVAD";
+                ship->decisionTimer = 0.5;
+            }
         }
     }
     
     
     if (!noWeaponsReady) {
-        ship->decisionTimer = 0.5;
+        
         if (ship->totalCondition <= 25 || ship->shields <= 25) {
-            ship->state = "EVAG";
+            if (ship->state != "EVAG") {
+                ship->state = "EVAG";
+                ship->decisionTimer = 0.5;
+            }
         } else {
-            ship->state = "AGGR";
+            if (ship->state != "AGGR") {
+                ship->state = "AGGR";
+                ship->decisionTimer = 0.5;
+            }
         }
     }
 
@@ -1394,13 +1419,14 @@ void Game::makeDecision(Ship* ship) {
                 ship->weaponSelected = wep;
                 
                 if (pickWeapon(ship)) {
+                    //randomly switch between torpedoes and spread. This will need to be changed for weapons without torpedoes, or torpedoes in a different spot.
                     if (std::get<0>(ship->weaponSelectedTuple) == "TORPEDO" && random0_nInclusive(1) == 1) {
                         wep++;
                         ship->weaponSelected = wep;
                         pickWeapon(ship);
                     }
+                    useWeapon(ship, randomCoord);
                 }
-                useWeapon(ship, randomCoord);
             }
 
             if (newPositionGenerated) {
@@ -1416,9 +1442,9 @@ void Game::makeDecision(Ship* ship) {
                     wep++;
                     ship->weaponSelected = wep;
                     pickWeapon(ship);
+                    useWeapon(ship, randomCoord);
                 }
             }
-            useWeapon(ship, randomCoord);
         }
         if (newPositionGenerated)
             moveShip(ship, ship->evadeTargetPosition);

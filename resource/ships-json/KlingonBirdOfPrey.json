@@ -1,0 +1,140 @@
+{
+    "shipSpritePath": "../resource/klingonbirdofprey.png",
+    "shields": 30.0,
+    "shieldBubbleRadius": 200,
+    "totalCondition": 100,
+    "friendly": true,
+    "name": "Bird-Of-Prey",
+    "registry": "",
+    "faction": "KLINGON",
+    "impulseSpeed": 0.25,
+    "warpSpeed": 9.4,
+    "mass": 5000000,
+    "scale": 0.4,
+    "systems": [
+        {
+            "name": "Bridge",
+            "class": "System",
+            "desiredRandomPersonnel": 5,
+            "coordinates": {"x": 48, "y": 0, "width": 33, "length": 20},
+            "rooms": [
+                {
+                    "name": "Main Bridge",
+                    "subsystems": [
+                        {"name": "Navigator's Conn"},
+                        {"name": "Helmsman's Conn"},
+                        {"name": "Captain's Chair"},
+                        {"name": "Officer's Chair"},
+                        {"name": "Counselor's Chair"},
+                        {"name": "Tactical"},
+                        {"name": "Science Panel I"},
+                        {"name": "Science Panel II"},
+                        {"name": "Operations Panel"},
+                        {"name": "Environment Panel"},
+                        {"name": "Engineering Panel"}
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Left Disruptor",
+            "class": "Weapon",
+            "coordinates": {"x": 10, "y": 62, "width": 24, "length": 7},
+            "cooldownThreshold": 3.0,
+            "cooldownThresholdBase": 3.0,
+            "damage": 1.0,
+            "damageBase": 1,
+            "desiredRandomPersonnel": 5,
+            "rooms": [
+                {
+                    "name": "Left Disruptor",
+                    "subsystems": [
+                        {"name": "Left Disruptor"},
+                        {"name": "Disruptor"}
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Right Disruptor",
+            "class": "Weapon",
+            "coordinates": {"x": 10, "y": -62, "width": 24, "length": 7},
+            "cooldownThreshold": 3.0,
+            "cooldownThresholdBase": 3.0,
+            "damage": 1.0,
+            "damageBase": 1,
+            "desiredRandomPersonnel": 5,
+            "rooms": [
+                {
+                    "name": "Right Disruptor",
+                    "subsystems": [
+                        {"name": "Right Disruptor Controls"},
+                        {"name": "Disruptor"}
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Left Nacelle",
+            "class": "Propulsion",
+            "desiredRandomPersonnel": 3,
+            "coordinates": {"x": -19, "y": -12, "width": 22, "length": 10},
+            "speed": 100.0,
+            "baseSpeed": 100.0,
+            "rooms": [
+                {
+                    "name": "Nacelle",
+                    "subsystems": [
+                        {"name": "Left Nacelle Controls"}
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Right Nacelle",
+            "class": "Propulsion",
+            "desiredRandomPersonnel": 3,
+            "coordinates": {"x": -19, "y": 12, "width": 24, "length": 10},
+            "speed": 100.0,
+            "baseSpeed": 100.0,
+            "rooms": [
+                {
+                    "name": "Nacelle",
+                    "subsystems": [
+                        {"name": "Right Nacelle Controls"}
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Engineering",
+            "class": "System",
+            "desiredRandomPersonnel": 7,
+            "coordinates": {"x": -20, "y": 0, "width": 20, "length": 20},
+            "rooms": [
+                {
+                    "name": "Engineering Room",
+                    "personnel": [{"first name": "Geordi", "middle name": "", "last name": "La Forge", "rank": "Lieutenant Commander", "species": "Human", "department": "Operations", "skill": 2.0, "defaultSubsystem": "Warp Core Controls"}],
+                    "subsystems": [
+                        {"name": "Engineering Station I"},
+                        {"name": "Engineering Station II"},
+                        {"name": "Engineering Station III"},
+                        {"name": "Engineering Station IV"},
+                        {"name": "Warp Core Controls"}
+                    ]
+                },
+                {
+                    "name": "Warp Core Room",
+                    "subsystems": [
+                        {"name": "Warp Core"}
+                    ]
+                }
+            ]
+
+        }
+    ],
+    "weaponsComplement": [
+        {"type": "DISRUPTOR", "system": "Left Disruptor"},
+        {"type": "DISRUPTOR", "system": "Right Disruptor"}
+    ]
+}

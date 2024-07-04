@@ -95,15 +95,15 @@ class Game {
         void updateAllShips();
         void moveShip(Ship* ship, sf::Vector2f moveTo);
 
-        void fireTorpedo(Ship& firingShip, int hitChance);
-        void fireDisruptor(Ship& firingShip, int hitChance);
-        void firePhaser(Ship& firingShip, int hitChance);
-        void fireTorpedoSpread(Ship& firingShip, int hitChance);
+        void fireTorpedo(Ship& firingShip, int hitChance, float damage, sf::Vector2f parentTip);
+        void fireDisruptor(Ship& firingShip, int hitChance, float damage, sf::Vector2f parentTip);
+        void firePhaser(Ship& firingShip, int hitChance, float damage, sf::Vector2f parentTip);
+        void fireTorpedoSpread(Ship& firingShip, int hitChance, float damage, sf::Vector2f parentTip);
 
-        void fireTorpedo(Ship& firingShip, sf::Vector2f targetP, int hitChance);
-        void fireDisruptor(Ship& firingShip, sf::Vector2f targetP, int hitChance);
-        void firePhaser(Ship& firingShip, sf::Vector2f targetP, int hitChance);
-        void fireTorpedoSpread(Ship& firingShip, sf::Vector2f targetP, int hitChance);
+        void fireTorpedo(Ship& firingShip, sf::Vector2f targetP, int hitChance, float damage, sf::Vector2f parentTip);
+        void fireDisruptor(Ship& firingShip, sf::Vector2f targetP, int hitChance, float damage, sf::Vector2f parentTip);
+        void firePhaser(Ship& firingShip, sf::Vector2f targetP, int hitChance, float damage, sf::Vector2f parentTip);
+        void fireTorpedoSpread(Ship& firingShip, sf::Vector2f targetP, int hitChance, float damage, sf::Vector2f parentTip);
         void renderProjectiles(); 
     
 

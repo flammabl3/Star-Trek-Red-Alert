@@ -63,7 +63,9 @@ void Personnel::randomName() {
     std::vector<std::string> lastNames;
 
     if (species == "Human") {
-        filename = "../resource/humannames.csv";
+        filename = "../resource/names/humannames.csv";
+    } else if (species == "Klingon") {
+        filename = "../resource/names/klingonnames.csv";
     }
     std::ifstream file(filename);
 

@@ -66,7 +66,7 @@ void Game::initWindow() {
 }
 
 void Game::initPlayer() {
-    playerShipObj = InitializeShip::makeShip("../resource/ships-json/NCC-1701-D.json"); // The Ship object associated with the player's ship will be made the USS enterprise using a function from NCC-1701-D.hpp.
+    playerShipObj = InitializeShip::makeShip("../resource/ships-json/FederationEnterpriseD/FederationEnterpriseD.json"); // The Ship object associated with the player's ship will be made the USS enterprise using a function from NCC-1701-D.hpp.
     playerShipObj.shipSprite.setPosition(700, 500);
     playerShipObj.shipSprite.setRotation(270);
     playerShipObj.setFriendly();
@@ -167,7 +167,7 @@ void Game::renderEnemyHitboxes() {
 //placeholder code will generate another USS enterprise for shooting at.
 void Game::initEnemy() {
     SATHelper sat; //using the same SATHelper multiple times throughout the code causes errors.
-    Ship* enemyShipObj = InitializeShip::makeShipPointer("../resource/ships-json/klingonbirdofprey.json");
+    Ship* enemyShipObj = InitializeShip::makeShipPointer("../resource/ships-json/klingonbirdofprey/klingonbirdofprey.json");
     enemyShipObj->shipSprite.setPosition(300, 100);
     enemyShipObj->shipSprite.setRotation(110);
     enemyShipObj->friendly = false;

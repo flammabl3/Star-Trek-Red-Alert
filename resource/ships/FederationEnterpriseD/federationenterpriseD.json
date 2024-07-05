@@ -1,0 +1,149 @@
+{
+    "shipSpritePath": "../resource/federationncc1701d/federationncc1701d.png",
+    "shields": 100.0,
+    "shieldBubbleRadius": 200,
+    "totalCondition": 100,
+    "friendly": true,
+    "name": "USS Enterprise",
+    "registry": "NCC-1701-D",
+    "faction": "FEDERATION",
+    "impulseSpeed": 0.25,
+    "warpSpeed": 9.4,
+    "mass": 5000000,
+    "scale": 1.0,
+    "systems": [
+        {
+            "name": "Bridge",
+            "class": "System",
+            "desiredRandomPersonnel": 5,
+            "coordinates": {"x": 20, "y": 0, "width": 40, "length": 120},
+            "rooms": [
+                {
+                    "name": "Main Bridge",
+                    "personnel": [
+                        {"first name": "Data", "middle name": "", "last name": "", "rank": "Lieutenant Commander", "species": "Soong-type Android", "department": "Operations", "skill": 2.0, "defaultSubsystem": "Navigator's Conn"},
+                        {"first name": "Jean-Luc", "middle name": "", "last name": "Picard", "rank": "Captain", "species": "Human", "department": "Command", "skill": 1.8, "defaultSubsystem": "Captain's Chair"},
+                        {"first name": "William", "middle name": "T.", "last name": "Riker", "rank": "Commander", "species": "Human", "department": "Command", "skill": 1.5, "defaultSubsystem": "Officer's Chair"},
+                        {"first name": "Worf", "middle name": "", "last name": "", "rank": "Lieutenant", "species": "Klingon", "department": "Operations", "skill": 1.5, "defaultSubsystem": "Tactical"},
+                        {"first name": "Deanna", "middle name": "", "last name": "Troi", "rank": "Lt. Commander", "species": "Human/Betazoid", "department": "Science", "skill": 1.3, "defaultSubsystem": "Counselor's Chair"},
+                        {"first name": "Laren", "middle name": "", "last name": "Ro", "rank": "Ensign", "species": "Bajoran", "department": "Command", "skill": 1.2, "defaultSubsystem": "Helmsman's Conn"}
+                    ],
+                    "subsystems": [
+                        {"name": "Navigator's Conn"},
+                        {"name": "Helmsman's Conn"},
+                        {"name": "Captain's Chair"},
+                        {"name": "Officer's Chair"},
+                        {"name": "Counselor's Chair"},
+                        {"name": "Tactical"},
+                        {"name": "Science Panel I"},
+                        {"name": "Science Panel II"},
+                        {"name": "Operations Panel"},
+                        {"name": "Environment Panel"},
+                        {"name": "Engineering Panel"}
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Forward Phasers",
+            "class": "Weapon",
+            "coordinates": {"x": 50, "y": 0, "width": 30, "length": 100},
+            "cooldownThreshold": 4.0,
+            "cooldownThresholdBase": 4.0,
+            "damage": 10.0,
+            "damageBase": 10.0,
+            "desiredRandomPersonnel": 5,
+            "rooms": [
+                {
+                    "name": "Forward Phasers",
+                    "subsystems": [
+                        {"name": "Forward Phaser Controls"},
+                        {"name": "Phaser"}
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Forward Torpedoes",
+            "class": "Weapon",
+            "coordinates": {"x": 0, "y": 0, "width": 20, "length": 20},
+            "cooldownThreshold": 4.0,
+            "cooldownThresholdBase": 4.0,
+            "desiredRandomPersonnel": 4,
+            "damage": 10.0,
+            "damageBase": 10.0,
+            "rooms": [
+                {
+                    "name": "Forward Torpedoes",
+                    "subsystems": [
+                        {"name": "Forward Torpedo Controls"},
+                        {"name": "Torpedo Launcher"}
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Left Nacelle",
+            "class": "Propulsion",
+            "desiredRandomPersonnel": 3,
+            "coordinates": {"x": -38, "y": -24, "width": 48, "length": 10},
+            "speed": 100.0,
+            "baseSpeed": 100.0,
+            "rooms": [
+                {
+                    "name": "Nacelle",
+                    "subsystems": [
+                        {"name": "Left Nacelle Controls"}
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Right Nacelle",
+            "class": "Propulsion",
+            "desiredRandomPersonnel": 3,
+            "coordinates": {"x": -38, "y": 24, "width": 48, "length": 10},
+            "speed": 100.0,
+            "baseSpeed": 100.0,
+            "rooms": [
+                {
+                    "name": "Nacelle",
+                    "subsystems": [
+                        {"name": "Right Nacelle Controls"}
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Engineering",
+            "class": "System",
+            "desiredRandomPersonnel": 7,
+            "coordinates": {"x": -40, "y": 0, "width": 40, "length": 40},
+            "rooms": [
+                {
+                    "name": "Engineering Room",
+                    "personnel": [{"first name": "Geordi", "middle name": "", "last name": "La Forge", "rank": "Lieutenant Commander", "species": "Human", "department": "Operations", "skill": 2.0, "defaultSubsystem": "Warp Core Controls"}],
+                    "subsystems": [
+                        {"name": "Engineering Station I"},
+                        {"name": "Engineering Station II"},
+                        {"name": "Engineering Station III"},
+                        {"name": "Engineering Station IV"},
+                        {"name": "Warp Core Controls"}
+                    ]
+                },
+                {
+                    "name": "Warp Core Room",
+                    "subsystems": [
+                        {"name": "Warp Core"}
+                    ]
+                }
+            ]
+
+        }
+    ],
+    "weaponsComplement": [
+        {"type": "TORPEDO", "system": "Forward Torpedoes"},
+        {"type": "TORPEDOSPREAD", "system": "Forward Torpedoes"},
+        {"type": "PHASER", "system": "Forward Phasers"}
+    ]
+}

@@ -9,5 +9,6 @@ class InitializeShip {
     public:
         static Ship makeShip(const std::string& jsonFilePath);
         static Ship* makeShipPointer(const std::string& jsonFilePath);
+        static Personnel* makeRandomPersonnel(const std::string& jsonFilePath);
 };
 

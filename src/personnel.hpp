@@ -39,6 +39,8 @@ class Personnel {
         Personnel(std::string rank, 
         std::string species, double skill);
 
+        Personnel(std::string rank, double skill);
+
         Personnel() = default;
 
         std::string getLogName();
@@ -47,5 +49,6 @@ class Personnel {
 
         void calculateCapacity();
 
+        void randomSpecies();
 };
 

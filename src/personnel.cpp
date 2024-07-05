@@ -43,6 +43,28 @@ Personnel::Personnel(std::string rank,
     killedThisFrame = false;
 }
 
+
+
+Personnel::Personnel(std::string rank, double skill) 
+{
+    std::string roles[3] = {"Command", "Operations", "Science"};
+    this->firstName = "Placeholder";
+    this->middleName = "Placeholder";
+    this->lastName = "Placeholder";
+    this->rank = rank;
+    randomSpecies();
+    this->role = roles[random0_nInclusive(2)];
+    this->health = 10.0;
+    this->skill = skill;
+    this->randomName();
+    usingSubsystem = false;
+    this->currentState = NORMAL;
+    hurtThisFrame = false;
+    killedThisFrame = false;
+}
+
+
+
 //capacity will be based on health, skill, mental state. Can exceed 1.
 
 //return first or last name depending on the naming custom of the character.
@@ -62,16 +84,18 @@ void Personnel::randomName() {
     std::vector<std::string> firstNames;
     std::vector<std::string> lastNames;
 
-    if (species == "Human") {
-        filename = "../resource/names/humannames.csv";
-    } else if (species == "Klingon") {
-        filename = "../resource/names/klingonnames.csv";
-    }
+    filename = "../resource/names/" + this->species + "names.csv";
+    
     std::ifstream file(filename);
 
     if (!file.is_open()) {
-        std::cerr << "Error opening file!" << std::endl;
-        return;
+        filename = "../resource/names/humanoidnames.csv";
+        file.close();  
+        file.open(filename);
+        if (!file.is_open()) {
+            std::cerr << "Error opening " << filename << std::endl;
+            return;
+        }
     }
 
     std::string line;
@@ -92,21 +116,39 @@ void Personnel::randomName() {
         lastNames.push_back(cell);
     }
 
-    std::random_device rd; 
-    std::mt19937 gen(rd()); 
-    std::uniform_int_distribution<> distr(0, firstNames.size() - 1); 
-    std::uniform_int_distribution<> distr2(0, lastNames.size() - 1); 
-
     file.close();  // Close the file
 
     if (!firstNames.empty() && !lastNames.empty()) {
-        firstName = firstNames.at(distr(gen));
-        lastName = lastNames.at(distr2(gen));
+        firstName = firstNames.at(random0_n(firstNames.size()));
+        lastName = lastNames.at(random0_n(lastNames.size()));
         //std::cout << firstName << " " << lastName << std::endl;
     } else {
         std::cerr << "Name vectors are empty." << std::endl;
     }
 
+}
+
+void Personnel::randomSpecies() {
+    std::ifstream file("../resource/names/humanoidspecies.csv");
+    std::vector<std::string> speciesName;
+
+    std::string line;
+
+    if (!file.is_open()) {
+        std::cerr << "Error opening file!" << std::endl;
+        return;
+    }
+
+    while (std::getline(file, line)) {
+        std::stringstream ss(line);
+        std::string cell;
+
+        // Get the first cell from the line (first column)
+        std::getline(ss, cell, ',');
+        speciesName.push_back(cell);  // Save the cell if you want to use it later
+    }
+
+    this->species = speciesName.at(random0_n(speciesName.size()));
 }
 
 void Personnel::calculateCapacity() {

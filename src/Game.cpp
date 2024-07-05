@@ -20,6 +20,8 @@ float rot = 0;
 // Improve functions to check for and apply damage, and damage rooms, subsystems, and personnel
 // ALL MOVEMENT MUST BE DELTATIMED.
 
+//we never use the operations dept of each crewmember. Additionally, non fed. personnel will not even have this.
+
 /*General path to completion
 Systems and damage -> Ship AI -> change views and window sizes (these are partially done)
 new ships -> UI -> sounds and animations -> rest of the game (scenarios, menus)
@@ -66,7 +68,7 @@ void Game::initWindow() {
 }
 
 void Game::initPlayer() {
-    playerShipObj = InitializeShip::makeShip("../resource/ships-json/FederationEnterpriseD/FederationEnterpriseD.json"); // The Ship object associated with the player's ship will be made the USS enterprise using a function from NCC-1701-D.hpp.
+    playerShipObj = InitializeShip::makeShip("../resource/ships/FederationEnterpriseD/FederationEnterpriseD.json"); // The Ship object associated with the player's ship will be made the USS enterprise using a function from NCC-1701-D.hpp.
     playerShipObj.shipSprite.setPosition(700, 500);
     playerShipObj.shipSprite.setRotation(270);
     playerShipObj.setFriendly();
@@ -167,7 +169,7 @@ void Game::renderEnemyHitboxes() {
 //placeholder code will generate another USS enterprise for shooting at.
 void Game::initEnemy() {
     SATHelper sat; //using the same SATHelper multiple times throughout the code causes errors.
-    Ship* enemyShipObj = InitializeShip::makeShipPointer("../resource/ships-json/klingonbirdofprey/klingonbirdofprey.json");
+    Ship* enemyShipObj = InitializeShip::makeShipPointer("../resource/ships/klingonbirdofprey/klingonbirdofprey.json");
     enemyShipObj->shipSprite.setPosition(300, 100);
     enemyShipObj->shipSprite.setRotation(110);
     enemyShipObj->friendly = false;
@@ -1316,7 +1318,7 @@ void Game::makeDecision(Ship* ship) {
     if (playerShipPointer == nullptr)
         return;
     bool noWeaponsReady = true;
-    bool newPositionGenerated = false;
+    bool moveThisFrame = false;
     //There should be an evade state, an evasion shooting state, and an aggressive shooting state.
     //Evasion is just about evading enemy fire and perhaps warping away
     //Evasion shooting should have the ship balance between moving and firing at the enemy
@@ -1339,6 +1341,7 @@ void Game::makeDecision(Ship* ship) {
             if (ship->state != "EVAD") {
                 ship->state = "EVAD";
                 ship->decisionTimer = 0.5;
+                ship->evadeTargetPosition = sf::Vector2f(ship->getPosition().x - randomNegPos() * (200 + random0_n(400)), ship->getPosition().y - randomNegPos() * (200 + random0_n(400)));
             }
         }
     }
@@ -1362,6 +1365,7 @@ void Game::makeDecision(Ship* ship) {
 
     //only move around if the new generated position is actually farther from the player than the current one. 
     //if the ship is aggressive then try to get close.
+    //get within a 25 unit radius.
     if (ship->state == "AGGR") {
         sf::Vector2f toPlayerVect = ship->getPosition() - playerShipPointer->getPosition();
         float toPlayerLength = std::sqrt(toPlayerVect.x * toPlayerVect.x + toPlayerVect.y * toPlayerVect.y);
@@ -1373,21 +1377,36 @@ void Game::makeDecision(Ship* ship) {
         float closestPointLength = std::sqrt(closestPoint.x * closestPoint.x + closestPoint.y * closestPoint.y);
 
         if (closestPointLength < toPlayerLength) {
-            newPositionGenerated = true;
+            moveThisFrame = true;
         }
     } else {
-        sf::Vector2 playerPos = playerShipPointer->getPosition();
-        ship->evadeTargetPosition = sf::Vector2f(playerPos.x + randomNegPos() * (200 + random0_n(400)), playerPos.y + randomNegPos() * (200 + random0_n(400)));
+        //point away and run.
+        sf::Vector2f tPos = playerShipPointer->getPosition() - ship->getPosition();
+        float rot = atan2(tPos.y, tPos.x) * 180 / M_PI;
+        rot += 180;
 
-        sf::Vector2f toTargetVect = ship->evadeTargetPosition - playerPos;
-        sf::Vector2f toPlayerVect = ship->getPosition() - playerPos;
+        float cwDistance = 0;
+        float ccwDistance = 0;
+        if (abs(ship->shipSprite.getRotation() - rot) > 10) {
+            if (rot >= ship->shipSprite.getRotation()) {
+                cwDistance = rot - ship->shipSprite.getRotation();
+                ccwDistance = ship->shipSprite.getRotation() + 360.0f - rot;
+            } else {
+                cwDistance = 360.0f - ship->shipSprite.getRotation() + rot;
+                ccwDistance = ship->shipSprite.getRotation() - rot;
+            }
 
-        float distanceToTarget = abs(std::sqrt(toTargetVect.x * toTargetVect.x + toTargetVect.y * toTargetVect.y));
-        float distanceToPlayer = abs(std::sqrt(toPlayerVect.x * toPlayerVect.x + toPlayerVect.y * toPlayerVect.y));
-        
-        if (distanceToTarget > distanceToPlayer) {
-            newPositionGenerated = true;
+            if (ccwDistance > cwDistance) {
+                ship->shipSprite.rotate(70 * deltaTime);
+            } else if (ccwDistance < cwDistance) {
+                ship->shipSprite.rotate(-70 * deltaTime);
+            }
         }
+
+        float radianRot = atan2(tPos.y, tPos.x);
+        ship->evadeTargetPosition = ship->getPosition() - sf::Vector2f(cos(radianRot), sin(radianRot));
+        std::cout << ship->evadeTargetPosition.x << std::endl;
+        moveThisFrame = true;
     }
     
 
@@ -1429,7 +1448,7 @@ void Game::makeDecision(Ship* ship) {
                 }
             }
 
-            if (newPositionGenerated) {
+            if (moveThisFrame) {
                 moveShip(ship, ship->evadeTargetPosition);
             }
         }
@@ -1446,11 +1465,11 @@ void Game::makeDecision(Ship* ship) {
                 }
             }
         }
-        if (newPositionGenerated)
+        if (moveThisFrame)
             moveShip(ship, ship->evadeTargetPosition);
     } else if (ship->state == "EVAD") {
         // just run to a random spot!
-        if (newPositionGenerated)
+        if (moveThisFrame)
             moveShip(ship, ship->evadeTargetPosition);
     }
 }

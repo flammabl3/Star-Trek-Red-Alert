@@ -45,8 +45,7 @@ Ship InitializeShip::makeShip(const std::string& jsonFilePath) {
         systemPtr->modifyScale(shipData["scale"]);
         for (const auto& room : system["rooms"]) {
             for (const auto& subsystem : room["subsystems"]) {
-                //make a random ensign and assign them to the newly created subsystem
-                Personnel* randomPersonnel = new Personnel("Ensign", "Human", 1.0);
+                Personnel* randomPersonnel = makeRandomPersonnel(shipData["faction"]);
                 randomPersonnel->usingSubsystem = true;
                 personnelVect.push_back(randomPersonnel);
                 Subsystem subsystemObject = Subsystem(subsystem["name"], randomPersonnel);
@@ -56,7 +55,7 @@ Ship InitializeShip::makeShip(const std::string& jsonFilePath) {
             }
             if (room.contains("desiredRandomPersonnel")) {
                 for (; generatedRandomPersonnel < room["desiredRandomPersonnel"]; generatedRandomPersonnel++) {
-                    Personnel* randomPersonnel = new Personnel("Ensign", "Human", 1.0);
+                    Personnel* randomPersonnel = makeRandomPersonnel(shipData["faction"]);
                     personnelVect.push_back(randomPersonnel);
                 }
             }
@@ -109,4 +108,20 @@ Ship* InitializeShip::makeShipPointer(const std::string& jsonFilePath) {
     Ship ship = makeShip(jsonFilePath);
     Ship* shipPointer = new Ship(ship);
     return shipPointer;
+}
+
+//make a random ensign and assign them to the newly created subsystem
+//1 in 3 chance they are not human.
+Personnel* InitializeShip::makeRandomPersonnel(const std::string& faction) {
+    Personnel* randomPersonnel;
+    if (faction == "Federation") {
+        if (random0_n(3) == 0)
+            randomPersonnel = new Personnel("Ensign", 1.0);
+        else {
+            randomPersonnel = new Personnel("Ensign", "Human", 1.0);
+        }
+    } else {
+        randomPersonnel = new Personnel("Ensign", faction, 1.0);
+    }
+    return randomPersonnel;
 }

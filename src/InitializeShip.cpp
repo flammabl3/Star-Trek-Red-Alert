@@ -93,6 +93,7 @@ Ship InitializeShip::makeShip(const std::string& jsonFilePath) {
     ship.shipSprite.setScale(shipData["scale"], shipData["scale"]);
     ship.shields = shipData["shields"];
     ship.shieldsBase = shipData["shields"];
+    ship.baseScale = shipData["scale"];
 
     std::map<int, std::tuple<std::string, std::string>> weaponsComplementArray;
     for (int i = 0; i < shipData["weaponsComplement"].size(); i++) {

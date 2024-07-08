@@ -1,7 +1,7 @@
 #include "SeparateAxisTheorem.hpp"
 
 std::vector<sf::Vector2f> SATHelper::getPoints(sf::Sprite sprite) {
-    sf::FloatRect sizeRect = sprite.getLocalBounds();
+    sf::FloatRect sizeRect = sprite.getGlobalBounds();
     sprite.setOrigin(sizeRect.width / 2, sizeRect.height / 2);
     sf::Vector2f spritePos = sprite.getPosition();
     std::vector<sf::Vector2f> returnVectors;
@@ -27,7 +27,7 @@ std::vector<sf::Vector2f> SATHelper::getPoints(sf::Sprite sprite) {
 
 //overloaded function to be used on hitboxes like system items.
 std::vector<sf::Vector2f> SATHelper::getPoints(sf::RectangleShape shape) {
-    sf::FloatRect sizeRect = shape.getLocalBounds();
+    sf::FloatRect sizeRect = shape.getGlobalBounds();
     shape.setOrigin(sizeRect.width / 2, sizeRect.height / 2);
     sf::Vector2f shapePos = shape.getPosition();
     std::vector<sf::Vector2f> returnVectors;
@@ -158,7 +158,7 @@ bool SATHelper::checkCollision(sf::RectangleShape shapeA, sf::RectangleShape sha
 }
 
 sf::RectangleShape SATHelper::returnBoundingBox(sf::Sprite sprite) {
-    sf::FloatRect sizeRect = sprite.getLocalBounds();
+    sf::FloatRect sizeRect = sprite.getGlobalBounds();
     sf::RectangleShape returnRectangle(sf::Vector2f(sizeRect.width, sizeRect.height));
     returnRectangle.setOrigin(sizeRect.width / 2, sizeRect.height / 2);
     returnRectangle.setRotation(sprite.getRotation());

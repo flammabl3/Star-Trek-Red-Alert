@@ -24,14 +24,10 @@
                         {"name": "Navigator's Conn"},
                         {"name": "Helmsman's Conn"},
                         {"name": "Captain's Chair"},
-                        {"name": "Officer's Chair"},
-                        {"name": "Counselor's Chair"},
-                        {"name": "Tactical"},
-                        {"name": "Science Panel I"},
-                        {"name": "Science Panel II"},
-                        {"name": "Operations Panel"},
-                        {"name": "Environment Panel"},
-                        {"name": "Engineering Panel"}
+                        {"name": "Tactical Station I"},
+                        {"name": "Tactical Station II"},
+                        {"name": "Tactical Station III"},
+                        {"name": "Tactical Station IV"}
                     ]
                 }
             ]
@@ -78,7 +74,7 @@
             "name": "Left Nacelle",
             "class": "Propulsion",
             "desiredRandomPersonnel": 3,
-            "coordinates": {"x": -19, "y": -12, "width": 22, "length": 10},
+            "coordinates": {"x": -22, "y": 24, "width": 24, "length": 34},
             "speed": 100.0,
             "baseSpeed": 100.0,
             "rooms": [
@@ -94,7 +90,7 @@
             "name": "Right Nacelle",
             "class": "Propulsion",
             "desiredRandomPersonnel": 3,
-            "coordinates": {"x": -19, "y": 12, "width": 24, "length": 10},
+            "coordinates": {"x": -22, "y": -24, "width": 24, "length": 34},
             "speed": 100.0,
             "baseSpeed": 100.0,
             "rooms": [
@@ -110,23 +106,21 @@
             "name": "Engineering",
             "class": "System",
             "desiredRandomPersonnel": 7,
-            "coordinates": {"x": -20, "y": 0, "width": 20, "length": 20},
+            "coordinates": {"x": -30, "y": 0, "width": 30, "length": 20},
             "rooms": [
                 {
                     "name": "Engineering Room",
                     "personnel": [{"first name": "Geordi", "middle name": "", "last name": "La Forge", "rank": "Lieutenant Commander", "species": "Human", "department": "Operations", "skill": 2.0, "defaultSubsystem": "Warp Core Controls"}],
                     "subsystems": [
                         {"name": "Engineering Station I"},
-                        {"name": "Engineering Station II"},
-                        {"name": "Engineering Station III"},
-                        {"name": "Engineering Station IV"},
-                        {"name": "Warp Core Controls"}
+                        {"name": "Engineering Station II"}
                     ]
                 },
                 {
                     "name": "Warp Core Room",
                     "subsystems": [
-                        {"name": "Warp Core"}
+                        {"name": "Warp Core"},
+                        {"name": "Warp Core Controls"}
                     ]
                 }
             ]

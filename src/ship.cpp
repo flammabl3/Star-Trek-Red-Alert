@@ -26,6 +26,8 @@ Ship::Ship(std::map<std::string, std::shared_ptr<System>> shipSystems, std::stri
     this->decisionTimer = 0;
     weaponSelectedTuple = std::tuple("", "");
     weaponSelected = 0;
+    baseScale = 1.0;
+    warping = false;
 }
 
 Ship::Ship() {

@@ -97,7 +97,10 @@ void Game::updatePlayer() {
     }
     
     if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-        movePlayer();
+        if (debugMode)
+            rotatePlayerBeforeWarp();
+        else
+            movePlayer();
     }
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
@@ -254,6 +257,10 @@ void Game::updateAllShips() {
             if (wep != nullptr && !wep->disabled) {
                 wep->updateTimer(deltaTime);
             }
+        }
+
+        if (!ship->warping && ship->shipSprite.getScale().x > ship->baseScale) {
+            ship->shipSprite.scale(0.9, 1);
         }
 
         createDebugBoxes(ship);
@@ -908,6 +915,8 @@ void Game::moveShip(Ship* ship, sf::Vector2f moveTo) {
         float speedTotal = 0;
         int speedCount = 0;
         float operationalCapacity = 0;
+
+        //the speed we will use is the averaeg of the speed of each nacelle or propulsion system.
         for (auto& pair: ship->shipSystems) {
             std::shared_ptr<System>& system = pair.second;
             Propulsion* prop = dynamic_cast<Propulsion*>(system.get());
@@ -961,6 +970,113 @@ void Game::moveShip(Ship* ship, sf::Vector2f moveTo) {
     
 }
 
+void Game::rotateBeforeWarp(Ship* ship, sf::Vector2f moveTo) {
+    sf::Vector2f movementDistance = (sf::Vector2f) moveTo - ship->getPosition();
+    float length = std::sqrt(movementDistance.x * movementDistance.x + movementDistance.y * movementDistance.y);
+    sf::Vector2f normalizedVector = movementDistance / length;
+
+    if (length != 0.0f) {
+        float operationalCapacity = 0;
+        for (auto& pair: ship->shipSystems) {
+            std::shared_ptr<System>& system = pair.second;
+            Propulsion* prop = dynamic_cast<Propulsion*>(system.get());
+            if (prop != nullptr) {
+                operationalCapacity += prop->operationalCapacity;
+            }
+        }
+            
+        float rotationSpeed = 70 * operationalCapacity / 100;
+        //ship's propulsion system speed stat multiplied to give effective speed
+
+        /*Find the angle of the distance vector using atan2, and convert to degrees. Then normalize it to be from 0 to 360 degrees. */
+        float distanceAngle = (180.0f / M_PI * atan2(normalizedVector.y, normalizedVector.x));
+        distanceAngle = std::fmod(distanceAngle + 360.0f, 360.0f);
+        //Algorithm for determining if it is closer to rotate clockwise or counterclockwise to the target angle. 
+        //Will not trigger if the ship's orientation is within 10 degrees of where the user is currently clicking.
+        int cwDistance;
+        int ccwDistance;
+        if (abs(ship->shipSprite.getRotation() - distanceAngle) > 10 && !ship->warping) {
+            if (distanceAngle >= ship->shipSprite.getRotation()) {
+                cwDistance = distanceAngle - ship->shipSprite.getRotation();
+                ccwDistance = ship->shipSprite.getRotation() + 360.0f - distanceAngle;
+            } else {
+                cwDistance = 360.0f - ship->shipSprite.getRotation() + distanceAngle;
+                ccwDistance = ship->shipSprite.getRotation() - distanceAngle;
+            }
+
+            if (ccwDistance > cwDistance) {
+                ship->shipSprite.rotate(rotationSpeed * deltaTime);
+            } else if (ccwDistance < cwDistance) {
+                ship->shipSprite.rotate(-rotationSpeed * deltaTime);
+            }
+        } else {
+            //extend the ship for the warp effect. 
+            moveShipWarp(ship, moveTo);
+        }
+    }
+}
+
+void Game::moveShipWarp(Ship* ship, sf::Vector2f moveTo) {
+    ship->warping = true;
+
+    sf::Vector2f movementDistance = (sf::Vector2f) moveTo - ship->getPosition();
+    float length = std::sqrt(movementDistance.x * movementDistance.x + movementDistance.y * movementDistance.y);
+    sf::Vector2f normalizedVector = movementDistance / length;
+
+    float speedTotal = 0;
+    int speedCount = 0;
+    float operationalCapacity = 0;
+    for (auto& pair: ship->shipSystems) {
+        std::shared_ptr<System>& system = pair.second;
+        Propulsion* prop = dynamic_cast<Propulsion*>(system.get());
+        if (prop != nullptr) {
+            speedTotal += prop->speed;
+            operationalCapacity += prop->operationalCapacity;
+            speedCount++;
+        }
+    }
+    float speed = 0;
+    if (speedCount > 0 && speedTotal > 1) {
+        speed = speedTotal / speedCount;
+        operationalCapacity /= speedCount;
+    } else {
+        speed = 0;
+        operationalCapacity = 0;
+    }
+
+    if (speed < 0 || speedCount <= 0) {
+        speed = 0;
+    }
+
+    float rotationSpeed = 10 * operationalCapacity / 100;
+
+    float distanceAngle = (180.0f / M_PI * atan2(normalizedVector.y, normalizedVector.x));
+    distanceAngle = std::fmod(distanceAngle + 360.0f, 360.0f);
+    int cwDistance;
+    int ccwDistance;
+    if (abs(ship->shipSprite.getRotation() - distanceAngle) > 10) {
+        if (distanceAngle >= ship->shipSprite.getRotation()) {
+            cwDistance = distanceAngle - ship->shipSprite.getRotation();
+            ccwDistance = ship->shipSprite.getRotation() + 360.0f - distanceAngle;
+        } else {
+            cwDistance = 360.0f - ship->shipSprite.getRotation() + distanceAngle;
+            ccwDistance = ship->shipSprite.getRotation() - distanceAngle;
+        }
+
+        if (ccwDistance > cwDistance) {
+            ship->shipSprite.rotate(rotationSpeed * deltaTime);
+        } else if (ccwDistance < cwDistance) {
+            ship->shipSprite.rotate(-rotationSpeed * deltaTime);
+        }
+    } 
+
+    if ((ship->shipSprite.getScale().x / ship->baseScale) < 4.0f)
+        ship->shipSprite.scale(1.01, 1);
+    else {
+        ship->shipSprite.move(normalizedVector * speed * 100.0f * deltaTime);
+    }
+}
+
 void Game::movePlayer() {
     if (playerShipPointer == nullptr)
         return;
@@ -969,6 +1085,27 @@ void Game::movePlayer() {
     }
     
     moveShip(playerShipPointer, window->mapPixelToCoords(sf::Mouse::getPosition(*window)));
+
+}
+
+void Game::rotatePlayerBeforeWarp() {
+    if (playerShipPointer == nullptr)
+        return;
+    if (playerShipObj.totalCondition <= 0) {
+        return;
+    }
+    
+    rotateBeforeWarp(playerShipPointer, window->mapPixelToCoords(sf::Mouse::getPosition(*window)));
+}
+
+void Game::movePlayerWarp() {
+    if (playerShipPointer == nullptr)
+        return;
+    if (playerShipObj.totalCondition <= 0) {
+        return;
+    }
+    
+    moveShipWarp(playerShipPointer, window->mapPixelToCoords(sf::Mouse::getPosition(*window)));
 
 }
 
@@ -1067,6 +1204,11 @@ void Game::updateEvents() {
                         logEvent("Debug mode on.", true);
                     }
                         
+                }
+            } 
+            if (event.type == sf::Event::MouseButtonReleased) {
+                if (event.mouseButton.button == sf::Mouse::Right) {
+                    playerShipObj.warping = false;
                 }
             }
         }
@@ -1405,7 +1547,6 @@ void Game::makeDecision(Ship* ship) {
 
         float radianRot = atan2(tPos.y, tPos.x);
         ship->evadeTargetPosition = ship->getPosition() - sf::Vector2f(cos(radianRot), sin(radianRot));
-        std::cout << ship->evadeTargetPosition.x << std::endl;
         moveThisFrame = true;
     }
     

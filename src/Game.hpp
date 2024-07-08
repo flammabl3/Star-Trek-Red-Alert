@@ -82,6 +82,7 @@ class Game {
         void initPlayer();
         void updatePlayer();
         void movePlayer();
+        void movePlayerWarp();
         void renderPlayer();
 
         void createShipHitboxes(Ship* enemyShip);
@@ -94,6 +95,9 @@ class Game {
 
         void updateAllShips();
         void moveShip(Ship* ship, sf::Vector2f moveTo);
+        void rotateBeforeWarp(Ship* ship, sf::Vector2f moveTo);
+        void rotatePlayerBeforeWarp();
+        void moveShipWarp(Ship* ship, sf::Vector2f moveTo);
 
         void fireTorpedo(Ship& firingShip, int hitChance, float damage, sf::Vector2f parentTip);
         void fireDisruptor(Ship& firingShip, int hitChance, float damage, sf::Vector2f parentTip);
@@ -141,4 +145,5 @@ class Game {
         void renderCoordinates();
 
         void setGameView(sf::Vector2f viewCoordinates);
+
 };

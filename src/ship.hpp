@@ -36,6 +36,8 @@ class Ship
         double decisionTimer;
         int shieldOpac;
         bool friendly;
+        float baseScale;
+        bool warping;
         std::string name;
         std::string registry;
         std::string faction;

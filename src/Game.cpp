@@ -16,11 +16,11 @@
 float rot = 0;
 
 //TODO: 
-// Personnel have no mental state system. Not sure how exactly to implement this.
+// Mental state has been scrapped.
 // Improve functions to check for and apply damage, and damage rooms, subsystems, and personnel
 // ALL MOVEMENT MUST BE DELTATIMED.
 
-//we never use the operations dept of each crewmember. Additionally, non fed. personnel will not even have this.
+// The department a crewmember is assigned to never gets used. Non Federation personnel also generally do not have an equivalent system.
 
 /*General path to completion
 Systems and damage -> Ship AI -> change views and window sizes (these are partially done)
@@ -37,10 +37,13 @@ void Game::initVariables() {
     this->window = nullptr;
     timer.getElapsedTime();
     torpedoTime = 0;
-    mov = 1;
+    paused = false;
 
-    //pick a font later.
-    font.loadFromFile("../resource/arial.ttf");
+    zoomScale = 1.0;
+    //pick a arial later.
+    arial.loadFromFile("../resource/arial.ttf");
+    tos.loadFromFile("../resource/TOS_Title.ttf");
+    okuda.loadFromFile("../resource/Trek_TNG_Monitors.ttf");
 
     if (!newStarTexture.loadFromFile("../resource/star1.png")) {
         std::cout << "Failed to load star texture." << std::endl;
@@ -53,17 +56,17 @@ void Game::initVariables() {
 }
 
 void Game::initWindow() {
-    this->videoMode.width = 1366;
-    this->videoMode.height = 768;
-    this->window = new sf::RenderWindow(sf::VideoMode(1366, 768), "Star Trek: Red Alert");
+    this->videoMode.width = 1920;
+    this->videoMode.height = 1080;
+    this->window = new sf::RenderWindow(videoMode, "Star Trek: Red Alert");
     this->window->setKeyRepeatEnabled(false);
 
     sf::Vector2u size = this->window->getSize();
     unsigned int width = size.x;
     unsigned int height = size.y;
 
-    view = sf::View(sf::FloatRect(0.f, 0.f, 1366.f, 768.f));
-    view.zoom(1.0f);
+    view = sf::View(sf::FloatRect(0.f, 0.f, 1920.f, 1080.f));
+    view.zoom(zoomScale);
 
 }
 
@@ -89,6 +92,8 @@ void Game::initPlayer() {
         std::shared_ptr<System>& system = pair.second;
         system->parentShip = playerShipPointer;
     }
+
+    usingWarp = false;
 }
 
 void Game::updatePlayer() {
@@ -97,7 +102,7 @@ void Game::updatePlayer() {
     }
     
     if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-        if (debugMode)
+        if (usingWarp)
             rotatePlayerBeforeWarp();
         else
             movePlayer();
@@ -120,7 +125,7 @@ void Game::showRoomDamage() {
     if (playerShipPointer == nullptr)
         return;
     int positionOffset = 5;
-    sf::Text text("", font);
+    sf::Text text("", okuda);
     for (auto& pair: playerShipPointer->shipSystems) {
         std::shared_ptr<System>& system = pair.second;
         for (Room& room: system->rooms) {
@@ -319,11 +324,11 @@ void Game::moveTorpedoes(Torpedo* projectile, int i) {
     sf::Vector2f elapsedDistance = projectile->getPosition() - projectile->spawnedAt;
     //if the projectile has travelled more than 400 units, delete it.
     float distanceLength = std::sqrt(elapsedDistance.x * elapsedDistance.x + elapsedDistance.y * elapsedDistance.y);
-    if (distanceLength > 900) {
+    if (distanceLength > 2900) {
         //projectile will begin to fade out after 900 units, rather than just disappear at 1000.
         projectile->projectileSprite.setColor(sf::Color(255,255,255,900-distanceLength));
     }
-    if (distanceLength > 1000) {
+    if (distanceLength > 3000) {
         projectilesList.erase(projectilesList.begin() + i);
         delete projectile;
         projectile = nullptr;
@@ -382,11 +387,11 @@ void Game::moveDisruptors(Disruptor* projectile, int i) {
         sf::Vector2f elapsedDistance = projectile->getPosition() - projectile->spawnedAt;
         //if the projectile has travelled more than 400 units, delete it.
         float distanceLength = std::sqrt(elapsedDistance.x * elapsedDistance.x + elapsedDistance.y * elapsedDistance.y);
-        if (distanceLength > 900) {
+        if (distanceLength > 1900) {
             //projectile will begin to fade out after 900 units, rather than just disappear at 1000.
             projectile->projectileSprite.setColor(sf::Color(255,255,255,900-distanceLength));
         }
-        if (distanceLength > 1000) {
+        if (distanceLength > 2000) {
             projectilesList.erase(projectilesList.begin() + i);
             delete projectile;
             projectile = nullptr;
@@ -466,7 +471,7 @@ void Game::movePhasers(Phaser* projectile, int i) {
     //subtract from scale so that the sprite actually touches the shield instead of slightly going through it
     projectile->projectileSprite.setScale(projectile->phaserScaleX - 1, 0.25);
 
-    if (projectile->phaserScaleX > 300 || projectile->phaserTimer > 5.0) {
+    if (projectile->phaserScaleX > 600 || projectile->phaserTimer > 5.0) {
         projectilesList.erase(projectilesList.begin() + i);
         delete projectile;
         projectile = nullptr;
@@ -1070,10 +1075,12 @@ void Game::moveShipWarp(Ship* ship, sf::Vector2f moveTo) {
         }
     } 
 
-    if ((ship->shipSprite.getScale().x / ship->baseScale) < 4.0f)
+    if ((ship->shipSprite.getScale().x / ship->baseScale) < 2.0f) {
+        ship->shipSprite.scale(1.001, 1);
+    } else if ((ship->shipSprite.getScale().x / ship->baseScale) < 4.0f) {
         ship->shipSprite.scale(1.01, 1);
-    else {
-        ship->shipSprite.move(normalizedVector * speed * 100.0f * deltaTime);
+    } else {
+        ship->shipSprite.move(normalizedVector * speed * ship->warpSpeed * 100.0f * deltaTime);
     }
 }
 
@@ -1156,14 +1163,12 @@ void Game::updateEvents() {
             this->window->close();
             exit(0);
         } else if (event.type == sf::Event::Resized) {
-            // get the new size of the window
-            sf::Vector2u newSize = window->getSize();
+            /*sf::Vector2u newSize = window->getSize();
             std::cout << "New width: " << newSize.x << " New height: " << newSize.y << std::endl;
 
-            // adjust the viewport
             sf::FloatRect visibleArea(0, 0, newSize.x, newSize.y);
             view = sf::View(visibleArea);
-            window->setView(view);
+            window->setView(view);*/
         }
         
         
@@ -1205,30 +1210,84 @@ void Game::updateEvents() {
                     }
                         
                 }
+
+                if (event.key.scancode == sf::Keyboard::Scan::W)
+                {
+                    if (usingWarp) {
+                        logEvent("Deactivating warp.", false);
+                        usingWarp = false;
+                    } else {
+                        logEvent("Initiating warp.", false);
+                        usingWarp = true;
+                    }
+                }
+
+                if (event.key.scancode == sf::Keyboard::Scan::Equal)
+                {
+                    if (playerShipObj.selectedWarpLevel < 1.0) {
+                        playerShipObj.selectedWarpLevel += 0.1;
+                        std::stringstream stream;
+                        stream << std::fixed << std::setprecision(2) << playerShipObj.warpSpeed;
+                        logEvent("Current warp level: " + stream.str(), false);
+                    } else {
+                        logEvent("Already at max warp!", false);
+                    }
+                }
+
+                if (event.key.scancode == sf::Keyboard::Scan::Hyphen)
+                {
+                    if (playerShipObj.selectedWarpLevel > 0.1) {
+                        playerShipObj.selectedWarpLevel -= 0.1;
+                        std::stringstream stream;
+                        stream << std::fixed << std::setprecision(2) << playerShipObj.warpSpeed;
+                        logEvent("Current warp level: " + stream.str(), false);
+                    } else {
+                        logEvent("Already at Minimum warp!", false);
+                    }
+                }
+
+                if (event.key.scancode == sf::Keyboard::Scan::Space) {
+                    paused = !paused;
+                }
             } 
             if (event.type == sf::Event::MouseButtonReleased) {
                 if (event.mouseButton.button == sf::Mouse::Right) {
                     playerShipObj.warping = false;
                 }
             }
+
+            if (event.type == sf::Event::MouseWheelScrolled) {
+                std::cout << event.mouseWheelScroll.delta << std::endl;
+                float zoomIncrement = 0;
+                if (event.mouseWheelScroll.delta < 0) {
+                    zoomIncrement = 0.1;
+                    view.zoom(1.1);
+                } else if (event.mouseWheelScroll.delta > 0) {
+                    zoomIncrement = -0.1;
+                    view.zoom(0.9);
+                }
+                zoomScale += zoomIncrement;
+                
+            }
         }
     }
 }
 
 void Game::update() {
-    deltaTime = clock.restart().asSeconds();
-
-    //use this to fix the homing weapons issue.
-    if (timer.getElapsedTime().asSeconds() > 0.00100001)
-        timer.restart();
-    timer.getElapsedTime();
-    this->window->clear();
     this->updateEvents();
-    this->updatePlayer();
-    this->updateEnemy();
-    this->updateAllShips();
-    this->checkCollisions();
-    this->generateStars();
+    this->window->clear();
+    deltaTime = clock.restart().asSeconds();
+    //timer is to prevent excessive updates of torpedo homing.
+    if (timer.getElapsedTime().asSeconds() > 0.00100001)
+            timer.restart();
+    timer.getElapsedTime();
+    if (!paused) {
+        this->updatePlayer();
+        this->updateEnemy();
+        this->updateAllShips();
+        this->checkCollisions();
+        this->generateStars();
+    }
 }
 
 void Game::render() {
@@ -1237,10 +1296,8 @@ void Game::render() {
     renderProjectiles();
     renderPlayer();
     renderEnemy();
-    displayEvents();
-    displayMiniText();
-    showRoomDamage();
     renderEnemyHitboxes();
+    renderUI();
 
     if (debugMode) {
         renderCoordinates();
@@ -1268,7 +1325,7 @@ void Game::logEvent(std::string event, bool friendly) {
 void Game::displayEvents() {
     int positionOffset = 10;
     for (auto& tuple: eventLog) {
-        sf::Text text(std::get<0>(tuple), font);
+        sf::Text text(std::get<0>(tuple), okuda);
         text.setScale(0.5, 0.5);
         //text will become more transparent as it moves up the log.
         //red or green text based on which faction is hit
@@ -1288,7 +1345,7 @@ void Game::displayEvents() {
 }
 
 void Game::miniTextCreate(std::string text, sf::Vector2f pos) {
-    sf::Text miniText(text, font);
+    sf::Text miniText(text, arial);
     miniText.setScale(0.5, 0.5);
     //text will become more transparent as it moves up the log.
     miniText.setFillColor(sf::Color(255, 255, 255, 255));
@@ -1453,10 +1510,12 @@ void Game::useWeapon(Ship* ship, sf::Vector2f enemyPosition) {
 
 void Game::makeDecision(Ship* ship) {
     //if the ship's state has changed, then we can set a timer to delay decisions.
+
     if (ship->decisionTimer > 0) {
         ship->decisionTimer-=deltaTime;
         return;
     }
+
     if (playerShipPointer == nullptr)
         return;
     bool noWeaponsReady = true;
@@ -1478,33 +1537,28 @@ void Game::makeDecision(Ship* ship) {
         }
     }
     
-    if (noWeaponsReady) {
-        if (ship->totalCondition <= 25 || ship->shields <= 25) {
-            if (ship->state != "EVAD") {
-                ship->state = "EVAD";
-                ship->decisionTimer = 0.5;
-                ship->evadeTargetPosition = sf::Vector2f(ship->getPosition().x - randomNegPos() * (200 + random0_n(400)), ship->getPosition().y - randomNegPos() * (200 + random0_n(400)));
-            }
+    if (ship->totalCondition / ship->totalConditionBase * 100 <= 25) {
+        if (ship->state != "EVAD") {
+            ship->state = "EVAD";
+            ship->decisionTimer = 0.5;
+            ship->evadeTargetPosition = sf::Vector2f(ship->getPosition().x - randomNegPos() * (200 + random0_n(400)), ship->getPosition().y - randomNegPos() * (200 + random0_n(400)));
         }
     }
     
-    
-    if (!noWeaponsReady) {
-        
-        if (ship->totalCondition <= 25 || ship->shields <= 25) {
-            if (ship->state != "EVAG") {
-                ship->state = "EVAG";
-                ship->decisionTimer = 0.5;
-            }
-        } else {
-            if (ship->state != "AGGR") {
-                ship->state = "AGGR";
-                ship->decisionTimer = 0.5;
-            }
+    else if (ship->totalCondition / ship->totalConditionBase * 100 <= 50 || ship->shields / ship->shieldsBase * 100 <= 30) {
+        ship->warping = false;
+        if (ship->state != "EVAG") {
+            ship->state = "EVAG";
+            ship->decisionTimer = 0.5;
+        }
+    } else {
+        ship->warping = false;
+        if (ship->state != "AGGR") {
+            ship->state = "AGGR";
+            ship->decisionTimer = 0.5;
         }
     }
-
-
+    
     //only move around if the new generated position is actually farther from the player than the current one. 
     //if the ship is aggressive then try to get close.
     //get within a 25 unit radius.
@@ -1513,8 +1567,8 @@ void Game::makeDecision(Ship* ship) {
         float toPlayerLength = std::sqrt(toPlayerVect.x * toPlayerVect.x + toPlayerVect.y * toPlayerVect.y);
         toPlayerVect = toPlayerVect / toPlayerLength;
         
-        sf::Vector2f closestPoint = sf::Vector2f(toPlayerVect.x * 25.0, toPlayerVect.y * 25.0) + ship->getPosition();
-        ship->evadeTargetPosition = window->mapPixelToCoords(sf::Vector2i(closestPoint), view);
+        sf::Vector2f closestPoint = ship->getPosition() - sf::Vector2f(toPlayerVect.x * 25.0, toPlayerVect.y * 25.0);
+        ship->evadeTargetPosition = closestPoint;
 
         float closestPointLength = std::sqrt(closestPoint.x * closestPoint.x + closestPoint.y * closestPoint.y);
 
@@ -1610,8 +1664,9 @@ void Game::makeDecision(Ship* ship) {
             moveShip(ship, ship->evadeTargetPosition);
     } else if (ship->state == "EVAD") {
         // just run to a random spot!
+        //ship->warping = false;
         if (moveThisFrame)
-            moveShip(ship, ship->evadeTargetPosition);
+            rotateBeforeWarp(ship, ship->evadeTargetPosition);
     }
 }
 
@@ -1712,11 +1767,28 @@ void Game::renderStars() {
     }
 }
 
+void Game::renderUI() {
+    displayEvents();
+    displayMiniText();
+    showRoomDamage();
+
+    if (paused) {
+        //the origin of the text should be accounted for, because the text is slightly off center.
+        sf::Text text("PAUSED", tos);
+        text.setScale(2, 2);
+        //text will become more transparent as it moves up the log.
+        text.setFillColor(sf::Color(255, 255, 255, 255));
+        sf::Vector2i viewPosition = sf::Vector2i(view.getCenter().x, 0);
+        text.setPosition(window->mapPixelToCoords(viewPosition));
+        window->draw(text);
+    }
+}
+
 
 void Game::renderCoordinates() {
     sf::Vector2f mousePosition = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
-    sf::Text coordinateTextX = sf::Text("X: " + std::to_string(static_cast<int>(mousePosition.x)), font, 15);
-    sf::Text coordinateTextY = sf::Text("Y: " + std::to_string(static_cast<int>(mousePosition.y)), font, 15);
+    sf::Text coordinateTextX = sf::Text("X: " + std::to_string(static_cast<int>(mousePosition.x)), arial, 15);
+    sf::Text coordinateTextY = sf::Text("Y: " + std::to_string(static_cast<int>(mousePosition.y)), arial, 15);
 
     coordinateTextX.setPosition(mousePosition);
     coordinateTextY.setPosition(mousePosition + sf::Vector2f(0, 10));
@@ -1726,7 +1798,7 @@ void Game::renderCoordinates() {
 }
 
 void Game::setGameView(sf::Vector2f viewCoordinates) {
-    view = sf::View(sf::FloatRect(0, 0, window->getSize().x, window->getSize().y));
+    //view = sf::View(sf::FloatRect(0, 0, window->getSize().x, window->getSize().y));
     view.setCenter(viewCoordinates);
     this->window->setView(view);
 }

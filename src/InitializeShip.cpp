@@ -89,7 +89,7 @@ Ship InitializeShip::makeShip(const std::string& jsonFilePath) {
             systemsMap[systemPtr->systemType] = std::shared_ptr<Propulsion>(dynamic_cast<Propulsion*>(systemPtr));
     }
 
-    Ship ship = Ship(systemsMap, shipData["shipSpritePath"], shipData["impulseSpeed"], shipData["warpSpeed"], shipData["shields"], std::string(shipData["name"]), std::string(shipData["registry"]));
+    Ship ship = Ship(systemsMap, shipData["shipSpritePath"], ship.totalCondition = shipData["totalCondition"], shipData["warpSpeed"], shipData["shields"], std::string(shipData["name"]), std::string(shipData["registry"]));
     ship.shipSprite.setScale(shipData["scale"], shipData["scale"]);
     ship.shields = shipData["shields"];
     ship.shieldsBase = shipData["shields"];

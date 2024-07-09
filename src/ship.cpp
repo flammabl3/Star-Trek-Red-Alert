@@ -4,9 +4,9 @@
 #include "random0_n.hpp"
 
 
-Ship::Ship(std::map<std::string, std::shared_ptr<System>> shipSystems, std::string shipTextureName, float impulseSpeed, float warpSpeed, float shields, std::string name, std::string designation) {
+Ship::Ship(std::map<std::string, std::shared_ptr<System>> shipSystems, std::string shipTextureName, float totalCondition, float warpSpeed, float shields, std::string name, std::string designation) {
     this->shipSystems = shipSystems;
-    this->impulseSpeed = impulseSpeed;
+    this->warpSpeedBase = warpSpeed;
     this->warpSpeed = warpSpeed;
     this->shields = shields;
     this->mass = mass;
@@ -15,7 +15,8 @@ Ship::Ship(std::map<std::string, std::shared_ptr<System>> shipSystems, std::stri
     this->state = "AGGR";
     this->shipSpritePath = shipTextureName;
     //this should vary with different ship strengths actually. the enterprise and a bird of prey should not be equal in combat.
-    this->totalCondition = 50;
+    this->totalCondition = totalCondition;
+    this->totalConditionBase = totalCondition;
     this->shields = 100;
     this->shieldsBase = shields;
     this->power = 100;
@@ -28,6 +29,7 @@ Ship::Ship(std::map<std::string, std::shared_ptr<System>> shipSystems, std::stri
     weaponSelected = 0;
     baseScale = 1.0;
     warping = false;
+    selectedWarpLevel = 1.0;
 }
 
 Ship::Ship() {

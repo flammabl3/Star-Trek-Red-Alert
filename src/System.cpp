@@ -112,6 +112,7 @@ std::vector<std::string> System::calculateOperationalCapacity(sf::Time time) {
         } else if (systemType == "Engineering") {   
             float bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
             this->operationalCapacity = (this->totalCondition + bridgeCapacity) / 2;
+            this->parentShip->warpSpeed = this->parentShip->warpSpeedBase * this->parentShip->selectedWarpLevel * this->operationalCapacity / 100;
         } else {    
             float bridgeCapacity = this->parentShip->shipSystems.at("Bridge")->operationalCapacity;
             this->power = this->parentShip->shipSystems.at("Engineering")->operationalCapacity;

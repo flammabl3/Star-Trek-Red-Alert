@@ -19,7 +19,6 @@ Personnel::Personnel(std::string firstName, std::string middleName, std::string 
     this->capacity = 1.0;
     this->role = role;
     usingSubsystem = false;
-    this->currentState = NORMAL;
     hurtThisFrame = false;
     killedThisFrame = false;
 }
@@ -38,7 +37,6 @@ Personnel::Personnel(std::string rank,
     this->skill = skill;
     this->randomName();
     usingSubsystem = false;
-    this->currentState = NORMAL;
     hurtThisFrame = false;
     killedThisFrame = false;
 }
@@ -58,7 +56,6 @@ Personnel::Personnel(std::string rank, double skill)
     this->skill = skill;
     this->randomName();
     usingSubsystem = false;
-    this->currentState = NORMAL;
     hurtThisFrame = false;
     killedThisFrame = false;
 }
@@ -152,6 +149,6 @@ void Personnel::randomSpecies() {
 }
 
 void Personnel::calculateCapacity() {
-    this->capacity = mentalStateModifiers[currentState] * health / 10; 
+    this->capacity = health / 10; 
     //mental state should be added.
 }

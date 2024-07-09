@@ -2,12 +2,11 @@
     "shipSpritePath": "../resource/ships/klingonbirdofprey/klingonbirdofprey.png",
     "shields": 30.0,
     "shieldBubbleRadius": 200,
-    "totalCondition": 100,
+    "totalCondition": 50,
     "friendly": true,
     "name": "Bird-Of-Prey",
     "registry": "",
     "faction": "Klingon",
-    "impulseSpeed": 0.25,
     "warpSpeed": 9.4,
     "mass": 5000000,
     "scale": 0.4,
@@ -110,7 +109,6 @@
             "rooms": [
                 {
                     "name": "Engineering Room",
-                    "personnel": [{"first name": "Geordi", "middle name": "", "last name": "La Forge", "rank": "Lieutenant Commander", "species": "Human", "department": "Operations", "skill": 2.0, "defaultSubsystem": "Warp Core Controls"}],
                     "subsystems": [
                         {"name": "Engineering Station I"},
                         {"name": "Engineering Station II"}

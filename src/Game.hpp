@@ -42,8 +42,7 @@ class Game {
         std::vector<Ship*> allShips;
         std::vector<Ship*> friendlyShips;
 
-        float playerSpeedx = 0; // these will eventually belong to the ship class.
-        float playerSpeedy = 0;
+        bool usingWarp;
                 
         //Objects associated with game objects
         Ship playerShipObj;
@@ -55,14 +54,16 @@ class Game {
         std::vector<sf::RectangleShape> enemyHitboxes;
         std::vector<sf::RectangleShape> friendlyHitboxes;
 
-        //for moving the enemy for test purposes
-        float mov;
+        bool paused;
+        float zoomScale;
 
         void makeDecision(Ship* ship);
 
         SATHelper satHelper;
 
-        sf::Font font;
+        sf::Font arial;
+        sf::Font tos;
+        sf::Font okuda;
 
         //log for recording ship, crew, systems damage and other events.
         std::vector<std::tuple<std::string, bool>> eventLog;
@@ -146,4 +147,5 @@ class Game {
 
         void setGameView(sf::Vector2f viewCoordinates);
 
+        void renderUI();
 };

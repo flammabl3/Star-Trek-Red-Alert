@@ -30,9 +30,13 @@ class Ship
         float shieldsBase;
         float shieldBubbleRadius;
         int power;
-        double impulseSpeed;
-        double warpSpeed;
+        float impulseSpeed;
+        float impulseSpeedBase;
+        float warpSpeed;
+        float warpSpeedBase;
+        float selectedWarpLevel;
         float totalCondition;
+        float totalConditionBase;
         double decisionTimer;
         int shieldOpac;
         bool friendly;
@@ -57,7 +61,7 @@ class Ship
         int width;
         int height;
 
-        Ship(std::map<std::string, std::shared_ptr<System>> shipSystems, std::string shipTextureName, float impulseSpeed, float warpSpeed, float shields, std::string name, std::string designation);
+        Ship(std::map<std::string, std::shared_ptr<System>> shipSystems, std::string shipTextureName, float totalCondition, float warpSpeed, float shields, std::string name, std::string designation);
 
         Ship();
 

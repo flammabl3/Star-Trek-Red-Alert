@@ -23,9 +23,8 @@ class Game {
         int alreadySeenRight;
         int alreadySeenTop;
         int alreadySeenBottom;
-        std::map<std::tuple<int, int>, bool> generatedChunks;
+        std::map<std::tuple<int, int>, std::vector<std::shared_ptr<sf::Sprite>>*> generatedChunks;
 
-        std::vector<sf::Sprite> starSprites;
         sf::Texture newStarTexture;
         sf::Texture newStarTexture2;
 
@@ -139,9 +138,11 @@ class Game {
 
         bool checkCollisionRectangleShape(sf::RectangleShape rect, sf::Vector2f vect);
 
-        void generateStarsStart();
         void generateStars();
         void renderStars();
+
+        sf::Vector2i getChunkNumber(sf::Vector2f& coordinate);
+        sf::Vector2i getChunkNumber();
 
         void renderCoordinates();
 

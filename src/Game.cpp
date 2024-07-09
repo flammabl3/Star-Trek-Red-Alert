@@ -1143,7 +1143,7 @@ Game::Game() {
     this->initWindow();
     this->initPlayer();
     this->initEnemy();
-    generateStarsStart();
+    //generateStarsStart();
 }
 
 Game::~Game() {
@@ -1670,79 +1670,59 @@ void Game::makeDecision(Ship* ship) {
     }
 }
 
-void Game::generateStarsStart() {
-    sf::Vector2f size = (view.getSize());
-    sf::Vector2f center = view.getCenter();
-    generatedChunks.insert(std::pair(std::tuple<int, int>(1, 1), true));
-
-    float left = center.x - size.x / 2;
-    float right = center.x + size.x / 2;
-    float top = center.y - size.y / 2;
-    float bottom = center.y + size.y / 2;
-
-    alreadySeenLeft, alreadySeenTop, alreadySeenRight, alreadySeenBottom = 0;
-
-    for (int i = 20 + random0_nInclusive(20); i > 0; i--) {
-        sf::Sprite newStar;
-        sf::Texture* textr = (random0_nInclusive(1) == 0) ? &newStarTexture : &newStarTexture2;
-        newStar.setTexture(*textr);
-        newStar.setColor(sf::Color(random_m_to_n_inclusive(200, 255), 200, random_m_to_n_inclusive(200, 255), random0_nInclusive(255)));
-        newStar.setOrigin(newStar.getLocalBounds().width / 2, newStar.getLocalBounds().height / 2);
-        newStar.setScale(1 + randomNegPos() * randomfloat0_n(1), 1 + randomNegPos() * randomfloat0_n(1));
-        //sf::Vector2f position = window->mapPixelToCoords(sf::Vector2i(random_m_to_n_inclusive(left, right), random_m_to_n_inclusive(bottom, top)));
-        newStar.setPosition(sf::Vector2f(random_m_to_n_inclusive(left, right), random_m_to_n_inclusive(top, bottom)));
-        starSprites.push_back(newStar);
-    }
+sf::Vector2i Game::getChunkNumber(sf::Vector2f& coordinate) {
+    //divide the world into 1000x1000 chunks. When the player approaches a new chunk they have not seen, generate new stars.   
+    int chunkX = std::floor(coordinate.x / 1000);
+    int chunkY = std::floor(coordinate.y / 1000);
+    return sf::Vector2i(chunkX, chunkY);
 }
 
+
+//for when we just want the current camera's chunk.
+sf::Vector2i Game::getChunkNumber() {
+    sf::Vector2f center = view.getCenter();
+    return getChunkNumber(center);
+}
+
+
 void Game::generateStars() {
+    //determine which chunks are currently to be generated, then for each chunk, mark it as generated and create stars inside to be held in a vector associated
+    //with the chunk.
     sf::Vector2f size = view.getSize();
     sf::Vector2f center = view.getCenter();
 
-    //divide the world into 1000x1000 chunks. When the player approaches a new chunk they have not seen, generate new stars.   
-    //(0 to 1000) is chunk 1. Conversely (0 to -1000) is chunk -1.
-    int chunkX = center.x / 1000;
-    int chunkY = center.y / 1000;
-        
-    (chunkX > 0) ? chunkX++ : chunkX--;
-    (chunkY > 0) ? chunkY++ : chunkY--;
-    //a number between 0 and 1000 divided by 1000 gives us 0, but we want this to be chunk 1.
-    if (abs(center.x) < 1000)
-        chunkX = (center.x > 0) ? 1 : -1;
-    if (abs(center.y) < 1000)
-        chunkY = (center.y > 0) ? 1 : -1;
-        
-    sf::Vector2i chunk = sf::Vector2i(chunkX, chunkY);
+    sf::Vector2i chunk = getChunkNumber();
 
-    std::vector<sf::Vector2i> chunksToDraw;
+    std::vector<sf::Vector2i> chunksToGenerate;
 
-    //generate all adjacent chunks in a 3x3, then mark all as generated.
-    int adjacentLeft = (chunk.x == 1) ? chunk.x - 2: chunk.x - 1;
-    int adjacentRight = (chunk.x == -1) ? chunk.x + 2: chunk.x + 1;
-    int adjacentTop = (chunk.y == 1) ? chunk.y - 2: chunk.y - 1;
-    int adjacentBottom = (chunk.y == -1) ? chunk.y + 2: chunk.y + 1;
+    //generate all adjacent chunks in a 5x5 sqyare, then mark all as generated.
+    //will generate in a range.
+    int adjacentLeft = chunk.x-2;
+    int adjacentRight = chunk.x+2;
+    int adjacentTop = chunk.y-2;
+    int adjacentBottom = chunk.y+2;
 
+    //ignore 0, 0 and current chunk, they are always going to be generated already.
     for (int x = adjacentLeft; x <= adjacentRight; x++) {
         for (int y = adjacentTop; y <= adjacentBottom; y++) {
-            if (!(x == 0 && y == 0) && !(x == chunk.x && y == chunk.y)) {
-                try {
-                    generatedChunks.at(std::tuple<int, int>(x, y));
-                } catch (std::exception e) {
-                    chunksToDraw.push_back(sf::Vector2i(x, y));
-                }
-                
+            if (generatedChunks.find(std::tuple<int, int>(x, y)) == generatedChunks.end()) {
+                chunksToGenerate.push_back(sf::Vector2i(x, y));
             }
         }
     }
     
-    for (sf::Vector2i& chunkToDraw: chunksToDraw) {
-        generatedChunks.insert_or_assign(std::tuple<int, int>(chunkToDraw.x, chunkToDraw.y), true);
-        //the edges of our chunks. If it is negative, the left side will be chunk * 1000 - 1000, and the far will be chunk * 1000.
-        //The reverse is true for positive chunks
-        int xLeft = (chunkToDraw.x > 0) ? chunkToDraw.x * 1000 - 1000 : chunkToDraw.x * 1000;
-        int xRight = (chunkToDraw.x > 0) ? chunkToDraw.x * 1000: chunkToDraw.x * 1000 + 1000;
-        int xBottom = (chunkToDraw.y > 0) ? chunkToDraw.y * 1000 - 1000 : chunkToDraw.y * 1000;
-        int xTop = (chunkToDraw.y > 0) ? chunkToDraw.y * 1000: chunkToDraw.y * 1000 + 1000;
+    for (sf::Vector2i& chunkToGenerate: chunksToGenerate) {
+        //the edges of our chunks. If it is a negative chunk, the left side will be chunk * 1000 - 1000, and the far will be chunk * 1000.
+        //The reverse is true for y direction chunks
+        //example: the left bound of chunk 3 is 3 * 1000 - 1000, or x = 2000.
+        int xLeft = (chunkToGenerate.x > 0) ? chunkToGenerate.x * 1000 - 1000 : chunkToGenerate.x * 1000;
+        int xRight = (chunkToGenerate.x > 0) ? chunkToGenerate.x * 1000: chunkToGenerate.x * 1000 + 1000;
+        int xBottom = (chunkToGenerate.y > 0) ? chunkToGenerate.y * 1000 - 1000 : chunkToGenerate.y * 1000;
+        int xTop = (chunkToGenerate.y > 0) ? chunkToGenerate.y * 1000: chunkToGenerate.y * 1000 + 1000;
+
+        std::vector<std::shared_ptr<sf::Sprite>>* starSprites = new std::vector<std::shared_ptr<sf::Sprite>>();
+
+        //generate 20 to 40 random stars in the bounds of the visible chunk.
         for (int i = 20 + random0_nInclusive(20); i > 0; i--) {
             sf::Sprite newStar;
             sf::Texture* textr = (random0_nInclusive(1) == 0) ? &newStarTexture : &newStarTexture2;
@@ -1751,20 +1731,36 @@ void Game::generateStars() {
             newStar.setOrigin(newStar.getLocalBounds().width / 2, newStar.getLocalBounds().height / 2);
             newStar.setScale(1 + randomNegPos() * randomfloat0_n(1), 1 + randomNegPos() * randomfloat0_n(1));
             newStar.setPosition(sf::Vector2f(random_m_to_n_inclusive(xLeft, xRight), random_m_to_n_inclusive(xBottom, xTop)));
-            starSprites.push_back(newStar);
+            starSprites->push_back(std::make_shared<sf::Sprite>(newStar));
+
+            //each chunk will have a vector of stars associated with it.
+            generatedChunks.insert_or_assign(std::tuple<int, int>(chunkToGenerate.x, chunkToGenerate.y), starSprites);
         }
     }
 }
 
 void Game::renderStars() {
-    sf::View currentView = window->getView();
-    sf::FloatRect viewBounds = sf::FloatRect(currentView.getCenter() - currentView.getSize() / 2.f, currentView.getSize());
+    //generate all stars held at the chunk at the current view.
+    //generate all chunks adjacent as well. Now we can extend the view and see more stars by modifying adjacent chunk to be plus/minus any number!
+    sf::Vector2i currentChunk = getChunkNumber();
+    int adjacentLeft = currentChunk.x-2;
+    int adjacentRight = currentChunk.x+2;
+    int adjacentTop = currentChunk.y-2;
+    int adjacentBottom = currentChunk.y+2;
 
-    for (sf::Sprite& starSprite: starSprites) {
-        if (starSprite.getGlobalBounds().intersects(viewBounds)) {
-            window->draw(starSprite);
+    for (int x = adjacentLeft; x <= adjacentRight; x++) {
+        for (int y = adjacentTop; y <= adjacentBottom; y++) {
+            if (generatedChunks.find(std::tuple<int, int>(x, y)) != generatedChunks.end()) {
+                std::vector<std::shared_ptr<sf::Sprite>> starsInChunk = *generatedChunks.at(std::tuple<int, int>(x, y));
+                for (std::shared_ptr<sf::Sprite> star : starsInChunk) {
+                    window->draw(*star);
+                }
+            } else {
+                return;
+            }
         }
     }
+
 }
 
 void Game::renderUI() {

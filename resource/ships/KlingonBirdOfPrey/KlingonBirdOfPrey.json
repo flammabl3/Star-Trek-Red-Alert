@@ -40,6 +40,7 @@
             "damage": 1.0,
             "damageBase": 1,
             "desiredRandomPersonnel": 5,
+            "hitChanceBase": 60,
             "rooms": [
                 {
                     "name": "Left Disruptor",
@@ -59,6 +60,7 @@
             "damage": 1.0,
             "damageBase": 1,
             "desiredRandomPersonnel": 5,
+            "hitChanceBase": 60,
             "rooms": [
                 {
                     "name": "Right Disruptor",

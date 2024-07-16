@@ -52,6 +52,7 @@
             "damage": 10.0,
             "damageBase": 10.0,
             "desiredRandomPersonnel": 5,
+            "hitChanceBase": 90,
             "rooms": [
                 {
                     "name": "Forward Phasers",
@@ -71,6 +72,7 @@
             "desiredRandomPersonnel": 4,
             "damage": 10.0,
             "damageBase": 10.0,
+            "hitChanceBase": 75,
             "rooms": [
                 {
                     "name": "Forward Torpedoes",

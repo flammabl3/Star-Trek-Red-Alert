@@ -34,6 +34,7 @@ Ship InitializeShip::makeShip(const std::string& jsonFilePath) {
             dynamic_cast<Weapon*>(systemPtr)->cooldownThresholdBase = system["cooldownThresholdBase"];
             dynamic_cast<Weapon*>(systemPtr)->damage = system["damage"];
             dynamic_cast<Weapon*>(systemPtr)->damageBase = system["damageBase"];
+            dynamic_cast<Weapon*>(systemPtr)->hitChanceBase = system["hitChanceBase"];
         }
         if (system["class"] == "Propulsion") {
             systemPtr = new Propulsion(system["name"], roomsVect, personnelVect);
@@ -83,7 +84,7 @@ Ship InitializeShip::makeShip(const std::string& jsonFilePath) {
     
         if (system["class"] == "System") 
             systemsMap[systemPtr->systemType] = std::shared_ptr<System>(systemPtr);
-        else if (system["class"] == "Weapon") 
+        else if (system["class"] == "Weapon")  
             systemsMap[systemPtr->systemType] = std::shared_ptr<Weapon>(dynamic_cast<Weapon*>(systemPtr));
         else if (system["class"] == "Propulsion") 
             systemsMap[systemPtr->systemType] = std::shared_ptr<Propulsion>(dynamic_cast<Propulsion*>(systemPtr));

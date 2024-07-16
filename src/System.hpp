@@ -74,6 +74,8 @@ class Weapon : public System {
         int damage;
         int damageBase;
 
+        int hitChanceBase;
+
         std::vector<std::string> calculateOperationalCapacity(sf::Time time);
 
 };

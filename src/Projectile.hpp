@@ -25,7 +25,6 @@ class Projectile {
         bool missed;
         float damage;
         float hitChance;
-        float hitChanceBase;
         bool hasPositionInitialized;
         
         Projectile(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage);

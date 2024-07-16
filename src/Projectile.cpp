@@ -19,7 +19,6 @@ Projectile::Projectile(std::string texturePath, float x, float y, sf::Vector2f d
     this->missed = false;
     this->hasPositionInitialized = false;
     this->hitChance = 0;
-    this->hitChanceBase = 100;
 }
 
 void Projectile::render(sf::RenderWindow* window) {

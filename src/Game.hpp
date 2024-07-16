@@ -67,6 +67,8 @@ class Game {
         //log for recording ship, crew, systems damage and other events.
         std::vector<std::tuple<std::string, bool>> eventLog;
         std::vector<std::tuple<sf::Text, int>> miniTextVect;
+
+        std::vector<std::shared_ptr<sf::RectangleShape>> cooldownUIElements;
     public:
         //Constructors and Destructors
         Game();
@@ -110,6 +112,8 @@ class Game {
         void fireTorpedoSpread(Ship& firingShip, sf::Vector2f targetP, int hitChance, float damage, sf::Vector2f parentTip);
         void renderProjectiles(); 
     
+        void moveProjectiles();
+        void updateHitboxes();
 
         void moveTorpedoes(Torpedo* projectile, int i);
         void moveDisruptors(Disruptor* projectile, int i);
@@ -149,4 +153,7 @@ class Game {
         void setGameView(sf::Vector2f viewCoordinates);
 
         void renderUI();
+
+        void cooldownUI();
+        void drawCooldownUI();
 };

@@ -94,24 +94,27 @@ void Game::initPlayer() {
     }
 
     usingWarp = false;
+    cooldownUI();
 }
 
 void Game::updatePlayer() {
-    if (playerShipObj.totalCondition <= 0) {
-        return;
-    }
-    
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-        if (usingWarp)
-            rotatePlayerBeforeWarp();
-        else
-            movePlayer();
-    }
-
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
         useWeapon(playerShipObj);
     }
-    playerShipObj.shieldOpacMod();
+    
+    if (!paused) {
+        if (playerShipObj.totalCondition <= 0) {
+            return;
+        }
+        
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+            if (usingWarp)
+                rotatePlayerBeforeWarp();
+            else
+                movePlayer();
+        }
+    }
+
 }
 
 void Game::renderPlayer() {
@@ -268,8 +271,6 @@ void Game::updateAllShips() {
             ship->shipSprite.scale(0.9, 1);
         }
 
-        createDebugBoxes(ship);
-        createShipHitboxes(ship);
         ship->shieldOpacMod();
 
         std::vector<std::string> outputLog = ship->checkDamage();
@@ -297,14 +298,15 @@ void Game::updateAllShips() {
     }
 }
 
+void Game::updateHitboxes() {
+    for (auto& ship: allShips) {
+        createDebugBoxes(ship);
+        createShipHitboxes(ship);
+    }
+}
 
-void Game::renderProjectiles() {
+void Game::moveProjectiles() {
     for (int i = 0; i < projectilesList.size(); i++) {
-        //don't render if the disruptor shot has the secondShot condition, which will hide the projectile until it is time to fire.
-        if (dynamic_cast<Disruptor*>(projectilesList.at(i)) == nullptr || !dynamic_cast<Disruptor*>(projectilesList.at(i))->secondShot)
-            projectilesList.at(i)->render(this->window);
-            //this function, render(), belongs to the Projectile class.
-
         //if the dynamic cast does not return nullptr, that means it is that type.
         //necessary because pushing a subclass to a vector of base class results in an implicit upcast
         if (dynamic_cast<Torpedo*>(projectilesList.at(i)) != nullptr) {
@@ -315,6 +317,17 @@ void Game::renderProjectiles() {
 
         else if (dynamic_cast<Phaser*>(projectilesList.at(i)) != nullptr)
             movePhasers(dynamic_cast<Phaser*>(projectilesList.at(i)), i);
+    }
+}
+
+void Game::renderProjectiles() {
+    for (int i = 0; i < projectilesList.size(); i++) {
+        //don't render if the disruptor shot has the secondShot condition, which will hide the projectile until it is time to fire.
+        if (dynamic_cast<Disruptor*>(projectilesList.at(i)) == nullptr || !dynamic_cast<Disruptor*>(projectilesList.at(i))->secondShot)
+            projectilesList.at(i)->render(this->window);
+            //this function, render(), belongs to the Projectile class.
+
+        
 
     }
 }
@@ -809,14 +822,14 @@ void Game::fireTorpedo(Ship& firingShip, sf::Vector2f targetP, int hitChance, fl
                     
                 }
             } else {
-                torpedo->hitChance = hitChance * torpedo->hitChanceBase / 100;
+                torpedo->hitChance = hitChance;
                 torpedo->targetPos = target;
             }   
         }
     }   
 
     torpedo->damage = damage;
-    torpedo->hitChance = hitChance * torpedo->hitChanceBase / 100;
+    torpedo->hitChance = hitChance;
     this->projectilesList.insert(projectilesList.begin(), torpedo);
 
 }
@@ -870,7 +883,7 @@ void Game::fireTorpedoSpread(Ship& firingShip, sf::Vector2f targetP, int hitChan
         }
 
         torpedo->damage = damage / 5;
-        torpedo->hitChance = hitChance * torpedo->hitChanceBase / 100;
+        torpedo->hitChance = hitChance;
         if (firingShip.friendly)
             torpedo->setFriendly(); 
         this->projectilesList.insert(projectilesList.begin(), torpedo);
@@ -900,8 +913,8 @@ void Game::fireDisruptor(Ship& firingShip, sf::Vector2f targetP, int hitChance, 
     disruptor->damage = damage;
     disruptor2->damage = damage;
 
-    disruptor->hitChance = hitChance * disruptor->hitChanceBase / 100;
-    disruptor2->hitChance = hitChance * disruptor2->hitChanceBase / 100;
+    disruptor->hitChance = hitChance;
+    disruptor2->hitChance = hitChance;
 
     this->projectilesList.insert(projectilesList.begin(), disruptor);
     this->projectilesList.insert(projectilesList.begin(), disruptor2);
@@ -1133,7 +1146,7 @@ void Game::firePhaser(Ship& firingShip, sf::Vector2f targetP, int hitChance, flo
 
     phaser->firingShip = &firingShip;
 
-    phaser->hitChance = hitChance * phaser->hitChanceBase / 100;
+    phaser->hitChance = hitChance;
     
     this->projectilesList.push_back(phaser);
 }
@@ -1281,13 +1294,15 @@ void Game::update() {
     if (timer.getElapsedTime().asSeconds() > 0.00100001)
             timer.restart();
     timer.getElapsedTime();
+    this->updatePlayer();
     if (!paused) {
-        this->updatePlayer();
+        this->moveProjectiles();
         this->updateEnemy();
         this->updateAllShips();
         this->checkCollisions();
         this->generateStars();
     }
+    updateHitboxes();
 }
 
 void Game::render() {
@@ -1433,7 +1448,11 @@ void Game::useWeapon(Ship& ship) {
         std::string weaponSelectedString = std::get<0>(ship.weaponSelectedTuple);
         std::string weaponSystem = std::get<1>(ship.weaponSelectedTuple);
         bool fired = false;
-        int hitChance = ship.shipSystems.at(weaponSystem)->operationalCapacity;
+
+        auto systemPtr = ship.shipSystems.at(weaponSystem);
+        std::shared_ptr<Weapon> wepPtr = std::dynamic_pointer_cast<Weapon>(systemPtr);
+
+        int hitChance = systemPtr->operationalCapacity * wepPtr->hitChanceBase;
 
         std::shared_ptr<System> wep = ship.shipSystems.at(weaponSystem);
         float damage = std::dynamic_pointer_cast<Weapon>(wep)->damage;
@@ -1472,8 +1491,15 @@ void Game::useWeapon(Ship& ship) {
 void Game::useWeapon(Ship* ship, sf::Vector2f enemyPosition) {
     if (std::get<0>(ship->weaponSelectedTuple) != "" && std::get<1>(ship->weaponSelectedTuple) != "") {
         std::string weaponSelectedString = std::get<0>(ship->weaponSelectedTuple);
+
+
         std::string weaponSystem = std::get<1>(ship->weaponSelectedTuple);
-        int hitChance = ship->shipSystems.at(weaponSystem)->operationalCapacity;
+
+        auto systemPtr = ship->shipSystems.at(weaponSystem);
+        std::shared_ptr<Weapon> wepPtr = std::dynamic_pointer_cast<Weapon>(systemPtr);
+
+        int hitChance = systemPtr->operationalCapacity * wepPtr->hitChanceBase;
+
         std::shared_ptr<System> wep = ship->shipSystems.at(weaponSystem);
         float damage = std::dynamic_pointer_cast<Weapon>(wep)->damage;
 
@@ -1767,6 +1793,7 @@ void Game::renderUI() {
     displayEvents();
     displayMiniText();
     showRoomDamage();
+    drawCooldownUI();
 
     if (paused) {
         //the origin of the text should be accounted for, because the text is slightly off center.
@@ -1778,6 +1805,7 @@ void Game::renderUI() {
         text.setPosition(window->mapPixelToCoords(viewPosition));
         window->draw(text);
     }
+
 }
 
 
@@ -1797,4 +1825,27 @@ void Game::setGameView(sf::Vector2f viewCoordinates) {
     //view = sf::View(sf::FloatRect(0, 0, window->getSize().x, window->getSize().y));
     view.setCenter(viewCoordinates);
     this->window->setView(view);
+}
+
+void Game::cooldownUI() {
+    float offset = 40;
+    for (int i = 1; i <= playerShipObj.weaponsComplement.size(); i++) {
+        std::tuple<std::string, std::string> weaponTuple = playerShipObj.weaponsComplement.at(i);
+        std::string weaponString = std::get<0>(weaponTuple);
+        sf::RectangleShape rect = sf::RectangleShape(sf::Vector2f(offset,offset));
+        cooldownUIElements.push_back(std::make_shared<sf::RectangleShape>(rect));
+        rect.setOrigin(20, 20);
+    }
+}
+
+void Game::drawCooldownUI() {
+    float offset = 40;
+    int i = 0;
+    for (std::shared_ptr<sf::RectangleShape> drawable: cooldownUIElements) {
+        i++;
+        float offsetFromCenter = offset * ((float)playerShipObj.weaponsComplement.size() / 2);
+        sf::Vector2f center = sf::Vector2f((float)(window->getSize().x) / 2 - offsetFromCenter, 0.0);
+        drawable->setPosition(center + sf::Vector2f(offset * i, 0));
+        window->draw(*drawable);
+    }
 }

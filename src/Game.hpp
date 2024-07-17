@@ -13,6 +13,7 @@ class Game {
         sf::VideoMode videoMode;
         sf::Event event;
         sf::View view;
+        sf::View uiView;
 
         //Private functions
         void initVariables();
@@ -54,7 +55,6 @@ class Game {
         std::vector<sf::RectangleShape> friendlyHitboxes;
 
         bool paused;
-        float zoomScale;
 
         void makeDecision(Ship* ship);
 
@@ -68,7 +68,8 @@ class Game {
         std::vector<std::tuple<std::string, bool>> eventLog;
         std::vector<std::tuple<sf::Text, int>> miniTextVect;
 
-        std::vector<std::shared_ptr<sf::RectangleShape>> cooldownUIElements;
+        std::vector<std::tuple<std::shared_ptr<sf::RectangleShape>, std::shared_ptr<sf::RectangleShape>, 
+                    std::shared_ptr<sf::Text>, std::string>> cooldownUIElements;
     public:
         //Constructors and Destructors
         Game();
@@ -156,4 +157,8 @@ class Game {
 
         void cooldownUI();
         void drawCooldownUI();
+
+        void renderEnemyArrows();
+
+        void placeTriangle(const sf::Vector2f& position, Ship* ship);
 };

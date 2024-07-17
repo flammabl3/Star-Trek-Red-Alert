@@ -39,7 +39,6 @@ void Game::initVariables() {
     torpedoTime = 0;
     paused = false;
 
-    zoomScale = 1.0;
     //pick a arial later.
     arial.loadFromFile("../resource/arial.ttf");
     tos.loadFromFile("../resource/TOS_Title.ttf");
@@ -66,8 +65,8 @@ void Game::initWindow() {
     unsigned int height = size.y;
 
     view = sf::View(sf::FloatRect(0.f, 0.f, 1920.f, 1080.f));
-    view.zoom(zoomScale);
-
+    uiView = view;
+    
 }
 
 void Game::initPlayer() {
@@ -151,7 +150,7 @@ void Game::showRoomDamage() {
             text.setScale(0.5, 0.5);
             //text will become more transparent as it moves up the log.
             text.setFillColor(sf::Color(255, 255 - room.fire, 255 - room.fire, 255));
-            sf::Vector2i viewPosition = sf::Vector2i(0, view.getSize().y - 12 * positionOffset);
+            sf::Vector2i viewPosition = sf::Vector2i(0, uiView.getSize().y - 12 * positionOffset);
             text.setPosition(window->mapPixelToCoords(viewPosition));
             if (positionOffset > 0)
                 positionOffset++;
@@ -402,7 +401,7 @@ void Game::moveDisruptors(Disruptor* projectile, int i) {
         float distanceLength = std::sqrt(elapsedDistance.x * elapsedDistance.x + elapsedDistance.y * elapsedDistance.y);
         if (distanceLength > 1900) {
             //projectile will begin to fade out after 900 units, rather than just disappear at 1000.
-            projectile->projectileSprite.setColor(sf::Color(255,255,255,900-distanceLength));
+            projectile->projectileSprite.setColor(sf::Color(255,255,255,1900-distanceLength));
         }
         if (distanceLength > 2000) {
             projectilesList.erase(projectilesList.begin() + i);
@@ -1270,16 +1269,11 @@ void Game::updateEvents() {
             }
 
             if (event.type == sf::Event::MouseWheelScrolled) {
-                std::cout << event.mouseWheelScroll.delta << std::endl;
-                float zoomIncrement = 0;
                 if (event.mouseWheelScroll.delta < 0) {
-                    zoomIncrement = 0.1;
                     view.zoom(1.1);
                 } else if (event.mouseWheelScroll.delta > 0) {
-                    zoomIncrement = -0.1;
                     view.zoom(0.9);
                 }
-                zoomScale += zoomIncrement;
                 
             }
         }
@@ -1287,6 +1281,7 @@ void Game::updateEvents() {
 }
 
 void Game::update() {
+    setGameView(playerShipObj.getPosition());
     this->updateEvents();
     this->window->clear();
     deltaTime = clock.restart().asSeconds();
@@ -1306,23 +1301,21 @@ void Game::update() {
 }
 
 void Game::render() {
-    setGameView(playerShipObj.getPosition());
     renderStars();
     renderProjectiles();
     renderPlayer();
     renderEnemy();
     renderEnemyHitboxes();
-    renderUI();
+    renderEnemyArrows();
 
     if (debugMode) {
         renderCoordinates();
         renderDebugObjects();
     }
         
-    
-    
+    window->setView(uiView);
+    renderUI();
     this->window->display();
-    //this->window->setView(view);
     friendlyHitboxes.clear();
     debugHitboxes.clear();
     enemyHitboxes.clear();
@@ -1827,25 +1820,147 @@ void Game::setGameView(sf::Vector2f viewCoordinates) {
     this->window->setView(view);
 }
 
+// a tuple of 3 elements, a sprite to indicate the weapon type, a rectangle to serve as the background, and a rectangle to serve as the cooldown indicator
 void Game::cooldownUI() {
-    float offset = 40;
+    float offset = 100;
     for (int i = 1; i <= playerShipObj.weaponsComplement.size(); i++) {
         std::tuple<std::string, std::string> weaponTuple = playerShipObj.weaponsComplement.at(i);
         std::string weaponString = std::get<0>(weaponTuple);
         sf::RectangleShape rect = sf::RectangleShape(sf::Vector2f(offset,offset));
-        cooldownUIElements.push_back(std::make_shared<sf::RectangleShape>(rect));
-        rect.setOrigin(20, 20);
+        rect.setOrigin(50, 50);
+        rect.setFillColor(sf::Color(255,158,99,120));
+
+        sf::RectangleShape rectOverlay = rect;
+        rectOverlay.setFillColor(sf::Color(100,109,204,0));
+
+        std::shared_ptr<sf::Text> txt = std::make_shared<sf::Text>();
+        std::string weaponName = std::get<0>(playerShipObj.weaponsComplement[i]);
+        std::string systemName = std::get<1>(playerShipObj.weaponsComplement[i]);
+
+        if (weaponName == "TORPEDO") {
+            txt->setString("Torpedo");
+        } else if (weaponName == "TORPEDOSPREAD") {
+            txt->setString("T. Spread");
+        } else if (weaponName == "PHASER") {
+            txt->setString("Phaser");
+        } else if (weaponName == "DISRUPTOR") {
+            txt->setString("Disruptor");
+        }
+
+        txt->setFont(okuda);
+        txt->setOrigin(txt->getGlobalBounds().getSize().x / 2, txt->getGlobalBounds().getSize().y / 2);
+
+        std::tuple tuple = std::make_tuple(std::make_shared<sf::RectangleShape>(rect), std::make_shared<sf::RectangleShape>(rectOverlay), 
+        txt, systemName);
+
+        cooldownUIElements.push_back(tuple);
     }
 }
 
 void Game::drawCooldownUI() {
-    float offset = 40;
-    int i = 0;
-    for (std::shared_ptr<sf::RectangleShape> drawable: cooldownUIElements) {
-        i++;
-        float offsetFromCenter = offset * ((float)playerShipObj.weaponsComplement.size() / 2);
-        sf::Vector2f center = sf::Vector2f((float)(window->getSize().x) / 2 - offsetFromCenter, 0.0);
-        drawable->setPosition(center + sf::Vector2f(offset * i, 0));
-        window->draw(*drawable);
+    float offset = 120;
+    int numberOfElements = playerShipObj.weaponsComplement.size();
+    float totalWidth = offset * numberOfElements;
+
+    float startX = uiView.getCenter().x - (totalWidth / 2);
+    float centerY = uiView.getCenter().y + uiView.getSize().y / 2 - 100;
+
+    for (int i = 0; i < numberOfElements; i++) {
+        sf::Vector2f position(startX + (offset * i), centerY);
+        std::tuple tuple = cooldownUIElements[i];
+
+        std::get<0>(tuple)->setPosition(position);
+        std::get<1>(tuple)->setPosition(position);
+        std::get<2>(tuple)->setPosition(position);
+
+        std::shared_ptr<System>& system = playerShipObj.shipSystems.at(std::get<3>(tuple));
+        Weapon* wep = dynamic_cast<Weapon*>(system.get());
+
+        int opacity;
+        if (wep->cooldownTimer <= 0) 
+            opacity = 0;
+        else
+            opacity = wep->cooldownTimer * 255 / wep->cooldownThreshold;
+
+        std::get<1>(tuple)->setFillColor(sf::Color(100,109,204, opacity));
+
+        window->draw(*std::get<0>(tuple));
+        window->draw(*std::get<1>(tuple));
+        window->draw(*std::get<2>(tuple));
     }
+}
+
+
+//check if the enemy is off screen, then place an arrow at the edge.
+void Game::renderEnemyArrows() {
+    for (Ship* ship : enemyShips) {
+        sf::FloatRect shipBounds = ship->shipSprite.getGlobalBounds();
+
+        sf::Vector2f viewCenter = view.getCenter();
+        sf::Vector2f viewSize = view.getSize();
+
+        sf::FloatRect viewBounds(viewCenter.x - viewSize.x / 2, viewCenter.y - viewSize.y / 2, viewSize.x, viewSize.y);
+
+        if (!shipBounds.intersects(viewBounds)) {
+            sf::Vector2f toPlayerVect = ship->getPosition() - playerShipPointer->getPosition();
+            float toPlayerLength = std::sqrt(toPlayerVect.x * toPlayerVect.x + toPlayerVect.y * toPlayerVect.y);
+            //direction is the unit vector
+            sf::Vector2f direction = toPlayerVect / toPlayerLength;
+
+            // determine the intersection with the screen edge
+            sf::Vector2f closestPoint;
+
+            //adjust so that the arrow pops up sooner
+            float minX = viewBounds.left + 100;
+            float maxX = viewBounds.left + viewBounds.width - 100;
+            float minY = viewBounds.top + 100;
+            float maxY = viewBounds.top + viewBounds.height - 100;
+
+            // check for intersection with each screen edge
+            // t is the scalar needed to multiply the unit vector from the player's position so that it touches the edge of the screen
+            // if the unit vector is positive, it is past the right edge, and vice versa.
+
+            if (direction.x != 0) {
+                float t = (direction.x > 0 ? maxX : minX) - playerShipPointer->getPosition().x;
+                t /= direction.x;
+                closestPoint = playerShipPointer->getPosition() + direction * t;
+                if (closestPoint.y >= minY && closestPoint.y <= maxY) {
+                    // intersection with vertical edge is valid
+
+                    // add (or subtract) 50 to prevent the triangle being on the very edge, which can make it hard to see.
+                    int offset = (direction.x > 0 ? -50 : 50);
+
+                    placeTriangle(closestPoint + sf::Vector2f(offset,0), ship);
+                    continue;
+                }
+            }
+
+            if (direction.y != 0) {
+                float t = (direction.y > 0 ? maxY : minY) - playerShipPointer->getPosition().y;
+                t /= direction.y;
+                closestPoint = playerShipPointer->getPosition() + direction * t;
+                if (closestPoint.x >= minX && closestPoint.x <= maxX) {
+                    // intersection with horizontal edge is valid
+
+                    int offset = (direction.y > 0 ? -50 : 50);
+
+                    placeTriangle(closestPoint + sf::Vector2f(0,offset), ship);
+                    continue;
+                }
+            }
+        }
+    }
+}
+
+void Game::placeTriangle(const sf::Vector2f& position, Ship* ship) {
+    sf::CircleShape triangle(10, 3);
+    triangle.setOrigin(triangle.getLocalBounds().getSize().x / 2, triangle.getLocalBounds().getSize().y / 2);
+    triangle.setFillColor(sf::Color(255, 0, 0, 255));
+    triangle.setPosition(position);
+
+    sf::Vector2f toShipVect = ship->getPosition() - position;
+    float toShipAngle = atan2(toShipVect.y, toShipVect.x) * 180 / M_PI;
+    triangle.setRotation(toShipAngle + 90);
+
+    window->draw(triangle);
 }

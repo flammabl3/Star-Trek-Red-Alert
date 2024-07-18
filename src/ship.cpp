@@ -106,7 +106,11 @@ void Ship::shieldOpacMod() {
     shieldRect.setRotation(0);
     if (shieldOpac > 0) 
         shieldOpac--;
-    shieldSprite.setColor(sf::Color(255, 255, 255, shieldOpac));
+        
+
+    sf::Color shieldColor = shieldSprite.getColor();
+    shieldColor.a = shieldOpac;
+    shieldSprite.setColor(shieldColor);
 }
 
 sf::RectangleShape Ship::setShield(int shieldBubbleRadius) {
@@ -122,8 +126,18 @@ sf::RectangleShape Ship::setShield(int shieldBubbleRadius) {
     shieldRect.setPosition(shipSprite.getPosition());
     shieldRect.setRotation(shipSprite.getRotation());
 
-    shieldRect.setFillColor(sf::Color(255,255,255,0));
-    shieldRect.setOutlineColor(sf::Color(255,255,0,255));
+    if (this->faction == "FEDERATION") {
+        shieldRect.setFillColor(sf::Color(255,255,255,0));
+        shieldRect.setOutlineColor(sf::Color(255,255,0,255));
+    } else if (this->faction == "KLINGON") {
+        shieldRect.setFillColor(sf::Color(0,255,0,0));
+        shieldRect.setOutlineColor(sf::Color(0,255,0,255));
+    } else {
+        shieldRect.setFillColor(sf::Color(255,255,255,0));
+        shieldRect.setOutlineColor(sf::Color(255,255,0,255));
+    }
+
+
     shieldRect.setOutlineThickness(1);
 
     return shieldRect;

@@ -71,6 +71,8 @@ class Weapon : public System {
         void resetTimer();
         bool ready;
 
+        sf::Vector2f offset;
+
         int damage;
         int damageBase;
 

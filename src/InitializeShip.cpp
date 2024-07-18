@@ -35,6 +35,9 @@ Ship InitializeShip::makeShip(const std::string& jsonFilePath) {
             dynamic_cast<Weapon*>(systemPtr)->damage = system["damage"];
             dynamic_cast<Weapon*>(systemPtr)->damageBase = system["damageBase"];
             dynamic_cast<Weapon*>(systemPtr)->hitChanceBase = system["hitChanceBase"];
+            if (system.contains("offset")) {
+                dynamic_cast<Weapon*>(systemPtr)->offset = sf::Vector2f(system["offset"][0], system["offset"][1]);
+            }
         }
         if (system["class"] == "Propulsion") {
             systemPtr = new Propulsion(system["name"], roomsVect, personnelVect);

@@ -44,6 +44,7 @@ void Game::initVariables() {
     tos.loadFromFile("../resource/TOS_Title.ttf");
     okuda.loadFromFile("../resource/Trek_TNG_Monitors.ttf");
 
+
     if (!newStarTexture.loadFromFile("../resource/star1.png")) {
         std::cout << "Failed to load star texture." << std::endl;
     }
@@ -426,10 +427,18 @@ void Game::moveDisruptors(Disruptor* projectile, int i) {
         } else {
             projectile->secondShot = false;
 
+            sf::RectangleShape systemHitbox = projectile->firingSystem->returnHitbox();
+
+            sf::Vector2f tipOfWeapon = sf::Vector2f(systemHitbox.getSize().x, systemHitbox.getSize().y / 2);
+
+            sf::Vector2f parentTip = systemHitbox.getTransform().transformPoint({tipOfWeapon});
+
+            tipOfWeapon += projectile->offset;
+
+            sf::Vector2f parentTip2 = systemHitbox.getTransform().transformPoint({tipOfWeapon});
             //this should eventually be changed to be the tip of the disruptor which shot it.
-            sf::Vector2f firingShipPos = projectile->firingShip->getPosition();
-            projectile->spawnedAt = firingShipPos;
-            projectile->projectileSprite.setPosition(firingShipPos);
+            projectile->projectileSprite.setPosition(parentTip2);
+            playSound("../resource/sounds/klingon_disruptor5.mp3");
         }
     }       
 }
@@ -534,6 +543,9 @@ void Game::checkCollisions() {
                         std::stringstream stream;
                         stream << std::fixed << std::setprecision(2) << ship->shields * 100 / ship->shieldsBase;
                         logEvent("Shields at " + stream.str() + " percent.", ship->friendly);
+
+                        playSound("../resource/sounds/shieldhit.wav");
+
                         it = projectilesList.erase(it);
                         delete projectile;
                         continue;
@@ -569,6 +581,7 @@ void Game::checkCollisions() {
                             std::stringstream stream;
                             stream << std::fixed << std::setprecision(2) << ship->shields * 100 / ship->shieldsBase;
                             logEvent("Shields at " + stream.str() + " percent.", ship->friendly);
+                            playSound("../resource/sounds/shieldhit.wav");
                             if (phaser->collidedDeleteTimer > 3.0) {
                                 it = projectilesList.erase(it);
                                 delete projectile;
@@ -830,7 +843,8 @@ void Game::fireTorpedo(Ship& firingShip, sf::Vector2f targetP, int hitChance, fl
     torpedo->damage = damage;
     torpedo->hitChance = hitChance;
     this->projectilesList.insert(projectilesList.begin(), torpedo);
-
+    
+    playSound("../resource/sounds/tng_torpedo.mp3");
 }
 
 void Game::fireTorpedoSpread(Ship& firingShip, int hitChance, float damage, sf::Vector2f parentTip) {
@@ -889,11 +903,11 @@ void Game::fireTorpedoSpread(Ship& firingShip, sf::Vector2f targetP, int hitChan
     }
 }
 
-void Game::fireDisruptor(Ship& firingShip, int hitChance, float damage, sf::Vector2f parentTip) {
-    fireDisruptor(firingShip, window->mapPixelToCoords(sf::Mouse::getPosition(*window)), hitChance, damage, parentTip);
+void Game::fireDisruptor(Ship& firingShip, int hitChance, float damage, sf::Vector2f parentTip, sf::Vector2f offset, std::shared_ptr<System> firingSystem) {
+    fireDisruptor(firingShip, window->mapPixelToCoords(sf::Mouse::getPosition(*window)), hitChance, damage, parentTip, offset, firingSystem);
 }
 
-void Game::fireDisruptor(Ship& firingShip, sf::Vector2f targetP, int hitChance, float damage, sf::Vector2f parentTip) {
+void Game::fireDisruptor(Ship& firingShip, sf::Vector2f targetP, int hitChance, float damage, sf::Vector2f parentTip, sf::Vector2f offset, std::shared_ptr<System> firingSystem) {
     sf::Vector2f target = targetP;
     
     Disruptor* disruptor = new Disruptor("../resource/disruptor.png", parentTip.x, parentTip.y,
@@ -903,6 +917,8 @@ void Game::fireDisruptor(Ship& firingShip, sf::Vector2f targetP, int hitChance, 
                                         target, 1700.0, 6);  
     disruptor2->secondShot = true;
     disruptor2->firingShip = &firingShip;
+    disruptor2->firingSystem = firingSystem;
+    disruptor2->offset = offset;
 
     if (firingShip.friendly) {
         disruptor->setFriendly();
@@ -917,6 +933,9 @@ void Game::fireDisruptor(Ship& firingShip, sf::Vector2f targetP, int hitChance, 
 
     this->projectilesList.insert(projectilesList.begin(), disruptor);
     this->projectilesList.insert(projectilesList.begin(), disruptor2);
+
+    playSound("../resource/sounds/klingon_disruptor5.mp3");
+
 }
 
 void Game::moveShip(Ship* ship, sf::Vector2f moveTo) {
@@ -1148,6 +1167,8 @@ void Game::firePhaser(Ship& firingShip, sf::Vector2f targetP, int hitChance, flo
     phaser->hitChance = hitChance;
     
     this->projectilesList.push_back(phaser);
+
+    playSound("../resource/sounds/tng_phaser.mp3");
 }
 
 Game::Game() {
@@ -1296,6 +1317,7 @@ void Game::update() {
         this->updateAllShips();
         this->checkCollisions();
         this->generateStars();
+        this->cleanupSounds();
     }
     updateHitboxes();
 }
@@ -1450,16 +1472,22 @@ void Game::useWeapon(Ship& ship) {
         std::shared_ptr<System> wep = ship.shipSystems.at(weaponSystem);
         float damage = std::dynamic_pointer_cast<Weapon>(wep)->damage;
 
+
         //projectiles will spawn at the transform of the tip of the system that fired them.
         sf::RectangleShape systemHitbox = ship.shipSystems.at(weaponSystem)->returnHitbox();
-        sf::Vector2f parentTip = systemHitbox.getTransform().transformPoint({systemHitbox.getSize().x, systemHitbox.getSize().y / 2});
+
+        sf::Vector2f tipOfWeapon = sf::Vector2f(systemHitbox.getSize().x, systemHitbox.getSize().y / 2);
+
+        sf::Vector2f parentTip = systemHitbox.getTransform().transformPoint({tipOfWeapon});
+
+        sf::Vector2f offset = wepPtr->offset;
         
         if (weaponSelectedString == "TORPEDO") {
             fireTorpedo(ship, hitChance, damage, parentTip);
             fired = true;
         }
         if (weaponSelectedString == "DISRUPTOR") {
-            fireDisruptor(ship, hitChance, damage, parentTip); 
+            fireDisruptor(ship, hitChance, damage, parentTip, offset, wepPtr); 
             fired = true;
         }
         if (weaponSelectedString == "PHASER") {
@@ -1497,7 +1525,12 @@ void Game::useWeapon(Ship* ship, sf::Vector2f enemyPosition) {
         float damage = std::dynamic_pointer_cast<Weapon>(wep)->damage;
 
         sf::RectangleShape systemHitbox = ship->shipSystems.at(weaponSystem)->returnHitbox();
-        sf::Vector2f parentTip = systemHitbox.getTransform().transformPoint({systemHitbox.getSize().x, systemHitbox.getSize().y / 2});
+
+        sf::Vector2f tipOfWeapon = sf::Vector2f(systemHitbox.getSize().x, systemHitbox.getSize().y / 2);
+
+        sf::Vector2f parentTip = systemHitbox.getTransform().transformPoint({tipOfWeapon});
+
+        sf::Vector2f offset = wepPtr->offset;
         
         bool fired = false;
         if (weaponSelectedString == "TORPEDO") {
@@ -1505,7 +1538,7 @@ void Game::useWeapon(Ship* ship, sf::Vector2f enemyPosition) {
             fired = true;
         }
         if (weaponSelectedString == "DISRUPTOR") {
-            fireDisruptor(*ship, enemyPosition, hitChance, damage, parentTip); 
+            fireDisruptor(*ship, enemyPosition, hitChance, damage, parentTip, offset, wepPtr); 
             fired = true;
         }
         if (weaponSelectedString == "PHASER") {
@@ -1963,4 +1996,30 @@ void Game::placeTriangle(const sf::Vector2f& position, Ship* ship) {
     triangle.setRotation(toShipAngle + 90);
 
     window->draw(triangle);
+}
+
+//Push a sound and a soundbuffer to std::lists. Play the sound and then erase the sound when it is done playing.
+//To improve this, create a map of buffers, one for each sound effect, then call as needed.
+void Game::playSound(std::string filePath) {
+    std::shared_ptr<sf::SoundBuffer> buffer = std::make_shared<sf::SoundBuffer>();
+    if (!buffer->loadFromFile(filePath)) {
+        std::cout << "failed to load " << filePath << std::endl;
+        return;
+    }
+    std::shared_ptr<sf::Sound> sound = std::make_shared<sf::Sound>();
+    sound->setBuffer(*buffer);
+    sound->play();
+
+    soundsList.push_back(sound);
+    buffers.push_back(buffer);
+}
+
+void Game::cleanupSounds() {
+    soundsList.erase(
+        std::remove_if(soundsList.begin(), soundsList.end(),
+            [](const std::shared_ptr<sf::Sound>& sound) {
+                return sound->getStatus() == sf::Sound::Stopped;
+            }),
+        soundsList.end()
+    );
 }

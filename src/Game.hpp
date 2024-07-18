@@ -1,7 +1,9 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Network.hpp>
+#include <SFML/Audio.hpp>
 #include <vector>
+#include <list>
 
 #include "Ship.hpp"
 #include "Projectile.hpp"
@@ -31,6 +33,9 @@ class Game {
 
         //Game Objects
         
+        std::list<std::shared_ptr<sf::Sound>> soundsList;
+        std::list<std::shared_ptr<sf::SoundBuffer>> buffers;
+
         sf::Vector2i mousePosition;
         sf::Clock clock;
         sf::Clock timer;
@@ -43,6 +48,7 @@ class Game {
         std::vector<Ship*> friendlyShips;
 
         bool usingWarp;
+
                 
         //Objects associated with game objects
         Ship playerShipObj;
@@ -103,12 +109,12 @@ class Game {
         void moveShipWarp(Ship* ship, sf::Vector2f moveTo);
 
         void fireTorpedo(Ship& firingShip, int hitChance, float damage, sf::Vector2f parentTip);
-        void fireDisruptor(Ship& firingShip, int hitChance, float damage, sf::Vector2f parentTip);
+        void fireDisruptor(Ship& firingShip, int hitChance, float damage, sf::Vector2f parentTip, sf::Vector2f offset, std::shared_ptr<System> firingSystem);
         void firePhaser(Ship& firingShip, int hitChance, float damage, sf::Vector2f parentTip);
         void fireTorpedoSpread(Ship& firingShip, int hitChance, float damage, sf::Vector2f parentTip);
 
         void fireTorpedo(Ship& firingShip, sf::Vector2f targetP, int hitChance, float damage, sf::Vector2f parentTip);
-        void fireDisruptor(Ship& firingShip, sf::Vector2f targetP, int hitChance, float damage, sf::Vector2f parentTip);
+        void fireDisruptor(Ship& firingShip, sf::Vector2f targetP, int hitChance, float damage, sf::Vector2f parentTip, sf::Vector2f offset, std::shared_ptr<System> firingSystem);
         void firePhaser(Ship& firingShip, sf::Vector2f targetP, int hitChance, float damage, sf::Vector2f parentTip);
         void fireTorpedoSpread(Ship& firingShip, sf::Vector2f targetP, int hitChance, float damage, sf::Vector2f parentTip);
         void renderProjectiles(); 
@@ -161,4 +167,8 @@ class Game {
         void renderEnemyArrows();
 
         void placeTriangle(const sf::Vector2f& position, Ship* ship);
+
+        void playSound(std::string filePath);
+
+        void cleanupSounds();
 };

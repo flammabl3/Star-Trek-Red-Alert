@@ -61,6 +61,8 @@ class Disruptor: public Projectile {
         bool secondShot;
         float secondShotDelay;
         Ship* firingShip;
+        std::shared_ptr<System> firingSystem;
+        sf::Vector2f offset;
         Disruptor(std::string texturePath, float x, float y, sf::Vector2f directionOfTravel, float speed, float damage);
 };
 

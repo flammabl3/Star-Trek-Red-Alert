@@ -7,6 +7,8 @@
 
 #include "Ship.hpp"
 #include "Projectile.hpp"
+#include "MainMenu.hpp"
+
 
 class Game {
     private:
@@ -76,6 +78,8 @@ class Game {
 
         std::vector<std::tuple<std::shared_ptr<sf::RectangleShape>, std::shared_ptr<sf::RectangleShape>, 
                     std::shared_ptr<sf::Text>, std::string>> cooldownUIElements;
+
+        MainMenu menuClass;
     public:
         //Constructors and Destructors
         Game();
@@ -83,10 +87,19 @@ class Game {
 
         const bool getWindowIsOpen() const;
 
+        enum class GameState {
+            MainMenu,
+            Playing
+        };
+
+        GameState state;
+
         //Public functions
         
         void updateEvents();
         void update();
+        void updateMainMenu();
+        void updateMainMenuEvents();
 
         void initPlayer();
         void updatePlayer();
@@ -137,6 +150,8 @@ class Game {
 
         void render();
 
+        void renderMainMenu();
+
         void logEvent(std::string event, bool friendly);
 
         void displayEvents();
@@ -171,4 +186,6 @@ class Game {
         void playSound(std::string filePath);
 
         void cleanupSounds();
+
+        void toggleMainMenu();
 };

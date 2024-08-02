@@ -12,7 +12,6 @@
 #include "Projectile.hpp"
 #include "random0_n.hpp"
 
-
 float rot = 0;
 
 //TODO: 
@@ -53,6 +52,8 @@ void Game::initVariables() {
     }
 
     debugMode = false;
+    state = GameState::MainMenu;
+    menuClass = MainMenu();
 }
 
 void Game::initWindow() {
@@ -2022,4 +2023,27 @@ void Game::cleanupSounds() {
             }),
         soundsList.end()
     );
+}
+
+void Game::updateMainMenu() {
+    this->updateMainMenuEvents();
+    this->window->display();
+}
+
+void Game::renderMainMenu() {
+    // store and use buttons and assets in this class!
+    //menuClass.initSFMLObjects();
+}
+
+void Game::updateMainMenuEvents() {
+    while (this->window->pollEvent(event)) {
+        if (this->event.type == sf::Event::Closed) {
+            this->window->close();
+            exit(0);
+        }
+    }
+}
+
+void Game::toggleMainMenu() {
+    state = (state == GameState::MainMenu) ? GameState::Playing : GameState::MainMenu;
 }

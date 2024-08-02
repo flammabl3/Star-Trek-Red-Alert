@@ -6,10 +6,14 @@ int main()
 
     while (game.getWindowIsOpen())
     {
-        
-        game.update();
-        
-        game.render();
+        if (game.state == Game::GameState::MainMenu) {
+            game.updateMainMenu();
+            game.renderMainMenu();
+        } else {
+            game.update();
+            
+            game.render();
+        }
     }
 
     return 0;

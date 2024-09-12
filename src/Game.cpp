@@ -68,7 +68,7 @@ void Game::initWindow() {
 
     view = sf::View(sf::FloatRect(0.f, 0.f, 1920.f, 1080.f));
     uiView = view;
-    menuClass.initSFMLObjects(view);
+    menuClass.initSFMLObjects(view, okuda);
 }
 
 void Game::initPlayer() {
@@ -2034,8 +2034,9 @@ void Game::updateMainMenu() {
 void Game::renderMainMenu() {
     this->window->clear();
     // store and use buttons and assets in this class!
-    for (auto& pair : menuClass.getButtonsAndItems()) {
-        this->window->draw(*pair.second);
+    for (auto& item : menuClass.getButtonsAndItems()) {
+        this->window->draw(item->buttonRectangle);
+        this->window->draw(item->buttonText);
     }
 }
 
@@ -2057,31 +2058,31 @@ void Game::toggleMainMenu() {
 
 //when you mouseover an item, do something and set the game's enum to determine what button you have moused over.
 //Perform the relevant action using performMainMenuActions when a click is registered.
-void Game::checkForMenuItemClicks(std::vector<std::pair<Menu::menuActions, std::shared_ptr<sf::RectangleShape>>> menuItems) {
+void Game::checkForMenuItemClicks(std::vector<std::shared_ptr<Button>> menuItems) {
     bool itemsAreMoused = false;
     sf::Vector2f mousePosition = (sf::Vector2f)sf::Mouse::getPosition(*window);
     for (auto& item: menuItems) {
-        if (checkCollisionRectangleShape(*item.second, mousePosition)) {
-            mouseOver = item.first;
-            item.second->setFillColor(sf::Color::Blue);
+        if (checkCollisionRectangleShape(item->buttonRectangle, mousePosition)) {
+            mouseOver = item->action;
+            item->buttonRectangle.setFillColor(sf::Color::Blue);
             itemsAreMoused = true;
         } else {
-            item.second->setFillColor(sf::Color::Red);
+            item->buttonRectangle.setFillColor(sf::Color::Red);
         }
     }
     if (!itemsAreMoused) {
-        mouseOver = Menu::menuActions::NONE;
+        mouseOver = Button::buttonActions::NONE;
     }
 }
 
-void Game::performMainMenuActions(Menu::menuActions action) {
+void Game::performMainMenuActions(Button::buttonActions action) {
     switch (action) {
-        case Menu::menuActions::EXIT:
+        case Button::buttonActions::EXIT:
             this->window->close();
             exit(0);
-        case Menu::menuActions::SETTINGS:
+        case Button::buttonActions::SETTINGS:
             break;
-        case Menu::menuActions::START:
+        case Button::buttonActions::START:
             this->state = GameState::Playing;
     }
 }

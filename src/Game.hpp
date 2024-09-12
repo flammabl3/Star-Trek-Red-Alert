@@ -80,7 +80,7 @@ class Game {
 
         MainMenu menuClass;
 
-        Menu::menuActions mouseOver = Menu::menuActions::NONE;
+        Button::buttonActions mouseOver = Button::buttonActions::NONE;
     public:
         //Constructors and Destructors
         Game();
@@ -165,9 +165,9 @@ class Game {
 
         bool checkCollisionRectangleShape(sf::RectangleShape rect, sf::Vector2f vect);
 
-        void checkForMenuItemClicks(std::vector<std::pair<Menu::menuActions, std::shared_ptr<sf::RectangleShape>>> menuItems);
+        void checkForMenuItemClicks(std::vector<std::shared_ptr<Button>> menuItems);
 
-        void performMainMenuActions(Menu::menuActions action);
+        void performMainMenuActions(Button::buttonActions action);
 
         void generateStars();
         void renderStars();

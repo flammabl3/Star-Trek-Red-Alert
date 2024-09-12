@@ -1,6 +1,12 @@
 [
 {
   "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
+  "command": "C:\\mingw64\\bin\\g++.exe -IC:/Users/Harry/Desktop/Star-Trek-Red-Alert/libs -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Button.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Button.cpp",
+  "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Button.cpp",
+  "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Button.cpp.obj"
+},
+{
+  "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
   "command": "C:\\mingw64\\bin\\g++.exe -IC:/Users/Harry/Desktop/Star-Trek-Red-Alert/libs -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Game.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Game.cpp",
   "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Game.cpp",
   "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Game.cpp.obj"

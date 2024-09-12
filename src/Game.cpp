@@ -68,7 +68,7 @@ void Game::initWindow() {
 
     view = sf::View(sf::FloatRect(0.f, 0.f, 1920.f, 1080.f));
     uiView = view;
-    
+    menuClass.initSFMLObjects(view);
 }
 
 void Game::initPlayer() {
@@ -2026,13 +2026,17 @@ void Game::cleanupSounds() {
 }
 
 void Game::updateMainMenu() {
+    checkForMenuItemClicks(menuClass.getButtonsAndItems());
     this->updateMainMenuEvents();
     this->window->display();
 }
 
 void Game::renderMainMenu() {
+    this->window->clear();
     // store and use buttons and assets in this class!
-    //menuClass.initSFMLObjects();
+    for (auto& pair : menuClass.getButtonsAndItems()) {
+        this->window->draw(*pair.second);
+    }
 }
 
 void Game::updateMainMenuEvents() {
@@ -2041,9 +2045,43 @@ void Game::updateMainMenuEvents() {
             this->window->close();
             exit(0);
         }
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            performMainMenuActions(mouseOver);
+        }
     }
 }
 
 void Game::toggleMainMenu() {
     state = (state == GameState::MainMenu) ? GameState::Playing : GameState::MainMenu;
+}
+
+//when you mouseover an item, do something and set the game's enum to determine what button you have moused over.
+//Perform the relevant action using performMainMenuActions when a click is registered.
+void Game::checkForMenuItemClicks(std::vector<std::pair<Menu::menuActions, std::shared_ptr<sf::RectangleShape>>> menuItems) {
+    bool itemsAreMoused = false;
+    sf::Vector2f mousePosition = (sf::Vector2f)sf::Mouse::getPosition(*window);
+    for (auto& item: menuItems) {
+        if (checkCollisionRectangleShape(*item.second, mousePosition)) {
+            mouseOver = item.first;
+            item.second->setFillColor(sf::Color::Blue);
+            itemsAreMoused = true;
+        } else {
+            item.second->setFillColor(sf::Color::Red);
+        }
+    }
+    if (!itemsAreMoused) {
+        mouseOver = Menu::menuActions::NONE;
+    }
+}
+
+void Game::performMainMenuActions(Menu::menuActions action) {
+    switch (action) {
+        case Menu::menuActions::EXIT:
+            this->window->close();
+            exit(0);
+        case Menu::menuActions::SETTINGS:
+            break;
+        case Menu::menuActions::START:
+            this->state = GameState::Playing;
+    }
 }

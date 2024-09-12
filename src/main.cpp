@@ -11,7 +11,6 @@ int main()
             game.renderMainMenu();
         } else {
             game.update();
-            
             game.render();
         }
     }

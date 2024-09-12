@@ -13,6 +13,12 @@
 },
 {
   "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
+  "command": "C:\\mingw64\\bin\\g++.exe -IC:/Users/Harry/Desktop/Star-Trek-Red-Alert/libs -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Menu.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Menu.cpp",
+  "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Menu.cpp",
+  "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Menu.cpp.obj"
+},
+{
+  "directory": "C:/Users/Harry/Desktop/Star-Trek-Red-Alert/build",
   "command": "C:\\mingw64\\bin\\g++.exe -IC:/Users/Harry/Desktop/Star-Trek-Red-Alert/libs -Ic:/SFML/include -Ic:/Catch2-devel -I/SFML/include -g -o CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Personnel.cpp.obj -c C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Personnel.cpp",
   "file": "C:\\Users\\Harry\\Desktop\\Star-Trek-Red-Alert\\src\\Personnel.cpp",
   "output": "CMakeFiles\\Star-Trek-Red-Alert.dir\\src\\Personnel.cpp.obj"

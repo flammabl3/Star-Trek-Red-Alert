@@ -7,7 +7,7 @@
 
 #include "Ship.hpp"
 #include "Projectile.hpp"
-#include "MainMenu.hpp"
+#include "Menu.hpp"
 
 
 class Game {
@@ -38,7 +38,6 @@ class Game {
         std::list<std::shared_ptr<sf::Sound>> soundsList;
         std::list<std::shared_ptr<sf::SoundBuffer>> buffers;
 
-        sf::Vector2i mousePosition;
         sf::Clock clock;
         sf::Clock timer;
         float deltaTime;
@@ -80,6 +79,8 @@ class Game {
                     std::shared_ptr<sf::Text>, std::string>> cooldownUIElements;
 
         MainMenu menuClass;
+
+        Menu::menuActions mouseOver = Menu::menuActions::NONE;
     public:
         //Constructors and Destructors
         Game();
@@ -163,6 +164,10 @@ class Game {
         void createDebugBoxes(Ship* enemyShipObj);
 
         bool checkCollisionRectangleShape(sf::RectangleShape rect, sf::Vector2f vect);
+
+        void checkForMenuItemClicks(std::vector<std::pair<Menu::menuActions, std::shared_ptr<sf::RectangleShape>>> menuItems);
+
+        void performMainMenuActions(Menu::menuActions action);
 
         void generateStars();
         void renderStars();
